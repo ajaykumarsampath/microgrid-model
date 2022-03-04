@@ -4,12 +4,11 @@ from functools import cached_property
 from typing import List
 import numpy as np
 
-from model.grid_model import GridNetwork
 from model.domain import BUS_ID, MicrogirdModellingError, UnknownComponentError, StepPreviousTimestamp, \
     SimulationGridError
 from model.component_interface import IComponent, IGridNetwork
 from model.generator_interface import IGeneratorComponent
-from model.storage import IUnitDataStorage
+from util.storage import IUnitDataStorage
 
 logger = logging.getLogger(__name__)
 
@@ -94,12 +93,6 @@ class MicrogridModel:
     @property
     def grid_model(self):
         return self._model_data.grid_model
-
-    """
-    @property
-    def unit_to_bus_matrix(self):
-        return self._unit_to_bus
-    """
 
     @property
     def current_power(self) -> np.array:

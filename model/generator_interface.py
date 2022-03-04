@@ -1,7 +1,7 @@
 from data_loader.power_unit import IUnitDataLoader
 from model.domain import BUS_ID
 from model.component_interface import IComponent, IUnitConfig
-from model.storage import IUnitDataStorage
+from util.storage import IUnitDataStorage
 
 
 class IGeneratorComponent(IComponent):
