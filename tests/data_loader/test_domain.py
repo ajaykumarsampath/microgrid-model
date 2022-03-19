@@ -1,6 +1,8 @@
 import pytest
 
 from data_loader.domain import SamplePointsToPowerTable
+from data_loader.generator_interface import IGeneratorDataLoader
+from model.domain import Bounds
 
 
 class TestSamplePointsToPowerTable:
@@ -27,3 +29,25 @@ class TestSamplePointsToPowerTable:
 
         with pytest.raises(ValueError):
             point_power_table.available_power_at_sample_point(6)
+
+
+class TestUnitDataLoader:
+    def test_unit_data_loader(self):
+        power_bounds = Bounds(0, 10)
+        generator_loader = IGeneratorDataLoader(
+            initial_timestamp=10, power_bounds=power_bounds)
+
+        assert generator_loader.droop_gain == 0
+        assert generator_loader.power_bounds == power_bounds
+        assert generator_loader.grid_forming_unit_flag == False
+
+    def test_grid_forming_data_loader(self):
+        power_bounds = Bounds(0, 10)
+        generator_loader = IGeneratorDataLoader(
+            initial_timestamp=10, power_bounds=power_bounds, grid_forming_unit_flag=True,
+            droop_gain=1
+        )
+
+        assert generator_loader.droop_gain == 1
+        assert generator_loader.power_bounds == power_bounds
+        assert generator_loader.grid_forming_unit_flag == True

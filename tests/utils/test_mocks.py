@@ -4,14 +4,14 @@ import numpy as np
 from numpy.random._generator import default_rng
 
 from data_loader.domain import SamplePointsToPowerTable
-from data_loader.power_unit import IUnitDataLoader
+from data_loader.generator_interface import IGeneratorDataLoader
 from data_loader.renewable_unit import RenewableUnitDataLoader
-from model.component_interface import IComponentDataLoader, IComponent, IGridNetwork
+from model.component_interface import IComponentDataLoader, IComponent, IGridNetwork, IUnitConfig
 
-from model.domain import HistoricalData, UnitSimulationData, SimulationTimeSeries, BUS_ID
-from model.generator_interface import IGeneratorComponent
+from model.domain import HistoricalData, UnitSimulationData, SimulationTimeSeries, BUS_ID, ComponentType
+from model.generator_interface import IGeneratorComponent, IGeneratorComponentConfig
 from model.renewable_unit import RenewablePowerUnit
-from model.storage import IUnitDataStorage
+from utils.storage import IUnitDataStorage
 
 
 class MockDataStorage(IUnitDataStorage):
@@ -78,14 +78,14 @@ def create_pv_plant(initial_timestamp: int = 1639396720, past_days: int = 4, fut
 
 
 
-class MockUnitDataLoader(IUnitDataLoader):
-    pass
-
 class MockComponentDataLoader(IComponentDataLoader):
     def __init__(self, initial_timestamp: int, data: UnitSimulationData):
         super().__init__(initial_timestamp)
         self.data = data
 
+
+class MockGeneratorDataLoader(IGeneratorDataLoader):
+    pass
 
 class MockComponent(IComponent):
     def __init__(self, name: str, data_loader: MockComponentDataLoader):
@@ -99,7 +99,7 @@ class MockComponent(IComponent):
         return self._data_loader.data
 
 
-class MockPowerUnit(IGeneratorComponent):
+class MockGeneratorUnit(IGeneratorComponent):
     def step(self, timestamp: int):
         self._check_step_timestamp(timestamp)
         self._current_power = self.power_setpoint
@@ -128,3 +128,24 @@ class MockGridNetwork(IGridNetwork):
 
     def step(self, timestamp: int):
         pass
+
+
+class MockUnitConfig(IUnitConfig):
+    def __init__(self, name: str, data_loader: MockComponentDataLoader, bus_id: BUS_ID,
+                 component_type: ComponentType = ComponentType.Unknown):
+        super().__init__(name, data_loader, bus_id)
+        self.data_loader = data_loader
+        self._component_type = component_type
+
+    def create_unit(self) -> IComponent:
+        return MockComponent(self.name, self.data_loader)
+
+class MockGeneratorConfig(IGeneratorComponentConfig):
+    def __init__(self, name: str, data_loader: MockGeneratorDataLoader, bus_id: BUS_ID,
+                 component_type: ComponentType = ComponentType.Unknown):
+        super().__init__(name, data_loader, bus_id)
+        self.data_loader = data_loader
+        self._component_type = component_type
+
+    def create_unit(self):
+        return MockGeneratorUnit(self.name, self.data_loader)

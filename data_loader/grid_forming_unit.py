@@ -1,10 +1,11 @@
-from data_loader.power_unit import IUnitDataLoader
+from data_loader.domain import UnitDataLoaderError
+from data_loader.generator_interface import IGeneratorDataLoader
 from model.domain import Bounds
 import logging
 
 logger = logging.getLogger(__name__)
 
-class GridFormingUnitDataLoader(IUnitDataLoader):
+class GridFormingUnitDataLoader(IGeneratorDataLoader):
     def __init__(self, initial_timestamp: int, power_bounds: Bounds, droop_gain: float,
                  grid_forming_unit_flag: bool = True):
         if droop_gain <= 0:
@@ -14,8 +15,8 @@ class GridFormingUnitDataLoader(IUnitDataLoader):
 
 
 class StoragePowerPlantDataLoader(GridFormingUnitDataLoader):
-    def __init__(self, initial_timestamp: int, power_bounds: Bounds, droop_gain: float, energy_bounds:Bounds,
-                 initial_energy: float, charge_efficiency: float = 1,
+    def __init__(self, initial_timestamp: int, power_bounds: Bounds, droop_gain: float,
+                 energy_bounds:Bounds, initial_energy: float = 0, charge_efficiency: float = 1,
                  discharge_efficiency: float=1):
         super().__init__(initial_timestamp, power_bounds, droop_gain,
                          grid_forming_unit_flag=True)
@@ -24,17 +25,17 @@ class StoragePowerPlantDataLoader(GridFormingUnitDataLoader):
         if self.energy_bounds.min <= initial_energy <= self.energy_bounds.max:
             self._initial_energy = initial_energy
         else:
-            logger.warning("initial energy is not contained in the energy bounds")
+            raise UnitDataLoaderError('storage: initial energy is not contained in the energy bounds')
 
         if 0 < charge_efficiency <= 1:
             self._charge_efficiency = charge_efficiency
         else:
-            logger.warning("charging efficiency should be between (0, 1]")
+            raise UnitDataLoaderError('storage: charging efficiency should be between (0, 1]')
 
         if 0 < discharge_efficiency <= 1:
             self._discharge_efficiency = discharge_efficiency
         else:
-            logger.warning("discharging efficiency should be between (0, 1]")
+            raise UnitDataLoaderError('storage: discharging efficiency should be between (0, 1]')
 
     @property
     def charge_efficiency(self):

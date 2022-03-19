@@ -2,11 +2,10 @@ import copy
 
 import pytest
 
-from data_loader.power_unit import IUnitDataLoader
 from model.domain import UnitSimulationData, Bounds, MicrogirdModellingError, StepPreviousTimestamp
 from model.microgrid_model import MicrogridModelData, MicrogridModel
-from tests.model.test_mocks import MockPowerUnit, MockComponent, MockComponentDataLoader, \
-    MockUnitDataLoader, MockGridNetwork
+from tests.utils.test_mocks import MockGeneratorUnit, MockComponent, MockComponentDataLoader, \
+    MockGeneratorDataLoader, MockGridNetwork
 
 
 def test_microgrid_model_data():
@@ -15,8 +14,8 @@ def test_microgrid_model_data():
     mock_data = UnitSimulationData(name='mock', values={'power': 1})
     data_loaders = MockComponentDataLoader(initial_timestamp, mock_data)
 
-    unit_data_loader = MockUnitDataLoader(initial_timestamp, power_bounds=Bounds(0, 10))
-    generators = [MockPowerUnit('generator', unit_data_loader),
+    unit_data_loader = MockGeneratorDataLoader(initial_timestamp, power_bounds=Bounds(0, 10))
+    generators = [MockGeneratorUnit('generator', unit_data_loader),
                   # MockPowerUnit('generator_1', copy.deepcopy(unit_data_loader))
                   ]
     loads = [MockComponent('load', data_loaders)]
@@ -41,10 +40,10 @@ def test_microgrid_duplicate_model_data():
     mock_data = UnitSimulationData(name='mock', values={'power': 1})
     data_loaders = MockComponentDataLoader(initial_timestamp, mock_data)
 
-    unit_data_loader = MockUnitDataLoader(initial_timestamp, power_bounds=Bounds(0, 10))
+    unit_data_loader = MockGeneratorDataLoader(initial_timestamp, power_bounds=Bounds(0, 10))
 
-    generators = [MockPowerUnit('generator', unit_data_loader),
-                  MockPowerUnit('generator', copy.deepcopy(unit_data_loader))
+    generators = [MockGeneratorUnit('generator', unit_data_loader),
+                  MockGeneratorUnit('generator', copy.deepcopy(unit_data_loader))
                   ]
     loads = [MockComponent('load', data_loaders)]
 
@@ -66,9 +65,9 @@ def test_microgrid_modelling_error():
     mock_data = UnitSimulationData(name='mock', values={'power': 1})
     data_loaders = MockComponentDataLoader(initial_timestamp, mock_data)
 
-    unit_data_loader = MockUnitDataLoader(initial_timestamp, power_bounds=Bounds(-5, 5))
-    generators = [MockPowerUnit('generator', unit_data_loader),
-                  MockPowerUnit('generator_1', copy.deepcopy(unit_data_loader))
+    unit_data_loader = MockGeneratorDataLoader(initial_timestamp, power_bounds=Bounds(-5, 5))
+    generators = [MockGeneratorUnit('generator', unit_data_loader),
+                  MockGeneratorUnit('generator_1', copy.deepcopy(unit_data_loader))
                   ]
     loads = [MockComponent('load', data_loaders)]
 
@@ -88,12 +87,12 @@ def microgird_model_data(initial_timestamp, droop_gain:float=1):
     mock_data = UnitSimulationData(name='mock', values={'power': 1})
     data_loaders = MockComponentDataLoader(initial_timestamp, mock_data)
 
-    unit_data_loader = MockUnitDataLoader(initial_timestamp, power_bounds=Bounds(-5, 5))
-    unit_data_loader_1 = MockUnitDataLoader(initial_timestamp, power_bounds=Bounds(-5, 5),
-                                          droop_gain=droop_gain, grid_forming_unit_flag = True)
+    unit_data_loader = MockGeneratorDataLoader(initial_timestamp, power_bounds=Bounds(-5, 5))
+    unit_data_loader_1 = MockGeneratorDataLoader(initial_timestamp, power_bounds=Bounds(-5, 5),
+                                                 droop_gain=droop_gain, grid_forming_unit_flag = True)
 
-    generators = [MockPowerUnit('generator', unit_data_loader),
-                  MockPowerUnit('generator_1',unit_data_loader_1)
+    generators = [MockGeneratorUnit('generator', unit_data_loader),
+                  MockGeneratorUnit('generator_1', unit_data_loader_1)
                   ]
     loads = [MockComponent('load', data_loaders)]
 

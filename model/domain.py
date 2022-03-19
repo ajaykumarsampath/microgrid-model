@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from enum import Enum
 from typing import List, Tuple, Optional
 
 import numpy as np
@@ -13,7 +14,7 @@ class Bounds:
 
 BUS_ID = str
 GRID_LINE = Tuple[BUS_ID, BUS_ID, float]
-UNIT_BUS_ID_MAP: [str, BUS_ID]
+UNIT_BUS_ID_MAP = [str, BUS_ID]
 SEC_TO_HOUR_FACTOR = 1/3600
 
 class StepPreviousTimestamp(ValueError):
@@ -72,10 +73,19 @@ class GridLine:
     bounds: Optional[Bounds] = field(default=None)
 
     def __eq__(self, other):
-        if self.to_bus == other.to_bus and self.from_bus == other.from_bus:
-            return True
-        else:
+        try:
+            if other.to_bus in [self.to_bus, self.from_bus] and \
+                    other.from_bus in [self.to_bus, self.from_bus] and \
+                    self.admittance == other.admittance:
+                return True
+            else:
+                return False
+        except AttributeError:
             return False
+
+    def __post_init__(self):
+        if self.to_bus == self.from_bus:
+            raise ValueError('to_bus and from_bus of the line are same')
 
 
 class SimulationTimeSeries:
@@ -92,3 +102,12 @@ class SimulationTimeSeries:
 
     def resample(self, timestamp: int):
         return self._function(timestamp)
+
+
+class ComponentType(Enum):
+    Load = 'Load'
+    Renewable = 'Renewable'
+    Storage = 'Storage'
+    Thermal = 'Thermal'
+    Grid = 'Grid'
+    Unknown = 'None'

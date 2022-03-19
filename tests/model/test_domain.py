@@ -1,9 +1,8 @@
 import numpy as np
 
 import pytest
-from model.domain import SimulationTimeSeries, SimulationTimeseriesError
-from data_loader.domain import SamplePointsToPowerTable
-
+from model.domain import SimulationTimeSeries, SimulationTimeseriesError, HistoricalData, UnitSimulationData, GridLine
+from tests.data_loader.test_domain import TestSamplePointsToPowerTable
 
 
 class TestSimulationTimeSeries:
@@ -23,33 +22,66 @@ class TestSimulationTimeSeries:
             SimulationTimeSeries(timestamps, values)
 
 
+class TestHistoricalData:
+    def test_valid_historical_data(self):
+        timestamps = [0, 10, 20, 30]
+        data = [UnitSimulationData('mock', values={'power': i}) for i in range(0, len(timestamps))]
+        historical_data = HistoricalData(timestamps, data)
+
+        assert historical_data.timestamps == timestamps
+        assert historical_data.data == data
+
+    def test_invalid_historical_data(self):
+        timestamps = [0, 10, 20, 30]
+        data = [UnitSimulationData('mock', values={'power': i}) for i in range(0, len(timestamps) - 1)]
+
+        with pytest.raises(SimulationTimeseriesError):
+            HistoricalData(timestamps, data)
+
+    def test_duplicated_timestamps(self):
+        timestamps = [0, 10, 20, 20]
+        data = [UnitSimulationData('mock', values={'power': i}) for i in range(0, len(timestamps) - 1)]
+
+        with pytest.raises(SimulationTimeseriesError):
+            HistoricalData(timestamps, data)
 
 
-class TestSamplePointsToPowerTable:
-    def test_sample_point_to_table(self):
-        points = list(range(0, 5))
-        power_values = list(range(0, 50, 10))
-        sample_point_table = SamplePointsToPowerTable(points=points, power_values=power_values)
+    def test_add_data(self):
+        timestamps = [0, 10, 20, 30]
+        data = [UnitSimulationData('mock', values={'power': i}) for i in range(0, len(timestamps))]
 
-        assert sample_point_table.maximum() == power_values[-1]
-        assert sample_point_table.minimum() == power_values[0]
+        historical_data = HistoricalData(timestamps, data)
+        data_point = UnitSimulationData('mock', values={'power': 8})
+        historical_data.add_data(40, data_point)
+
+        assert historical_data.data[-1] == data_point
+        assert historical_data.timestamps[-1] == 40
+
+    def test_add_existing_timestamp(self):
+        timestamps = [0, 10, 20, 30]
+        data = [UnitSimulationData('mock', values={'power': i}) for i in range(0, len(timestamps))]
+
+        historical_data = HistoricalData(timestamps, data)
+        data_point = UnitSimulationData('mock', values={'power': 8})
+        with pytest.raises(SimulationTimeseriesError):
+            historical_data.add_data(30, data_point)
+
+        assert historical_data.data == data
+        assert historical_data.timestamps == timestamps
 
 
-    def test_unequal_sample_point_to_table(self):
-        points = list(range(0, 5))
-        power_values = list(range(0, 50))
+def test_grid_line_comparison():
+    grid_line_1 = GridLine(from_bus='bus_0', to_bus='bus_1', admittance=20)
+    grid_line_2 = GridLine(from_bus='bus_1', to_bus='bus_0', admittance=20)
+    grid_line_3 = GridLine(from_bus='bus_3', to_bus='bus_0', admittance=10)
 
-        with pytest.raises(ValueError):
-            SamplePointsToPowerTable(points=points, power_values=power_values)
+    assert grid_line_1 == grid_line_2
+    assert not grid_line_3 == grid_line_2
+    assert not grid_line_1 == 1
 
-    def test_not_existance_sample_point_to_table(self):
-        points = list(range(0, 5))
-        power_values = list(range(0, 50, 10))
-        point_power_table = SamplePointsToPowerTable(points=points, power_values=power_values)
-
-        with pytest.raises(ValueError):
-            point_power_table.available_power_at_sample_point(6)
-
+def test_invalid_grid_line():
+    with pytest.raises(ValueError):
+        GridLine(from_bus='bus_0', to_bus='bus_0', admittance=20)
 
 if __name__ == '__main__':
     test_simulation_series = TestSimulationTimeSeries()

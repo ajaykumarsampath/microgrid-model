@@ -8,7 +8,7 @@ from model.domain import BUS_ID, MicrogirdModellingError, UnknownComponentError,
     SimulationGridError
 from model.component_interface import IComponent, IGridNetwork
 from model.generator_interface import IGeneratorComponent
-from util.storage import IUnitDataStorage
+from utils.storage import IUnitDataStorage
 
 logger = logging.getLogger(__name__)
 

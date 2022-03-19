@@ -27,6 +27,14 @@ class SamplePointsToPowerTable:
         except ValueError:
             raise ValueError("point is not part of the table and cannot be extrapolated")
 
-
 class DuplicateUnitNameError(ValueError):
+    pass
+
+class UnitDataLoaderError(Exception):
+    pass
+
+class DuplicateGridModelError(ValueError):
+    pass
+
+class UnknownComponentQueryError(ValueError):
     pass

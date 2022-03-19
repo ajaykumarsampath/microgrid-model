@@ -2,7 +2,7 @@ from model.component_interface import IComponentDataLoader
 from model.domain import Bounds
 
 
-class IUnitDataLoader(IComponentDataLoader):
+class IGeneratorDataLoader(IComponentDataLoader):
     def __init__(self, initial_timestamp: int, power_bounds: Bounds, droop_gain: float = 0,
                  grid_forming_unit_flag: bool = False):
         super().__init__(initial_timestamp)

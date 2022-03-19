@@ -3,7 +3,7 @@ from unittest import TestCase
 from data_loader.renewable_unit import IRenewableUnitDataLoader
 from model.domain import Bounds, StepPreviousTimestamp
 from model.renewable_unit import RenewablePowerUnit
-from tests.model.test_mocks import MockDataStorage
+from tests.utils.test_mocks import MockDataStorage
 
 
 class MockRenewableUnitDataLoader(IRenewableUnitDataLoader):

@@ -3,14 +3,14 @@ import logging
 from data_loader.grid_forming_unit import StoragePowerPlantDataLoader, ThermalGeneratorDataLoader
 from model.domain import SEC_TO_HOUR_FACTOR, UnitSimulationData
 from model.generator_interface import IGeneratorComponent
-from data_loader.power_unit import IUnitDataLoader
+from data_loader.generator_interface import IGeneratorDataLoader
 
 logger = logging.getLogger(__name__)
 
 
 
 class GridFormingPowerUnit(IGeneratorComponent):
-    def __init__(self, name: str, data_loader: IUnitDataLoader):
+    def __init__(self, name: str, data_loader: IGeneratorDataLoader):
         super().__init__(name, data_loader)
         self._is_grid_forming_unit = True
 

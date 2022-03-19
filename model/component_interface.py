@@ -1,5 +1,5 @@
-from model.domain import BUS_ID, StepPreviousTimestamp, UnitSimulationData
-from util.storage import IUnitDataStorage
+from model.domain import BUS_ID, StepPreviousTimestamp, UnitSimulationData, ComponentType
+from utils.storage import IUnitDataStorage
 
 class IComponentDataLoader:
     def __init__(self, initial_timestamp: int):
@@ -67,27 +67,30 @@ class IGridNetwork(IComponent):
     def set_bus_power(self, bus_id: BUS_ID, power: float):
         raise NotImplementedError
 
-
 class IUnitConfig:
-    def __init__(self, name: str, data_loader: IComponentDataLoader, data_storage: IUnitDataStorage,
-                 bus_id: BUS_ID):
+    def __init__(self, name: str, data_loader: IComponentDataLoader, bus_id: BUS_ID):
         self.name = name
         self.data_loader = data_loader
-        self.data_storage = data_storage
         self.bus_id = bus_id
+        self._component_type = ComponentType.Unknown
 
+    @property
+    def component_type(self) -> ComponentType:
+        return self._component_type
 
     def create_unit(self) -> IComponent:
         raise NotImplementedError
 
 
 class IGridNetworkConfig:
-    def __init__(self, name: str, data_loader: IComponentDataLoader, data_storage: IUnitDataStorage):
+    def __init__(self, name: str, data_loader: IComponentDataLoader):
         self.name = name
         self.data_loader = data_loader
-        self.data_storage = data_storage
+        self._component_type = ComponentType.Unknown
+
+    @property
+    def component_type(self) -> ComponentType:
+        return self._component_type
 
     def create_grid_network(self) -> IGridNetwork:
        raise NotImplementedError
-
-

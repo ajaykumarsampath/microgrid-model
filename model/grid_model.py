@@ -17,7 +17,7 @@ class GridNetwork(IGridNetwork):
         self._data_loader = data_loader
         self._bus_power = np.array([])
 
-        if data_loader.validate_model_data() == False:
+        if data_loader.validate_grid_line_data() == False:
             logger.warning("grid line data is not correct. It contain duplicate lines")
             self._validate_flag = False
         elif data_loader.check_grid_network_connected() == False:
@@ -42,7 +42,7 @@ class GridNetwork(IGridNetwork):
         return self._data_loader.buses()
 
     @property
-    def grid_lines(self):
+    def grid_lines(self) -> List[GridLine]:
         return self._data_loader.grid_lines
 
     @property

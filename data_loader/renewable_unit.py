@@ -1,11 +1,11 @@
-from data_loader.power_unit import IUnitDataLoader
+from data_loader.generator_interface import IGeneratorDataLoader
 from model.domain import SimulationTimeSeries, Bounds
-from data_loader.domain import SamplePointsToPowerTable
+from data_loader.domain import SamplePointsToPowerTable, UnitDataLoaderError
 import logging
 
 logger = logging.getLogger(__name__)
 
-class IRenewableUnitDataLoader(IUnitDataLoader):
+class IRenewableUnitDataLoader(IGeneratorDataLoader):
     def get_data(self, timestamp: int):
         raise NotImplementedError
 
@@ -22,6 +22,9 @@ class RenewableUnitDataLoader(IRenewableUnitDataLoader):
         self._sample_point_to_power = sample_point_to_power
         self._min_simulation_timestamp = min(simulation_time_series.timestamps)
         self._max_simulation_timestamp = max(simulation_time_series.timestamps)
+        if initial_timestamp > self._max_simulation_timestamp:
+            raise UnitDataLoaderError(f'renewable unit simulation timestamps are '
+                                      f'past compared to the initial time')
 
     def get_data(self, timestamp: int):
         if self._min_simulation_timestamp <= timestamp <= self._max_simulation_timestamp:

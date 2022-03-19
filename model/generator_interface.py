@@ -1,11 +1,10 @@
-from data_loader.power_unit import IUnitDataLoader
-from model.domain import BUS_ID
+from data_loader.generator_interface import IGeneratorDataLoader
+from model.domain import BUS_ID, ComponentType
 from model.component_interface import IComponent, IUnitConfig
-from util.storage import IUnitDataStorage
 
 
 class IGeneratorComponent(IComponent):
-    def __init__(self, name: str, data_loader: IUnitDataLoader):
+    def __init__(self, name: str, data_loader: IGeneratorDataLoader):
         super().__init__(name, data_loader)
         self._data_loader = data_loader
         self._power_setpoint = 0
@@ -50,11 +49,9 @@ class IGeneratorComponent(IComponent):
         else:
             self._power_sharing = 0
 
-
 class IGeneratorComponentConfig(IUnitConfig):
-    def __init__(self, name: str, data_loader: IUnitDataLoader, data_storage: IUnitDataStorage,
-                 bus_id: BUS_ID):
-        super().__init__(name, data_loader, data_storage, bus_id)
+    def __init__(self, name: str, data_loader: IGeneratorDataLoader, bus_id: BUS_ID):
+        super().__init__(name, data_loader, bus_id)
 
     def create_unit(self) -> IGeneratorComponent:
         raise NotImplementedError

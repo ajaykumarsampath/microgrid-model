@@ -1,9 +1,9 @@
 import pytest
 
-from data_loader.power_unit import IUnitDataLoader
+from data_loader.generator_interface import IGeneratorDataLoader
 from model.domain import Bounds, UnitSimulationData, HistoricalData, SimulationTimeseriesError, \
     StepPreviousTimestamp
-from tests.model.test_mocks import MockPowerUnit, MockComponentDataLoader, MockComponent
+from tests.utils.test_mocks import MockGeneratorUnit, MockComponentDataLoader, MockComponent
 
 def test_wrong_historical_data():
     wrong_timestamp = list(range(0, 10))
@@ -65,8 +65,8 @@ def test_wrong_simulation_timestamp():
 
 class TestPowerUnit:
     def test_power_set_points(self):
-        data_loader =  IUnitDataLoader(initial_timestamp=10, power_bounds=Bounds(0, 10))
-        mock_power_unit = MockPowerUnit(name='mock', data_loader=data_loader)
+        data_loader =  IGeneratorDataLoader(initial_timestamp=10, power_bounds=Bounds(0, 10))
+        mock_power_unit = MockGeneratorUnit(name='mock', data_loader=data_loader)
 
         mock_power_unit.power_setpoint = 4
         assert mock_power_unit.power_setpoint == 4
@@ -79,18 +79,18 @@ class TestPowerUnit:
 
     def test_droop_values(self):
         droop_gain = 10
-        data_loader = IUnitDataLoader(initial_timestamp=10, droop_gain=droop_gain,
-                                      power_bounds=Bounds(0, 10))
-        mock_power_unit = MockPowerUnit(name='mock', data_loader=data_loader)
+        data_loader = IGeneratorDataLoader(initial_timestamp=10, droop_gain=droop_gain,
+                                           power_bounds=Bounds(0, 10))
+        mock_power_unit = MockGeneratorUnit(name='mock', data_loader=data_loader)
 
         assert mock_power_unit.droop_gain == droop_gain
         assert mock_power_unit.droop_gain_inverse() == 1/droop_gain
 
     def test_zero_droop_value(self):
         droop_gain = 0
-        data_loader = IUnitDataLoader(initial_timestamp=10, droop_gain=droop_gain,
-                                      power_bounds=Bounds(0, 10))
-        mock_power_unit = MockPowerUnit(name='mock', data_loader=data_loader)
+        data_loader = IGeneratorDataLoader(initial_timestamp=10, droop_gain=droop_gain,
+                                           power_bounds=Bounds(0, 10))
+        mock_power_unit = MockGeneratorUnit(name='mock', data_loader=data_loader)
 
         assert mock_power_unit.droop_gain == droop_gain
         assert mock_power_unit.droop_gain_inverse() == droop_gain

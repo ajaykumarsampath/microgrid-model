@@ -52,7 +52,7 @@ def generate_microgrid_config_from_data_loader(data_loader: MicrogridModelDataLo
     thermal_config = []
     for generator in thermal_generators:
         current_unit_config = ThermalGeneratorConfig(
-            generator.name, data_loader=generator.data_loader, data_storage=generator.data_storage
+            generator.name, data_loader=generator.data_loader
         )
         thermal_config.append(current_unit_config)
 
@@ -60,7 +60,7 @@ def generate_microgrid_config_from_data_loader(data_loader: MicrogridModelDataLo
     storage_config = []
     for generator in storage_power_plants:
         current_unit_config = StoragePowerPlantConfig(
-            generator.name, data_loader=generator.data_loader, data_storage=generator.data_storage
+            generator.name, data_loader=generator.data_loader
         )
         storage_config.append(current_unit_config)
 
@@ -68,7 +68,7 @@ def generate_microgrid_config_from_data_loader(data_loader: MicrogridModelDataLo
     renewable_config = []
     for generator in renewable_units:
         current_unit_config = RenewableUnitConfig(
-            generator.name, data_loader=generator.data_loader, data_storage=generator.data_storage
+            generator.name, data_loader=generator.data_loader
         )
         renewable_config.append(current_unit_config)
 
@@ -76,8 +76,10 @@ def generate_microgrid_config_from_data_loader(data_loader: MicrogridModelDataLo
     load_config = []
     for load in load_demands:
         current_unit_config = LoadDemandConfig(
-            load.name, data_loader=load.data_loader, data_storage=load.data_storage
+            load.name, data_loader=load.data_loader
         )
         load_config.append(current_unit_config)
 
-
+    return MicrogridModelConfig(
+        name, thermal_config,
+    )
