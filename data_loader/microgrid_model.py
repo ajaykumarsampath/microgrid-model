@@ -3,8 +3,7 @@ from typing import List, Optional
 
 from data_loader.domain import DuplicateUnitNameError
 from model.domain import BUS_ID, UNIT_BUS_ID_MAP
-from model.grid_model import GridNetwork
-from model.component_interface import IUnitConfig, IGridNetworkConfig, IComponent
+from model.component_interface import IUnitConfig, IGridNetworkConfig, IComponent, IGridNetwork
 from model.generator_interface import IGeneratorComponent, IGeneratorComponentConfig
 from model.microgrid_model import MicrogridModelData
 
@@ -16,14 +15,13 @@ class MicrogridModelDataLoader:
         self._name = name
         self._generators:List[IGeneratorComponent] = []
         self._loads:List[IComponent] = []
-        self._grid_model: Optional[GridNetwork] = None
+        self._grid_model: Optional[IGridNetwork] = None
         self._generator_bus_ids: List[BUS_ID] = []
         self._load_bus_ids: List[BUS_ID] = []
         self._unit_bus_mapper: List[UNIT_BUS_ID_MAP] = []
         self._thermal_generator_index: List[int] = []
         self._storage_power_plant_index: List[int] = []
         self._renewable_unit_index: List[int] = []
-        # self._grid_model_data: Optional[GridNetworkDataLoader] = None
 
 
     def microgrid_model_data(self):
@@ -61,17 +59,17 @@ class MicrogridModelDataLoader:
     def add_thermal_power_plant(self, unit_config: IGeneratorComponentConfig):
         current_number_unit = len(self._generators)
         self._add_unit(unit_config)
-        self._thermal_generator_index.append(current_number_unit + 1)
+        self._thermal_generator_index.append(current_number_unit)
 
     def add_storage_power_plant(self, unit_config: IGeneratorComponentConfig):
         current_number_unit = len(self._generators)
         self._add_unit(unit_config)
-        self._storage_power_plant_index.append(current_number_unit + 1)
+        self._storage_power_plant_index.append(current_number_unit)
 
     def add_renewable_unit(self, unit_config: IGeneratorComponentConfig):
         current_number_unit = len(self._generators)
         self._add_unit(unit_config)
-        self._renewable_unit_index.append(current_number_unit + 1)
+        self._renewable_unit_index.append(current_number_unit)
 
     def add_grid_model(self, grid_config: IGridNetworkConfig):
         if self._grid_model is not None:
@@ -80,37 +78,26 @@ class MicrogridModelDataLoader:
             logger.warning(f"replacing the grid model of the {self._name}")
             self._grid_model = grid_config.create_grid_network()
 
-    def get_thermal_generators(self) -> Optional[List[IGeneratorComponent]]:
-        if len(self._thermal_generator_index) > 0:
-            return [self._generators[i] for i in self._thermal_generator_index]
-        else:
-            return None
+    def get_thermal_generators(self) -> List[IGeneratorComponent]:
+        return [self._generators[i] for i in self._thermal_generator_index]
 
-    def get_storage_power_plants(self) -> Optional[List[IGeneratorComponent]]:
-        if len(self._storage_power_plant_index) > 0:
-            return [self._generators[i] for i in self._storage_power_plant_index]
-        else:
-            return None
+    def get_storage_power_plants(self) -> List[IGeneratorComponent]:
+        return [self._generators[i] for i in self._storage_power_plant_index]
 
-    def get_renewable_units(self) -> Optional[List[IGeneratorComponent]]:
-        if len(self._renewable_unit_index) > 0:
-            return [self._generators[i] for i in self._renewable_unit_index]
-        else:
-            return None
+    def get_renewable_units(self) -> List[IGeneratorComponent]:
+        return [self._generators[i] for i in self._renewable_unit_index]
 
-    def get_load_demands(self) -> Optional[List[IComponent]]:
-        if len(self._loads) > 0:
-            return self._loads
-        else:
-            return None
+    def get_load_demands(self) -> List[IComponent]:
+        return self._loads
 
-
-    def get_unit_bus_id(self, unit: IComponent):
+    def get_component_bus_id(self, generator_id: str):
         generator_name = [g.name for g in self._generators]
         load_name = [l.name for l in self._loads]
-        if unit.name in generator_name:
-            return self._generators[generator_name.index(unit.name)]
-        elif unit.name in load_name :
-            return self._generators[generator_name.index(unit.name)]
-        else:
+        try:
+            if generator_id in generator_name:
+                return self._generator_bus_ids[generator_name.index(generator_id)]
+            else:
+                return self._load_bus_ids[load_name.index(generator_id)]
+        except ValueError:
+            logger.warning(f'{generator_id} is in the microgrid model')
             return None
