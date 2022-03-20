@@ -25,22 +25,24 @@ class TestGridDataLoader:
         assert valid_data_flag == False
 
     def test_invalid_grid_data(self):
+        initial_timestamp = 10
         grid_lines = [GridLine(from_bus='bus_0', to_bus='bus_1', admittance=20),
-                      GridLine(from_bus='bus_2', to_bus='bus_2', admittance=20),]
-        grid_data_loader = GridNetworkDataLoader(grid_line=grid_lines)
+                      ]
+        grid_data_loader = GridNetworkDataLoader(initial_timestamp = initial_timestamp,
+                                                 grid_line=grid_lines)
         valid_data_flag = grid_data_loader.validate_grid_line_data()
 
-        assert valid_data_flag == False
+        assert valid_data_flag == True
 
     def test_duplicate_grid_data(self):
         initial_timestamp = 10
         grid_lines = [GridLine(from_bus='bus_0', to_bus='bus_1', admittance=20),
                       GridLine(from_bus='bus_1', to_bus='bus_2', admittance=20),
-                      GridLine(from_bus='bus_1', to_bus='bus_2', admittance=40),
+                      GridLine(from_bus='bus_1', to_bus='bus_2', admittance=20),
                       ]
 
         with pytest.raises(DuplicateGridModelError):
-            grid_data_loader = GridNetworkDataLoader(
+            GridNetworkDataLoader(
                 initial_timestamp=initial_timestamp, grid_line=grid_lines
             )
 
@@ -75,8 +77,6 @@ class TestGridDataLoader:
 
         grid_data_loader.add_grid_line(GridLine(from_bus='bus_0', to_bus='bus_2', admittance=20))
 
-        # print(grid_data_loader.check_grid_network_connected())
-        # print(grid_data_loader.buses())
         assert len(grid_data_loader.grid_lines) == 3
         assert grid_data_loader.validate_grid_line_data() == True
         assert grid_data_loader.check_grid_network_connected() == True
