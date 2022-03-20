@@ -5,7 +5,6 @@ from typing import List
 from data_loader.microgrid_model import MicrogridModelDataLoader
 from config.unit import ThermalGeneratorConfig, StoragePowerPlantConfig, \
     RenewableUnitConfig, LoadDemandConfig, GridNetworkConfig
-from model.domain import UNIT_BUS_ID_MAP
 
 logger = logging.getLogger(__name__)
 

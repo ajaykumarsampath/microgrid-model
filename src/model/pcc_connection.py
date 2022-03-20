@@ -1,5 +1,4 @@
-from model.domain import Bounds, UnitSimulationData
-from model.generator_interface import IGeneratorComponent
+from src.model.generator_interface import IGeneratorComponent
 
 """
 class PCCConnection(IPowerUnit):

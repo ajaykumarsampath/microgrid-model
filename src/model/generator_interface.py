@@ -1,5 +1,5 @@
 from data_loader.generator_interface import IGeneratorDataLoader
-from model.domain import BUS_ID, ComponentType
+from model.domain import BUS_ID
 from model.component_interface import IComponent, IUnitConfig
 
 

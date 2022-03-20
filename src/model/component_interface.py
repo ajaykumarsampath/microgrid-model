@@ -1,5 +1,5 @@
 from model.domain import BUS_ID, StepPreviousTimestamp, UnitSimulationData, ComponentType
-from utils.storage import IUnitDataStorage
+from src.utils.storage import IUnitDataStorage
 
 class IComponentDataLoader:
     def __init__(self, initial_timestamp: int):

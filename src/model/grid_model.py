@@ -1,5 +1,5 @@
 import logging
-from typing import List, Dict
+from typing import List
 
 from data_loader.grid_model import IGridNetworkDataLoader
 from model.domain import UnitSimulationData, GridLine, BUS_ID, UnknownComponentError, SimulationGridError

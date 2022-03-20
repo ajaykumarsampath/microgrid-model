@@ -1,7 +1,7 @@
 import logging
 from typing import List, Optional
 
-from data_loader.domain import DuplicateUnitNameError
+from src.data_loader.domain import DuplicateUnitNameError
 from model.domain import BUS_ID, UNIT_BUS_ID_MAP
 from model.component_interface import IUnitConfig, IGridNetworkConfig, IComponent, IGridNetwork
 from model.generator_interface import IGeneratorComponent, IGeneratorComponentConfig

@@ -1,7 +1,8 @@
 from data_loader.generator_interface import IGeneratorDataLoader
-from model.domain import SimulationTimeSeries, Bounds
 from data_loader.domain import SamplePointsToPowerTable, UnitDataLoaderError
 import logging
+
+from model.domain import SimulationTimeSeries, Bounds
 
 logger = logging.getLogger(__name__)
 
