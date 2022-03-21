@@ -1,0 +1,6 @@
+numpy
+oct2py
+pandas
+matplotlib
+pytest
+coverage
