@@ -2,8 +2,12 @@ import copy
 
 import pytest
 
-from model.domain import UnitSimulationData, Bounds, MicrogirdModellingError, StepPreviousTimestamp
-from model.microgrid_model import MicrogridModelData, MicrogridModel
+from model.domain import MicrogridModelData
+from model.exception import StepPreviousTimestamp, MicrogirdModellingError
+from shared.component import ComponentSimulationData
+from shared.component import Bounds
+
+from model.microgrid_model import MicrogridModel
 from tests.utils.test_mocks import MockGeneratorUnit, MockComponent, MockComponentDataLoader, \
     MockGeneratorDataLoader, MockGridNetwork
 
@@ -11,7 +15,7 @@ from tests.utils.test_mocks import MockGeneratorUnit, MockComponent, MockCompone
 def test_microgrid_model_data():
     initial_timestamp = 1639396720
     expected_bus_ids = ['BUS_1', 'BUS_2']
-    mock_data = UnitSimulationData(name='mock', values={'power': 1})
+    mock_data = ComponentSimulationData(name='mock', values={'power': 1})
     data_loaders = MockComponentDataLoader(initial_timestamp, mock_data)
 
     unit_data_loader = MockGeneratorDataLoader(initial_timestamp, power_bounds=Bounds(0, 10))
@@ -20,7 +24,7 @@ def test_microgrid_model_data():
                   ]
     loads = [MockComponent('load', data_loaders)]
 
-    grid_loader = MockComponentDataLoader(initial_timestamp, UnitSimulationData('grid', values={}))
+    grid_loader = MockComponentDataLoader(initial_timestamp, ComponentSimulationData('grid', values={}))
     mock_grid = MockGridNetwork('grid', grid_loader, buses=expected_bus_ids)
     data = MicrogridModelData(name='microgrid', generators=generators,
                               loads=loads, grid_model= mock_grid,
@@ -37,7 +41,7 @@ def test_microgrid_model_data():
 def test_microgrid_duplicate_model_data():
     initial_timestamp = 1639396720
     expected_bus_ids = ['BUS_1']
-    mock_data = UnitSimulationData(name='mock', values={'power': 1})
+    mock_data = ComponentSimulationData(name='mock', values={'power': 1})
     data_loaders = MockComponentDataLoader(initial_timestamp, mock_data)
 
     unit_data_loader = MockGeneratorDataLoader(initial_timestamp, power_bounds=Bounds(0, 10))
@@ -47,7 +51,7 @@ def test_microgrid_duplicate_model_data():
                   ]
     loads = [MockComponent('load', data_loaders)]
 
-    grid_loader = MockComponentDataLoader(initial_timestamp, UnitSimulationData('grid', values={}))
+    grid_loader = MockComponentDataLoader(initial_timestamp, ComponentSimulationData('grid', values={}))
     mock_grid = MockGridNetwork('grid', grid_loader, buses=expected_bus_ids)
     data = MicrogridModelData(name='microgrid', generators=generators, loads=loads,
                               grid_model= mock_grid, generator_bus_ids=[expected_bus_ids[0]],
@@ -62,7 +66,7 @@ def test_microgrid_duplicate_model_data():
 def test_microgrid_modelling_error():
     initial_timestamp = 1639396720
     expected_bus_ids = ['BUS_1', 'BUS_2']
-    mock_data = UnitSimulationData(name='mock', values={'power': 1})
+    mock_data = ComponentSimulationData(name='mock', values={'power': 1})
     data_loaders = MockComponentDataLoader(initial_timestamp, mock_data)
 
     unit_data_loader = MockGeneratorDataLoader(initial_timestamp, power_bounds=Bounds(-5, 5))
@@ -71,7 +75,7 @@ def test_microgrid_modelling_error():
                   ]
     loads = [MockComponent('load', data_loaders)]
 
-    grid_loader = MockComponentDataLoader(initial_timestamp, UnitSimulationData('grid', values={}))
+    grid_loader = MockComponentDataLoader(initial_timestamp, ComponentSimulationData('grid', values={}))
     mock_grid = MockGridNetwork('grid', grid_loader, buses=expected_bus_ids)
     data = MicrogridModelData(name='microgrid', generators=generators, loads=loads, grid_model=mock_grid,
                               generator_bus_ids=[expected_bus_ids[0]],
@@ -84,7 +88,7 @@ def test_microgrid_modelling_error():
 def microgird_model_data(initial_timestamp, droop_gain:float=1):
     # initial_timestamp = 1639396720
     expected_bus_ids = ['BUS_1', 'BUS_2']
-    mock_data = UnitSimulationData(name='mock', values={'power': 1})
+    mock_data = ComponentSimulationData(name='mock', values={'power': 1})
     data_loaders = MockComponentDataLoader(initial_timestamp, mock_data)
 
     unit_data_loader = MockGeneratorDataLoader(initial_timestamp, power_bounds=Bounds(-5, 5))
@@ -96,7 +100,7 @@ def microgird_model_data(initial_timestamp, droop_gain:float=1):
                   ]
     loads = [MockComponent('load', data_loaders)]
 
-    grid_loader = MockComponentDataLoader(initial_timestamp, UnitSimulationData('grid', values={}))
+    grid_loader = MockComponentDataLoader(initial_timestamp, ComponentSimulationData('grid', values={}))
     mock_grid = MockGridNetwork('grid', grid_loader, buses=expected_bus_ids)
     data = MicrogridModelData(name='microgrid', generators=generators, loads=loads, grid_model=mock_grid,
                               generator_bus_ids=[expected_bus_ids[0], expected_bus_ids[0]],

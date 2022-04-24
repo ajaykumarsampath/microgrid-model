@@ -1,5 +1,3 @@
-from src.model.generator_interface import IGeneratorComponent
-
 """
 class PCCConnection(IPowerUnit):
     def __init__(self, name: str, initial_timestamp: int, power_bounds: Bounds):

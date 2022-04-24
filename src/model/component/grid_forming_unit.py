@@ -1,9 +1,10 @@
 import logging
 
-from data_loader.grid_forming_unit import StoragePowerPlantDataLoader, ThermalGeneratorDataLoader
-from model.domain import SEC_TO_HOUR_FACTOR, UnitSimulationData
+from data_loader.component.grid_forming_unit import StoragePowerPlantDataLoader, ThermalGeneratorDataLoader
+from model.domain import SEC_TO_HOUR_FACTOR
+from shared.component import ComponentSimulationData
 from model.generator_interface import IGeneratorComponent
-from data_loader.generator_interface import IGeneratorDataLoader
+from data_loader.interface import IGeneratorDataLoader
 
 logger = logging.getLogger(__name__)
 
@@ -52,13 +53,13 @@ class StoragePowerPlant(GridFormingPowerUnit):
 
         self._current_energy = energy
 
-    def current_simulation_data(self) -> UnitSimulationData:
+    def current_simulation_data(self) -> ComponentSimulationData:
         values = {'current_energy': self.current_energy,
                   'power_sharing': self.power_sharing,
                   'power_setpoint': self.power_setpoint,
                   'current_power': self.current_power}
 
-        return UnitSimulationData(self._name, values=values)
+        return ComponentSimulationData(self._name, values=values)
 
 
 class ThermalGenerator(GridFormingPowerUnit):
@@ -100,12 +101,12 @@ class ThermalGenerator(GridFormingPowerUnit):
         self._check_step_timestamp(timestamp)
         self._current_power = self.power_sharing + self._power_setpoint
 
-    def current_simulation_data(self) -> UnitSimulationData:
+    def current_simulation_data(self) -> ComponentSimulationData:
         values = {'power_setpoint': self.power_setpoint,
                   'power_sharing': self.power_sharing,
                   'current_power': self.current_power,
                   'switch_state': self.switch_state}
 
-        return UnitSimulationData(name=self._name, values=values)
+        return ComponentSimulationData(name=self._name, values=values)
 
 

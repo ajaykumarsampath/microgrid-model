@@ -1,8 +1,8 @@
 import pytest
 
-from data_loader.renewable_unit import RenewableUnitDataLoader
-from model.domain import SimulationTimeSeries
+from data_loader.component.renewable_unit import RenewableUnitDataLoader
 from data_loader.domain import SamplePointsToPowerTable, UnitDataLoaderError
+from shared.timeseries import SimulationTimeSeries
 
 
 class TestRenewableUnitDataLoader:

@@ -2,9 +2,10 @@ import time
 
 import numpy as np
 
-from model.domain import GridLine, UnknownComponentError
-from model.grid_model import GridNetwork
-from data_loader.grid_model import GridNetworkDataLoader, SingleBusGridNetworkDataLoader
+from model.exception import UnknownComponentError
+from core.domain import GridLine
+from model.component.grid_model import GridNetwork
+from data_loader.component.grid_model import GridNetworkDataLoader, SingleBusGridNetworkDataLoader
 import pytest
 
 

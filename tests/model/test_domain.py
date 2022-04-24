@@ -1,7 +1,10 @@
 import numpy as np
 
 import pytest
-from model.domain import SimulationTimeSeries, SimulationTimeseriesError, HistoricalData, UnitSimulationData, GridLine
+from shared.component import ComponentSimulationData, GridLine
+from shared.timeseries import SimulationTimeseriesError, SimulationTimeSeries
+from utils.storage import HistoricalData
+
 from tests.data_loader.test_domain import TestSamplePointsToPowerTable
 
 
@@ -25,7 +28,7 @@ class TestSimulationTimeSeries:
 class TestHistoricalData:
     def test_valid_historical_data(self):
         timestamps = [0, 10, 20, 30]
-        data = [UnitSimulationData('mock', values={'power': i}) for i in range(0, len(timestamps))]
+        data = [ComponentSimulationData('mock', values={'power': i}) for i in range(0, len(timestamps))]
         historical_data = HistoricalData(timestamps, data)
 
         assert historical_data.timestamps == timestamps
@@ -33,14 +36,14 @@ class TestHistoricalData:
 
     def test_invalid_historical_data(self):
         timestamps = [0, 10, 20, 30]
-        data = [UnitSimulationData('mock', values={'power': i}) for i in range(0, len(timestamps) - 1)]
+        data = [ComponentSimulationData('mock', values={'power': i}) for i in range(0, len(timestamps) - 1)]
 
         with pytest.raises(SimulationTimeseriesError):
             HistoricalData(timestamps, data)
 
     def test_duplicated_timestamps(self):
         timestamps = [0, 10, 20, 20]
-        data = [UnitSimulationData('mock', values={'power': i}) for i in range(0, len(timestamps) - 1)]
+        data = [ComponentSimulationData('mock', values={'power': i}) for i in range(0, len(timestamps) - 1)]
 
         with pytest.raises(SimulationTimeseriesError):
             HistoricalData(timestamps, data)
@@ -48,10 +51,10 @@ class TestHistoricalData:
 
     def test_add_data(self):
         timestamps = [0, 10, 20, 30]
-        data = [UnitSimulationData('mock', values={'power': i}) for i in range(0, len(timestamps))]
+        data = [ComponentSimulationData('mock', values={'power': i}) for i in range(0, len(timestamps))]
 
         historical_data = HistoricalData(timestamps, data)
-        data_point = UnitSimulationData('mock', values={'power': 8})
+        data_point = ComponentSimulationData('mock', values={'power': 8})
         historical_data.add_data(40, data_point)
 
         assert historical_data.data[-1] == data_point
@@ -59,10 +62,10 @@ class TestHistoricalData:
 
     def test_add_existing_timestamp(self):
         timestamps = [0, 10, 20, 30]
-        data = [UnitSimulationData('mock', values={'power': i}) for i in range(0, len(timestamps))]
+        data = [ComponentSimulationData('mock', values={'power': i}) for i in range(0, len(timestamps))]
 
         historical_data = HistoricalData(timestamps, data)
-        data_point = UnitSimulationData('mock', values={'power': 8})
+        data_point = ComponentSimulationData('mock', values={'power': 8})
         with pytest.raises(SimulationTimeseriesError):
             historical_data.add_data(30, data_point)
 

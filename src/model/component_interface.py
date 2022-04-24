@@ -1,13 +1,7 @@
-from model.domain import BUS_ID, StepPreviousTimestamp, UnitSimulationData, ComponentType
-from src.utils.storage import IUnitDataStorage
-
-class IComponentDataLoader:
-    def __init__(self, initial_timestamp: int):
-        self._initial_timestamp = initial_timestamp
-
-    @property
-    def initial_timestamp(self)  -> int:
-        return self._initial_timestamp
+from model.exception import StepPreviousTimestamp
+from shared.component import BUS_ID, ComponentSimulationData
+from shared.data_loader import IComponentDataLoader
+from shared.storage import IComponentDataStorage
 
 
 class IComponent:
@@ -39,7 +33,7 @@ class IComponent:
     def current_timestamp(self):
         return self._current_timestamp
 
-    def add_simulation_data(self, data_storage: IUnitDataStorage):
+    def add_simulation_data(self, data_storage: IComponentDataStorage):
         data = self.current_simulation_data()
         data_storage.add_simulation_data(
             current_timestamp=self._current_timestamp, data=data
@@ -50,10 +44,10 @@ class IComponent:
             raise StepPreviousTimestamp('Cannot step to past timestamp than current timestamp')
         self._current_timestamp = timestamp
 
-    def current_simulation_data(self) -> UnitSimulationData:
+    def current_simulation_data(self) -> ComponentSimulationData:
         raise NotImplementedError
 
-    def get_simulation_data(self, timestamp: int, data_storage: IUnitDataStorage):
+    def get_simulation_data(self, timestamp: int, data_storage: IComponentDataStorage):
         data_storage.get_historical_data(self._name, since=timestamp)
 
 class IGridNetwork(IComponent):
@@ -66,31 +60,3 @@ class IGridNetwork(IComponent):
 
     def set_bus_power(self, bus_id: BUS_ID, power: float):
         raise NotImplementedError
-
-class IUnitConfig:
-    def __init__(self, name: str, data_loader: IComponentDataLoader, bus_id: BUS_ID):
-        self.name = name
-        self.data_loader = data_loader
-        self.bus_id = bus_id
-        self._component_type = ComponentType.Unknown
-
-    @property
-    def component_type(self) -> ComponentType:
-        return self._component_type
-
-    def create_unit(self) -> IComponent:
-        raise NotImplementedError
-
-
-class IGridNetworkConfig:
-    def __init__(self, name: str, data_loader: IComponentDataLoader):
-        self.name = name
-        self.data_loader = data_loader
-        self._component_type = ComponentType.Unknown
-
-    @property
-    def component_type(self) -> ComponentType:
-        return self._component_type
-
-    def create_grid_network(self) -> IGridNetwork:
-       raise NotImplementedError

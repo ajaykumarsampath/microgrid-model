@@ -1,17 +1,15 @@
-from data_loader.generator_interface import IGeneratorDataLoader
+from data_loader.interface import IRenewableUnitDataLoader
 from data_loader.domain import SamplePointsToPowerTable, UnitDataLoaderError
 import logging
 
-from model.domain import SimulationTimeSeries, Bounds
+from shared.component import Bounds
+from shared.timeseries import SimulationTimeSeries, Timestamp
 
 logger = logging.getLogger(__name__)
 
-class IRenewableUnitDataLoader(IGeneratorDataLoader):
-    def get_data(self, timestamp: int):
-        raise NotImplementedError
 
 class RenewableUnitDataLoader(IRenewableUnitDataLoader):
-    def __init__(self, initial_timestamp: int, sample_point_to_power: SamplePointsToPowerTable,
+    def __init__(self, initial_timestamp: Timestamp, sample_point_to_power: SamplePointsToPowerTable,
                  simulation_time_series: SimulationTimeSeries):
 
         power_bounds = Bounds(min = sample_point_to_power.minimum(),

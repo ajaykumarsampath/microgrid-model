@@ -1,8 +1,8 @@
 import pytest
 
 from data_loader.domain import SamplePointsToPowerTable
-from data_loader.generator_interface import IGeneratorDataLoader
-from model.domain import Bounds
+from data_loader.interface import IGeneratorDataLoader
+from shared.component import Bounds
 
 
 class TestSamplePointsToPowerTable:

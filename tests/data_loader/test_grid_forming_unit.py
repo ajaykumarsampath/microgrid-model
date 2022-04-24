@@ -1,8 +1,8 @@
 import pytest
 
 from data_loader.domain import UnitDataLoaderError
-from data_loader.grid_forming_unit import StoragePowerPlantDataLoader, ThermalGeneratorDataLoader
-from model.domain import Bounds
+from data_loader.component.grid_forming_unit import StoragePowerPlantDataLoader, ThermalGeneratorDataLoader
+from shared.component import Bounds
 
 
 class TestStoragePowerPlantDataLoader:

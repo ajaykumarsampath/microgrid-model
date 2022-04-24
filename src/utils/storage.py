@@ -1,34 +1,31 @@
+from dataclasses import dataclass
 from typing import List
 
-from model.domain import UnitSimulationData, HistoricalData
+import numpy as np
+
+from shared.component import ComponentSimulationData
+from shared.timeseries import SimulationTimeseriesError, Timestamp
 
 
-class IUnitDataStorage:
-    def add_simulation_data(self, current_timestamp: int, data: UnitSimulationData):
-        raise NotImplementedError
+@dataclass
+class HistoricalData:
+    timestamps: List[Timestamp]
+    data: List[ComponentSimulationData]
 
-    def get_historical_data(self, unit_id: str, since: int, until: int=None) -> List[UnitSimulationData]:
-        raise NotImplementedError
+    def __post_init__(self):
+        if len(self.timestamps) > 0:
+            if np.diff(self.timestamps).min() <= 0 or len(self.timestamps) != len(self.data):
+                raise SimulationTimeseriesError('time stamps in the historical data should be increasing')
 
-class UnitDataStorage(IUnitDataStorage):
-    def __init__(self, initial_timestamp: int):
-        self._initial_timestamp = initial_timestamp
-        self._current_timestamp = initial_timestamp
-        self.historical_data = HistoricalData([], [])
+    def add_data(self, timestamp: int, data: ComponentSimulationData):
+        if len(self.timestamps) > 0:
+            if timestamp <= self.timestamps[-1]:
+                raise SimulationTimeseriesError('time stamps in the historical data should be increasing')
+            else:
+                self.timestamps.append(timestamp)
+                self.data.append(data)
+        else:
+            self.timestamps.append(timestamp)
+            self.data.append(data)
 
-    @property
-    def initial_timestamp(self):
-        return self._initial_timestamp
 
-    @property
-    def current_timestamp(self):
-        return self._current_timestamp
-
-    def add_simulation_data(self, current_timestamp, data: UnitSimulationData):
-        self._current_timestamp = current_timestamp
-        self.historical_data.timestamps.append(current_timestamp)
-        self.historical_data.data.append(data)
-
-    def get_historical_data(self, since: int, until:int=None, unit_id: str=None) \
-            -> List[UnitSimulationData]:
-        pass

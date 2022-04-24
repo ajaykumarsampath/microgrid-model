@@ -1,113 +1,65 @@
-from dataclasses import dataclass, field
-from enum import Enum
-from typing import List, Tuple, Optional
+from dataclasses import dataclass
+from functools import cached_property
+from typing import List
 
 import numpy as np
-from scipy.interpolate import interp1d
 
+from model.component_interface import IComponent, IGridNetwork
+from model.generator_interface import IGeneratorComponent
+from shared.component import BUS_ID
 
-@dataclass
-class Bounds:
-    min: float
-    max: float
-
-
-BUS_ID = str
-GRID_LINE = Tuple[BUS_ID, BUS_ID, float]
+# GRID_LINE = Tuple[BUS_ID, BUS_ID, float]
 UNIT_BUS_ID_MAP = [str, BUS_ID]
 SEC_TO_HOUR_FACTOR = 1/3600
 
-class StepPreviousTimestamp(ValueError):
-    pass
 
-class UnknownComponentError(Exception):
-    pass
-
-class SimulationTimeseriesError(ValueError):
-    pass
-
-class SimulationGridError(Exception):
-    pass
-
-class MicrogirdModellingError(Exception):
-    pass
-
-class MicrogridSimulationError(Exception):
-    pass
-
-
-@dataclass
-class UnitSimulationData:
+@dataclass(frozen=True)
+class MicrogridModelData:
     name: str
-    values: dict
+    generators: List[IGeneratorComponent]
+    loads: List[IComponent]
+    grid_model: IGridNetwork
+    generator_bus_ids: List[BUS_ID]
+    load_bus_ids: List[BUS_ID]
 
+    @cached_property
+    def model_bus_ids(self) -> List[BUS_ID]:
+        unique_bus = []
+        for i, e in enumerate(self.generator_bus_ids + self.load_bus_ids):
+            if e not in unique_bus:
+                unique_bus.append(e)
+        return unique_bus
 
-@dataclass
-class HistoricalData:
-    timestamps: List[int]
-    data: List[UnitSimulationData]
-
-    def __post_init__(self):
-        if len(self.timestamps) > 0:
-            if np.diff(self.timestamps).min() <= 0 or len(self.timestamps) != len(self.data):
-                raise SimulationTimeseriesError('time stamps in the historical data should be increasing')
-
-    def add_data(self, timestamp: int, data: UnitSimulationData):
-        if len(self.timestamps) > 0:
-            if timestamp <= self.timestamps[-1]:
-                raise SimulationTimeseriesError('time stamps in the historical data should be increasing')
-            else:
-                self.timestamps.append(timestamp)
-                self.data.append(data)
-        else:
-            self.timestamps.append(timestamp)
-            self.data.append(data)
-
-
-
-@dataclass
-class GridLine:
-    from_bus: BUS_ID
-    to_bus: BUS_ID
-    admittance: Optional[float] = field(default=None)
-    bounds: Optional[Bounds] = field(default=None)
-
-    def __eq__(self, other):
+    @cached_property
+    def valid_data(self):
+        grid_buses = self.grid_model.buses
         try:
-            if other.to_bus in [self.to_bus, self.from_bus] and \
-                    other.from_bus in [self.to_bus, self.from_bus] and \
-                    self.admittance == other.admittance:
-                return True
-            else:
-                return False
-        except AttributeError:
+            self._check_non_unique_ids(self.generators)
+            self._check_non_unique_ids(self.loads)
+            assert len(self.generators) == len(self.generator_bus_ids)
+            assert len(self.loads) == len(self.load_bus_ids)
+            assert len(grid_buses) == len(self.model_bus_ids)
+            assert all([bus in self.model_bus_ids for bus in grid_buses])
+            return self.grid_model.validate_grid_model()
+        except AssertionError:
             return False
 
-    def __post_init__(self):
-        if self.to_bus == self.from_bus:
-            raise ValueError('to_bus and from_bus of the line are same')
+    def _check_non_unique_ids(self, components: List[IComponent]):
+        component_names = [c.name for c in components]
+        assert len(component_names) == len(set(component_names))
 
+    def unit_bus_matrix(self):
+        num_generators = len(self.generator_bus_ids)
+        num_loads = len(self.load_bus_ids)
+        cols_unit_bus_mat = len(self.model_bus_ids)
+        _unit_bus_mat = np.zeros((num_generators + num_loads, cols_unit_bus_mat))
 
-class SimulationTimeSeries:
+        for count, bus_id in enumerate(self.generator_bus_ids):
+            bus_id_index = self.model_bus_ids.index(bus_id)
+            _unit_bus_mat[count, bus_id_index] = 1
 
-    def __init__(self, timestamps: List[int], values:List[float]):
-        try:
-            self.timestamps = timestamps
-            self.values = values
-            self._function = interp1d(x=self.timestamps, y=self.values, kind='linear',
-                                      fill_value="extrapolate")
-        except Exception as err:
-            raise SimulationTimeseriesError(f'{err}')
+        for count, bus_id in enumerate(self.load_bus_ids):
+            bus_id_index = self.model_bus_ids.index(bus_id)
+            _unit_bus_mat[count + num_generators, bus_id_index] = 1
 
-
-    def resample(self, timestamp: int):
-        return self._function(timestamp)
-
-
-class ComponentType(Enum):
-    Load = 'Load'
-    Renewable = 'Renewable'
-    Storage = 'Storage'
-    Thermal = 'Thermal'
-    Grid = 'Grid'
-    Unknown = 'None'
+        return _unit_bus_mat

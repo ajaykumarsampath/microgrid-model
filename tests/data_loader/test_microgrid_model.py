@@ -1,6 +1,7 @@
 from data_loader.microgrid_model import MicrogridModelDataLoader
-from model.domain import UnitSimulationData, BUS_ID, Bounds
-from tests.utils.test_mocks import MockUnitConfig, MockComponentDataLoader, MockGeneratorConfig, MockGeneratorDataLoader
+from shared.component import ComponentSimulationData, Bounds, BUS_ID
+from tests.utils.test_mocks import MockUnitConfig, MockComponentDataLoader, \
+    MockGeneratorConfig, MockGeneratorDataLoader
 
 
 
@@ -19,7 +20,7 @@ class TestMicrogridModel:
         expected_bus_id = ['bus_0', 'bus_1', 'bus_2', 'bus_0']
         expected_demand_names = ['mock_unit']
 
-        data = UnitSimulationData('mock_unit', values={'power': 1})
+        data = ComponentSimulationData('mock_unit', values={'power': 1})
         mock_data_loader = MockComponentDataLoader(10, data)
 
         mock_unit_config = MockUnitConfig(expected_demand_names[0], mock_data_loader,

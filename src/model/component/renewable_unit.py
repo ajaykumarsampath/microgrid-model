@@ -1,5 +1,5 @@
-from data_loader.renewable_unit import IRenewableUnitDataLoader
-from model.domain import UnitSimulationData
+from data_loader.interface import IRenewableUnitDataLoader
+from shared.component import ComponentSimulationData
 from model.generator_interface import IGeneratorComponent
 import logging
 
@@ -21,7 +21,7 @@ class RenewablePowerUnit(IGeneratorComponent):
         self._available_power = self.calculate_available_power(timestamp=timestamp)
         self._current_power = min(self._available_power, self.power_setpoint)
 
-    def current_simulation_data(self) -> UnitSimulationData:
+    def current_simulation_data(self) -> ComponentSimulationData:
         values = {'current_power': self._current_power, 'available_power': self._available_power,
                   'power_setpoint': self._power_setpoint}
-        return UnitSimulationData(self._name,values=values)
+        return ComponentSimulationData(self._name, values=values)
