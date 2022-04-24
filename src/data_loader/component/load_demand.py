@@ -1,14 +1,11 @@
 import logging
 
 from data_loader.domain import UnitDataLoaderError
-from model.component_interface import IComponentDataLoader
-from model.domain import SimulationTimeSeries
+from data_loader.interface import ILoadDemandDataLoader
+from shared.timeseries import SimulationTimeSeries
 
 logger = logging.getLogger(__name__)
 
-class ILoadDemandDataLoader(IComponentDataLoader):
-    def get_data(self, timestamp: int):
-        raise NotImplementedError
 
 class LoadDemandDataLoader(ILoadDemandDataLoader):
     def __init__(self, initial_timestamp: int, demand_time_series: SimulationTimeSeries):

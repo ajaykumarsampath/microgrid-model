@@ -1,14 +1,16 @@
 import pytest
 
-from data_loader.generator_interface import IGeneratorDataLoader
-from model.domain import Bounds, UnitSimulationData, HistoricalData, SimulationTimeseriesError, \
-    StepPreviousTimestamp
+from data_loader.interface import IGeneratorDataLoader
+from model.exception import StepPreviousTimestamp
+from shared.component import ComponentSimulationData, Bounds
+from shared.timeseries import SimulationTimeseriesError
+from utils.storage import HistoricalData
 from tests.utils.test_mocks import MockGeneratorUnit, MockComponentDataLoader, MockComponent
 
 def test_wrong_historical_data():
     wrong_timestamp = list(range(0, 10))
     wrong_timestamp[-1] = 8
-    data = [UnitSimulationData(name='a', values={'power': t}) for t in wrong_timestamp]
+    data = [ComponentSimulationData(name='a', values={'power': t}) for t in wrong_timestamp]
 
     with pytest.raises(SimulationTimeseriesError):
         HistoricalData(timestamps=wrong_timestamp, data=data)
@@ -21,10 +23,10 @@ def test_wrong_historical_data():
 
 def test_historical_data():
     timestamp = list(range(0, 10))
-    data = [UnitSimulationData(name='a', values={'power': t}) for t in timestamp]
+    data = [ComponentSimulationData(name='a', values={'power': t}) for t in timestamp]
     historical_data = HistoricalData(timestamps=timestamp, data=data)
 
-    current_data = UnitSimulationData(name='a', values={'power': 12})
+    current_data = ComponentSimulationData(name='a', values={'power': 12})
     with pytest.raises(SimulationTimeseriesError):
         historical_data.add_data(timestamp=8, data=current_data)
 
@@ -36,14 +38,14 @@ def test_historical_data():
 def test_component_interface():
     initial_timestamp = 10
 
-    mock_data = UnitSimulationData(name='mock', values={'power': 1})
+    mock_data = ComponentSimulationData(name='mock', values={'power': 1})
 
     mock_loader = MockComponentDataLoader(initial_timestamp, data=mock_data)
 
     mock_unit = MockComponent(name='mock', data_loader=mock_loader)
 
     timestamp = list(range(0, initial_timestamp))
-    data = [UnitSimulationData(name='a', values={'power': t}) for t in timestamp]
+    data = [ComponentSimulationData(name='a', values={'power': t}) for t in timestamp]
 
     data = mock_unit.current_simulation_data()
 
@@ -52,7 +54,7 @@ def test_component_interface():
 def test_wrong_simulation_timestamp():
     initial_timestamp = 10
 
-    mock_data = UnitSimulationData(name='mock', values={'power': 1})
+    mock_data = ComponentSimulationData(name='mock', values={'power': 1})
 
     mock_loader = MockComponentDataLoader(initial_timestamp, data=mock_data)
 

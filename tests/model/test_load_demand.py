@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from data_loader.load_demand import ILoadDemandDataLoader
-from model.load_demand import LoadDemand
+from data_loader.interface import ILoadDemandDataLoader
+from model.component.load_demand import LoadDemand
 
 
 class MockLoadDemandDataLoader(ILoadDemandDataLoader):

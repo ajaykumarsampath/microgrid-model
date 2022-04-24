@@ -4,24 +4,30 @@ import numpy as np
 from numpy.random._generator import default_rng
 
 from data_loader.domain import SamplePointsToPowerTable
-from data_loader.generator_interface import IGeneratorDataLoader
-from data_loader.renewable_unit import RenewableUnitDataLoader
-from model.component_interface import IComponentDataLoader, IComponent, IGridNetwork, IUnitConfig
+from data_loader.interface import IGeneratorDataLoader
+from data_loader.component.renewable_unit import RenewableUnitDataLoader
 
-from model.domain import HistoricalData, UnitSimulationData, SimulationTimeSeries, BUS_ID, ComponentType
-from model.generator_interface import IGeneratorComponent, IGeneratorComponentConfig
-from model.renewable_unit import RenewablePowerUnit
-from utils.storage import IUnitDataStorage
+from model.component_interface import IComponent, IGridNetwork
+from model.generator_interface import IGeneratorComponent
+from model.component.renewable_unit import RenewablePowerUnit
+from config.interface import IUnitConfig, IGeneratorComponentConfig
+
+from shared.data_loader import IComponentDataLoader
+from shared.component import ComponentSimulationData, ComponentType, BUS_ID
+from shared.timeseries import SimulationTimeSeries
+from shared.storage import IComponentDataStorage
+
+from utils.storage import HistoricalData
 
 
-class MockDataStorage(IUnitDataStorage):
+class MockDataStorage(IComponentDataStorage):
     def __init__(self, data: HistoricalData=HistoricalData([], [])):
         self._data = data
 
-    def add_simulation_data(self, current_timestamp: int, data: UnitSimulationData):
+    def add_simulation_data(self, current_timestamp: int, data: ComponentSimulationData):
         self._data.add_data(current_timestamp, data)
 
-    def get_historical_data(self, unit_id: str, since: int, until: int=None) -> List[UnitSimulationData]:
+    def get_historical_data(self, unit_id: str, since: int, until: int=None) -> List[ComponentSimulationData]:
         return [d for t, d in zip(self._data.timestamps, self._data.data) if t > since]
 
 
@@ -79,7 +85,7 @@ def create_pv_plant(initial_timestamp: int = 1639396720, past_days: int = 4, fut
 
 
 class MockComponentDataLoader(IComponentDataLoader):
-    def __init__(self, initial_timestamp: int, data: UnitSimulationData):
+    def __init__(self, initial_timestamp: int, data: ComponentSimulationData):
         super().__init__(initial_timestamp)
         self.data = data
 
@@ -95,7 +101,7 @@ class MockComponent(IComponent):
     def step(self, timestamp: int):
         self._check_step_timestamp(timestamp)
 
-    def current_simulation_data(self) -> UnitSimulationData:
+    def current_simulation_data(self) -> ComponentSimulationData:
         return self._data_loader.data
 
 

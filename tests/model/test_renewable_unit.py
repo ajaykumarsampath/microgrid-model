@@ -1,8 +1,10 @@
 from unittest import TestCase
 
-from data_loader.renewable_unit import IRenewableUnitDataLoader
-from model.domain import Bounds, StepPreviousTimestamp
-from model.renewable_unit import RenewablePowerUnit
+from data_loader.interface import IRenewableUnitDataLoader
+from model.exception import StepPreviousTimestamp
+from shared.component import Bounds
+
+from model.component.renewable_unit import RenewablePowerUnit
 from tests.utils.test_mocks import MockDataStorage
 
 

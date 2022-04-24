@@ -1,8 +1,8 @@
 from unittest import TestCase
 
-from data_loader.grid_forming_unit import StoragePowerPlantDataLoader, ThermalGeneratorDataLoader
-from model.domain import Bounds
-from model.grid_forming_unit import StoragePowerPlant, ThermalGenerator
+from data_loader.component.grid_forming_unit import StoragePowerPlantDataLoader, ThermalGeneratorDataLoader
+from core.domain import Bounds
+from model.component.grid_forming_unit import StoragePowerPlant, ThermalGenerator
 
 
 class TestStoragePowerPlant(TestCase):

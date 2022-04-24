@@ -1,10 +1,11 @@
 from data_loader.domain import UnitDataLoaderError
-from data_loader.generator_interface import IGeneratorDataLoader
-from model.domain import Bounds
+from data_loader.interface import IGeneratorDataLoader, IThermalGeneratorDataLoader, IStoragePowerPlantDataLoader
+from shared.component import Bounds
 import logging
 
 logger = logging.getLogger(__name__)
 
+"""
 class GridFormingUnitDataLoader(IGeneratorDataLoader):
     def __init__(self, initial_timestamp: int, power_bounds: Bounds, droop_gain: float,
                  grid_forming_unit_flag: bool = True):
@@ -12,15 +13,19 @@ class GridFormingUnitDataLoader(IGeneratorDataLoader):
             logger.warning('Droop gain should be positive')
         else:
             super().__init__(initial_timestamp, power_bounds, droop_gain, grid_forming_unit_flag)
+"""
 
-
-class StoragePowerPlantDataLoader(GridFormingUnitDataLoader):
+class StoragePowerPlantDataLoader(IStoragePowerPlantDataLoader):
     def __init__(self, initial_timestamp: int, power_bounds: Bounds, droop_gain: float,
                  energy_bounds:Bounds, initial_energy: float = 0, charge_efficiency: float = 1,
                  discharge_efficiency: float=1):
-        super().__init__(initial_timestamp, power_bounds, droop_gain,
-                         grid_forming_unit_flag=True)
-        self.energy_bounds = energy_bounds
+        self._energy_bounds = energy_bounds
+
+        if droop_gain < 0:
+            raise UnitDataLoaderError('storage: Droop gain should be positive')
+        else:
+            super().__init__(initial_timestamp, power_bounds, droop_gain,
+                             grid_forming_unit_flag=True)
 
         if self.energy_bounds.min <= initial_energy <= self.energy_bounds.max:
             self._initial_energy = initial_energy
@@ -49,6 +54,10 @@ class StoragePowerPlantDataLoader(GridFormingUnitDataLoader):
     def initial_energy(self):
         return self._initial_energy
 
+    @property
+    def energy_bounds(self):
+        return self._energy_bounds
+
     @initial_energy.setter
     def initial_energy(self, value):
         if self.energy_bounds.min <= value <= self.energy_bounds.max:
@@ -56,13 +65,16 @@ class StoragePowerPlantDataLoader(GridFormingUnitDataLoader):
         else:
             logger.warning("current value is not energy bounds")
 
-
-
-class ThermalGeneratorDataLoader(GridFormingUnitDataLoader):
+class ThermalGeneratorDataLoader(IThermalGeneratorDataLoader):
     def __init__(self, initial_timestamp, power_bounds: Bounds, droop_gain: float,
-                 switch_state: bool = float):
+                 switch_state: bool = False):
 
-        super().__init__(initial_timestamp, power_bounds, droop_gain, grid_forming_unit_flag=True)
+        if droop_gain < 0:
+            raise UnitDataLoaderError('storage: Droop gain should be positive')
+        else:
+            super().__init__(initial_timestamp, power_bounds, droop_gain,
+                             grid_forming_unit_flag=True)
+
         self._switch_state = switch_state
 
     @property

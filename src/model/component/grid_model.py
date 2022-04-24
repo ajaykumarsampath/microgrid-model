@@ -1,8 +1,9 @@
 import logging
 from typing import List
 
-from data_loader.grid_model import IGridNetworkDataLoader
-from model.domain import UnitSimulationData, GridLine, BUS_ID, UnknownComponentError, SimulationGridError
+from data_loader.interface import IGridNetworkDataLoader
+from model.exception import UnknownComponentError, SimulationGridError
+from shared.component import ComponentSimulationData, GridLine, BUS_ID
 import numpy as np
 
 from model.component_interface import IGridNetwork
@@ -137,6 +138,6 @@ class GridNetwork(IGridNetwork):
             raise SimulationGridError('either bus power not correctly error or '
                                       'the grid model is not complete')
 
-    def current_simulation_data(self) -> UnitSimulationData:
+    def current_simulation_data(self) -> ComponentSimulationData:
         values = {'current_power': self._current_power, 'bus_power': self.buses_power}
-        return UnitSimulationData(name=self._name,values=values)
+        return ComponentSimulationData(name=self._name, values=values)

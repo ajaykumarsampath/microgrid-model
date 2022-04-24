@@ -1,30 +1,18 @@
 from typing import List
 
 from data_loader.domain import DuplicateGridModelError
-from model.component_interface import IComponentDataLoader
-from model.domain import GridLine
+from data_loader.interface import IGridNetworkDataLoader
 import logging
+
+from shared.component import GridLine
+from shared.timeseries import Timestamp
 
 logger = logging.getLogger(__name__)
 
 
-class IGridNetworkDataLoader(IComponentDataLoader):
-    @property
-    def grid_lines(self):
-        raise NotImplementedError
-
-    def buses(self):
-        raise NotImplementedError
-
-    def validate_grid_line_data(self):
-        raise NotImplementedError
-
-    def check_grid_network_connected(self):
-        raise NotImplementedError
-
 class SingleBusGridNetworkDataLoader(IGridNetworkDataLoader):
     SLACK_BUS_ID = 'slack'
-    def __init__(self, initial_timestamp: int):
+    def __init__(self, initial_timestamp: Timestamp):
         super().__init__(initial_timestamp)
         self._grid_lines = []
 
@@ -42,7 +30,7 @@ class SingleBusGridNetworkDataLoader(IGridNetworkDataLoader):
         return True
 
 class GridNetworkDataLoader(IGridNetworkDataLoader):
-    def __init__(self, initial_timestamp: int, grid_line: List[GridLine]):
+    def __init__(self, initial_timestamp: Timestamp, grid_line: List[GridLine]):
         super(GridNetworkDataLoader, self).__init__(initial_timestamp)
         if self._check_duplicate_grid_lines(grid_line):
             self._grid_lines = grid_line
