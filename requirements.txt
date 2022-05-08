@@ -4,3 +4,5 @@ pandas
 matplotlib
 pytest
 coverage
+dacite
+pydantic

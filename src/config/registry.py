@@ -52,8 +52,8 @@ class IComponentRegistry:
 class DefaultComponentRegistry(IComponentRegistry):
     component_registry = [
         default_thermal_config_registry, default_renewable_config_registry,
-        default_storage_config_registry, default_single_grid_network_registry,
-        default_grid_network_registry
+        default_storage_config_registry, default_load_config_registry,
+        default_single_grid_network_registry, default_grid_network_registry
     ]
     def __init__(self):
         if not self.validate_component_registry_data(self.component_registry):
@@ -69,7 +69,7 @@ class DefaultComponentRegistry(IComponentRegistry):
             raise UnknownComponentConfigType(f'{reference} is not part of the config registry')
 
     def get_component_config_reference(self, config: Union[IUnitConfig, IGridNetworkConfig]) -> Reference:
-        class_importer = ClassImportModuler(config.__module__, config.__name__)
+        class_importer = ClassImportModuler(config.__module__, config.__class__.__name__)
 
         try:
             return [c.reference for c in self.component_registry if c.config_class_module == class_importer][0]

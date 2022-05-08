@@ -33,18 +33,17 @@ class MicrogridModelConfigBuilder:
                              reference: Reference, data: dict) -> MicrogridModelConfig:
         config_registry_data = self.registry.get_component_config(reference)
         config = config_registry_data.create_config_class(data)
-        config_class_type = config_registry_data.config_class_module.create_class()
 
         if reference in self.registry.get_thermal_config_references():
-            microgrid_config.thermal_generator_config.append(config_class_type(config))
+            microgrid_config.thermal_generator_config.append(config)
         elif reference in self.registry.get_storage_config_references():
-            microgrid_config.storage_config.append(config_class_type(config))
+            microgrid_config.storage_config.append(config)
         elif reference in self.registry.get_renewable_config_references():
-            microgrid_config.renewable_config.append(config_class_type(config))
+            microgrid_config.renewable_config.append(config)
         elif reference in self.registry.get_load_config_references():
-            microgrid_config.load_config.append(config_class_type(config))
+            microgrid_config.load_config.append(config)
         elif reference in self.registry.get_grid_config_references():
-            microgrid_config.grid_network_config = config_class_type(config)
+            microgrid_config.grid_network_config = [config]
         else:
             raise UnknownComponentConfigType(f'{reference} not in component registry')
 

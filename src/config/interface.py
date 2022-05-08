@@ -119,7 +119,7 @@ class ComponentConfigRegistryData:
     config_class_module: ClassImportModuler
     config_data_module: ClassImportModuler
 
-    def create_config_class(self, dict_: dict) -> IUnitConfig:
+    def create_config_class(self, dict_: dict) -> Any: #IUnitConfig:
         try:
             config_data_type = self.config_data_module.create_class()
             config_class_type = self.config_class_module.create_class()

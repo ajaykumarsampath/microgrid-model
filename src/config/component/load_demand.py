@@ -34,9 +34,9 @@ class LoadDemandConfigData(IUnitConfigData):
 
 
 class LoadDemandConfig(IUnitConfig):
-    def __init__(self, load_demand_config_data: LoadDemandConfigData):
-        super().__init__(load_demand_config_data)
-        self.initial_timestamp = load_demand_config_data.initial_timestamp
+    def __init__(self, config_data: LoadDemandConfigData):
+        super().__init__(config_data)
+        self.initial_timestamp = config_data.initial_timestamp
         self._component_type = ComponentType.Load
 
     def create_unit(self) -> LoadDemand:
