@@ -14,7 +14,7 @@ class StoragePowerPlantDataLoaderData(IComponentDataLoaderData):
     droop_gain: float
     energy_bounds: Bounds
     initial_energy: float = 0
-    charge_efficiency: float = 1,
+    charge_efficiency: float = 1
     discharge_efficiency: float = 1
 
 @dataclass

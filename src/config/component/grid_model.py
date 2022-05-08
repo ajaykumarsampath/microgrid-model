@@ -42,7 +42,7 @@ class SingleGridNetworkConfig(IGridNetworkConfig):
     def name(self):
         return self.config_data.name
 
-    def create_unit(self) -> GridNetwork:
+    def create_grid_network(self) -> GridNetwork:
         data_loader = self.create_data_loader()
         return GridNetwork(self.name, data_loader)
 
@@ -58,7 +58,7 @@ class GridNetworkConfig(IGridNetworkConfig):
     def name(self):
         return self.config_data.name
 
-    def create_unit(self):
+    def create_grid_network(self) -> GridNetwork:
         data_loader = self.create_data_loader()
         return GridNetwork(self.name, data_loader)
 

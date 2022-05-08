@@ -17,9 +17,7 @@ class MicrogridModelDataReference:
     generator_config_reference: List[Reference] = field(default_factory= lambda : [])
     load_config_reference: List[Reference] = field(default_factory= lambda : [])
     grid_config_reference: List[Reference] = field(default_factory=lambda : [])
-    # thermal_config_reference: List[Reference] = field(default_factory=lambda: [])
-    # storage_config_reference: List[Reference] = field(default_factory=lambda: [])
-    # renewable_config_reference: List[Reference] = field(default_factory=lambda: [])
+
 
 class MicrogridModelDataLoader:
     def __init__(self, name: str):
@@ -93,7 +91,7 @@ class MicrogridModelDataLoader:
 
     def add_grid_model(self, grid_config: IGridNetworkConfig,
                        config_reference: Optional[Reference]=None):
-        if self._grid_model is not None:
+        if self._grid_model is None:
             self._grid_model = grid_config.create_grid_network()
             self._microgrid_config_reference.generator_config_reference.append(config_reference)
         else:
