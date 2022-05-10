@@ -45,6 +45,8 @@ coverage.xml
 .hypothesis/
 tests/.pytest_cache
 tests/data_loader/.pytest_cache
+tests/model/.pytest_cache
+tests/utils/.pytest_cache
 
 
 # Translations
