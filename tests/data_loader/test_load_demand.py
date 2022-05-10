@@ -2,7 +2,7 @@ import pytest
 
 from data_loader.domain import UnitDataLoaderError
 from data_loader.component.load_demand import LoadDemandDataLoader
-from core.domain import SimulationTimeSeries
+from shared.timeseries import SimulationTimeSeries
 
 
 class TestLoadDemandDataLoader:

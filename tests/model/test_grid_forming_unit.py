@@ -1,8 +1,8 @@
 from unittest import TestCase
 
 from data_loader.component.grid_forming_unit import StoragePowerPlantDataLoader, ThermalGeneratorDataLoader
-from core.domain import Bounds
 from model.component.grid_forming_unit import StoragePowerPlant, ThermalGenerator
+from shared.component import Bounds
 
 
 class TestStoragePowerPlant(TestCase):
@@ -68,7 +68,7 @@ class TestStoragePowerPlant(TestCase):
 
         storage_plant.power_setpoint = 1
 
-        with self.assertLogs('model.grid_forming_unit') as cm:
+        with self.assertLogs('model.component.grid_forming_unit') as cm:
             storage_plant.step(initial_timestamp + 900)
             storage_plant.step(initial_timestamp + 1800)
             assert len(cm.records) == 2

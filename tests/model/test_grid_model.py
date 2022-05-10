@@ -3,10 +3,11 @@ import time
 import numpy as np
 
 from model.exception import UnknownComponentError
-from core.domain import GridLine
 from model.component.grid_model import GridNetwork
 from data_loader.component.grid_model import GridNetworkDataLoader, SingleBusGridNetworkDataLoader
 import pytest
+
+from shared.component import GridLine
 
 
 class TestGridModel:
