@@ -75,8 +75,8 @@ class TestGridModel:
         grid_network.set_bus_power(bus_id='bus_2', power=-2)
         line_power = grid_network.calculate_line_power()
 
-        assert pytest.approx(line_power[0], -3, 1e-5) == -3
-        assert pytest.approx(line_power[1], 2, 1e-5) == 2
+        assert pytest.approx(line_power[0], abs=1e-5) == -3
+        assert pytest.approx(line_power[1], abs=1e-5) == 2
 
     def test_wrong_set_bus_power(self):
         initial_timestamp = int(time.time())
