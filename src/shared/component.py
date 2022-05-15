@@ -4,6 +4,7 @@ from typing import Optional
 
 BUS_ID = str
 
+
 @dataclass
 class Bounds:
     min: float
@@ -12,6 +13,7 @@ class Bounds:
     def __post_init__(self):
         if self.min > self.max:
             raise ValueError('Bounds are not correct: min should be less than max')
+
 
 @dataclass
 class GridLine:
@@ -34,6 +36,7 @@ class GridLine:
     def __post_init__(self):
         if self.to_bus == self.from_bus:
             raise ValueError('to_bus and from_bus of the line are same')
+
 
 @dataclass
 class ComponentSimulationData:

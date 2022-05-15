@@ -20,6 +20,7 @@ class ILoadDemandConfigData(IUnitConfigData):
     bus_id: BUS_ID
 """
 
+
 @dataclass
 class LoadDemandDataLoaderData(IComponentDataLoaderData):
     demand_time_series: SimulationTimeSeries
@@ -48,7 +49,8 @@ class LoadDemandConfig(IUnitConfig):
             self.initial_timestamp, self.data_loader_data.demand_time_series
         )
 
+
 default_load_config_registry = ComponentConfigRegistryData(
     'LOAD_DEMAND', ClassImportModuler(LoadDemandConfig.__module__, LoadDemandConfig.__name__),
-    ClassImportModuler( LoadDemandConfigData.__module__,  LoadDemandConfigData.__name__)
+    ClassImportModuler(LoadDemandConfigData.__module__, LoadDemandConfigData.__name__)
 )

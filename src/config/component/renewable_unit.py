@@ -3,7 +3,8 @@ from dataclasses import dataclass
 from data_loader.component.renewable_unit import RenewableUnitDataLoader
 from data_loader.domain import SamplePointsToPowerTable
 from model.component.renewable_unit import RenewablePowerUnit
-from config.interface import IGeneratorComponentConfig, ComponentConfigRegistryData, ClassImportModuler
+from config.interface import IGeneratorComponentConfig, ComponentConfigRegistryData,\
+    ClassImportModuler
 from shared.component import ComponentType
 from shared.data_loader import IComponentDataLoaderData, IGeneratorConfigData
 from shared.timeseries import SimulationTimeSeries
@@ -22,8 +23,8 @@ class RenewableComponentConfigData(IGeneratorConfigData):
     def __post_init__(self):
         self.component_type: ComponentType = ComponentType.Renewable
 
-class RenewableUnitConfig(IGeneratorComponentConfig):
 
+class RenewableUnitConfig(IGeneratorComponentConfig):
     def __init__(self, config_data: RenewableComponentConfigData):
         super().__init__(config_data)
         self.config_data = config_data
@@ -39,7 +40,10 @@ class RenewableUnitConfig(IGeneratorComponentConfig):
             self.config_data.data_loader_data.sample_point_to_power,
             self.config_data.data_loader_data.simulation_time_series)
 
+
 default_renewable_config_registry = ComponentConfigRegistryData(
-    'RENEWABLE_UNIT',  ClassImportModuler(RenewableUnitConfig.__module__, RenewableUnitConfig.__name__),
-    ClassImportModuler(RenewableComponentConfigData.__module__,  RenewableComponentConfigData.__name__)
+    'RENEWABLE_UNIT', ClassImportModuler(
+        RenewableUnitConfig.__module__, RenewableUnitConfig.__name__),
+    ClassImportModuler(
+        RenewableComponentConfigData.__module__, RenewableComponentConfigData.__name__)
 )

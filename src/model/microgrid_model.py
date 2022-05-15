@@ -4,7 +4,8 @@ from typing import List
 import numpy as np
 
 from model.domain import MicrogridModelData
-from model.exception import StepPreviousTimestamp, UnknownComponentError, SimulationGridError, MicrogirdModellingError
+from model.exception import StepPreviousTimestamp, UnknownComponentError, \
+    SimulationGridError, MicrogirdModellingError
 from shared.storage import IComponentDataStorage
 
 logger = logging.getLogger(__name__)
@@ -19,7 +20,7 @@ class MicrogridModel:
             self._load_bus_ids = microgrid_model_data.load_bus_ids
             self._unit_to_bus = microgrid_model_data.unit_bus_matrix()
             self._generator_ids = [g.name for g in self._model_data.generators]
-            self._load_ids = [l.name for l in self._model_data.loads]
+            self._load_ids = [g.name for g in self._model_data.loads]
         else:
             raise MicrogirdModellingError(f'Microgrid data is not valid at '
                                           f'{microgrid_model_data.name}')
@@ -62,10 +63,9 @@ class MicrogridModel:
         else:
             raise UnknownComponentError(f'unit {unit_id} to getting is not in microgrid')
 
-
     def convert_unit_power_bus_power(self, power: np.array):
         try:
-            return self._unit_to_bus.T@power
+            return self._unit_to_bus.T @ power
         except Exception as err:
             raise UnknownComponentError(f'input power and bus dimension does not match {err}')
 
@@ -74,7 +74,6 @@ class MicrogridModel:
             self.generators[self._generator_ids.index(unit_id)].power_setpoint = power
         except IndexError:
             raise UnknownComponentError(f'unit {unit_id} trying to set power is not in microgrid')
-
 
     def set_power_setpoints(self, power_setpoints: List[float]):
         try:
@@ -101,7 +100,7 @@ class MicrogridModel:
                 delta_power = delta_power + generator.current_power
 
         if self.sum_inverse_droop_gain > 0:
-            return 1/self.sum_inverse_droop_gain * delta_power
+            return 1 / self.sum_inverse_droop_gain * delta_power
         else:
             logger.warning("sum of droop gain inverse is zero.")
             return 0
@@ -133,7 +132,6 @@ class MicrogridModel:
             raise StepPreviousTimestamp(f'timestamps at {self.name} is at historical timestamp')
         except SimulationGridError as err:
             raise SimulationGridError(f'{err}')
-
 
     def add_simulation_data(self, data_storage: IComponentDataStorage):
         for generator in self.generators:

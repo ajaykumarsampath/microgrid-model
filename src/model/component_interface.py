@@ -50,6 +50,7 @@ class IComponent:
     def get_simulation_data(self, timestamp: int, data_storage: IComponentDataStorage):
         data_storage.get_historical_data(self._name, since=timestamp)
 
+
 class IGridNetwork(IComponent):
     @property
     def buses(self):

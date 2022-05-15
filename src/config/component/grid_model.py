@@ -13,6 +13,7 @@ from shared.timeseries import Timestamp
 class SingleGridNetworkDataLoaderData(IComponentDataLoaderData):
     pass
 
+
 @dataclass
 class GridNetworkDataLoaderData(IComponentDataLoaderData):
     grid_lines: List[GridLine]
@@ -20,8 +21,8 @@ class GridNetworkDataLoaderData(IComponentDataLoaderData):
 
 @dataclass
 class SingleGridNetworkConfigData(IGridNetworkConfigData):
-    name:str
-    initial_timestamp:Timestamp
+    name: str
+    initial_timestamp: Timestamp
     data_loader_data: SingleGridNetworkDataLoaderData
 
 
@@ -33,6 +34,7 @@ class GridNetworkConfigData(IGridNetworkConfigData):
 
     def __post_init__(self):
         self.component_type = ComponentType.Grid
+
 
 class SingleGridNetworkConfig(IGridNetworkConfig):
     def __init__(self, config_data: SingleGridNetworkConfigData):
@@ -48,6 +50,7 @@ class SingleGridNetworkConfig(IGridNetworkConfig):
 
     def create_data_loader(self) -> SingleBusGridNetworkDataLoader:
         return SingleBusGridNetworkDataLoader(self.config_data.initial_timestamp)
+
 
 class GridNetworkConfig(IGridNetworkConfig):
     def __init__(self, config_data: GridNetworkConfigData):
@@ -77,5 +80,5 @@ default_single_grid_network_registry = ComponentConfigRegistryData(
 default_grid_network_registry = ComponentConfigRegistryData(
     'GRID_NETWORK',
     ClassImportModuler(GridNetworkConfig.__module__, GridNetworkConfig.__name__),
-    ClassImportModuler( GridNetworkConfigData.__module__,  GridNetworkConfigData.__name__)
+    ClassImportModuler(GridNetworkConfigData.__module__, GridNetworkConfigData.__name__)
 )
