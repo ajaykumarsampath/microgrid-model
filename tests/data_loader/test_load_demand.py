@@ -15,7 +15,6 @@ class TestLoadDemandDataLoader:
         data = load_demand_loader.get_data(540)
         assert data == -54
 
-
     def test_get_data_unknown_timestamp(self, caplog):
         timestamps = list(range(0, 600, 60))
         values = list(range(0, -60, -6))

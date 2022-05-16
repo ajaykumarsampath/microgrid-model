@@ -1,6 +1,7 @@
 from unittest import TestCase
 
-from data_loader.component.grid_forming_unit import StoragePowerPlantDataLoader, ThermalGeneratorDataLoader
+from data_loader.component.grid_forming_unit import StoragePowerPlantDataLoader, \
+    ThermalGeneratorDataLoader
 from model.component.grid_forming_unit import StoragePowerPlant, ThermalGenerator
 from shared.component import Bounds
 
@@ -14,7 +15,7 @@ class TestStoragePowerPlant(TestCase):
             initial_timestamp, power_bounds=Bounds(0, 5), droop_gain=1, energy_bounds=Bounds(0, 5),
             initial_energy=initial_energy
         )
-        storage_plant = StoragePowerPlant(name = 'storage', data_loader=data_loader)
+        storage_plant = StoragePowerPlant(name='storage', data_loader=data_loader)
 
         storage_plant.power_setpoint = power_setpoint
 
@@ -89,19 +90,20 @@ class TestStoragePowerPlant(TestCase):
         assert data.values['power_setpoint'] == 0
         assert data.values['current_power'] == 0
 
+
 class TestThermalGenerator(TestCase):
     def test_thermal_generator_initialisation(self):
         initial_timestamp = 1639396720
         power_setpoint = 2
         data_loader = ThermalGeneratorDataLoader(
-            initial_timestamp, power_bounds=Bounds(0, 5), droop_gain=1, switch_state = False
+            initial_timestamp, power_bounds=Bounds(0, 5), droop_gain=1, switch_state=False
         )
         thermal_plant = ThermalGenerator(name='thermal', data_loader=data_loader)
 
         thermal_plant.power_setpoint = power_setpoint
 
         assert thermal_plant.power_setpoint == power_setpoint
-        assert thermal_plant.switch_state == True
+        assert thermal_plant.switch_state
 
     def test_step_simulation_timestamp(self):
         initial_timestamp = 1639396720
@@ -118,7 +120,7 @@ class TestThermalGenerator(TestCase):
 
         assert thermal_plant.power_setpoint == power_setpoint
         assert thermal_plant.current_power == power_setpoint
-        assert thermal_plant.switch_state == False
+        assert not thermal_plant.switch_state
         assert thermal_plant.power_sharing == 0
 
     def test_current_simulation_data(self):
@@ -135,6 +137,6 @@ class TestThermalGenerator(TestCase):
 
         data = thermal_plant.current_simulation_data()
 
-        assert data.values['switch_state'] == True
+        assert data.values['switch_state']
         assert data.values['power_setpoint'] == power_setpoint
         assert data.values['current_power'] == power_setpoint

@@ -34,11 +34,11 @@ class TestGridModel:
 
         expected_bus_ids = ['bus_0', 'bus_1']
         expected_admittance = np.array([[admittance, -admittance],
-                                    [-admittance, admittance]])
+                                        [-admittance, admittance]])
 
         assert grid_network.grid_lines[0] == grid_lines[0]
         assert all([b in expected_bus_ids for b in grid_network.buses])
-        assert np.linalg.norm(grid_network.admittance_matrix -  expected_admittance) == 0
+        assert np.linalg.norm(grid_network.admittance_matrix - expected_admittance) == 0
         assert grid_network.get_bus_grid_line('bus_0')[0] == grid_lines[0]
         assert grid_network.get_bus_grid_line('bus_1')[0] == grid_lines[0]
 
@@ -64,7 +64,7 @@ class TestGridModel:
     def test_calculate_line_power(self):
         initial_timestamp = int(time.time())
         grid_lines = [GridLine(from_bus='bus_0', to_bus='bus_1', admittance=20),
-                      GridLine(from_bus='bus_1', to_bus='bus_2', admittance=20),]
+                      GridLine(from_bus='bus_1', to_bus='bus_2', admittance=20)]
         grid_network_data = GridNetworkDataLoader(
             initial_timestamp=initial_timestamp, grid_line=grid_lines
         )
@@ -128,22 +128,9 @@ class TestGridModel:
         assert abs(grid_network.current_power) == 1
         assert all([p in expected_bus_power for p in grid_network.buses_power])
 
+
 if __name__ == '__main__':
 
     test_grid = TestGridModel()
     test_grid.test_calculate_line_power()
-    # grid_network = test_grid.create_single_bus_grid_model()
-    # grid_network = test_grid.create_sample_grid_model()
-    # print(grid_network.admittance_matrix)
-    # print(grid_network.dc_power_flow_matrix)
-    # print(grid_network.buses())
-
-    # print(grid_network.is_grid_connected())
-
-
-    # test_grid_data_loader = TestGridDataLoader()
-    # test_grid_data_loader.test_connected_grid_data()
-    # test_grid_data_loader.test_invalid_grid_data()
-    # test_grid_data_loader.test_duplicate_grid_data()
-    # test_grid_data_loader.test_add_grid_data()
     print("completed")

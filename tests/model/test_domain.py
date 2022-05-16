@@ -36,18 +36,19 @@ class TestHistoricalData:
 
     def test_invalid_historical_data(self):
         timestamps = [0, 10, 20, 30]
-        data = [ComponentSimulationData('mock', values={'power': i}) for i in range(0, len(timestamps) - 1)]
+        data = [ComponentSimulationData('mock', values={'power': i})
+                for i in range(0, len(timestamps) - 1)]
 
         with pytest.raises(SimulationTimeseriesError):
             HistoricalData(timestamps, data)
 
     def test_duplicated_timestamps(self):
         timestamps = [0, 10, 20, 20]
-        data = [ComponentSimulationData('mock', values={'power': i}) for i in range(0, len(timestamps) - 1)]
+        data = [ComponentSimulationData('mock', values={'power': i})
+                for i in range(0, len(timestamps) - 1)]
 
         with pytest.raises(SimulationTimeseriesError):
             HistoricalData(timestamps, data)
-
 
     def test_add_data(self):
         timestamps = [0, 10, 20, 30]
@@ -82,9 +83,11 @@ def test_grid_line_comparison():
     assert not grid_line_3 == grid_line_2
     assert not grid_line_1 == 1
 
+
 def test_invalid_grid_line():
     with pytest.raises(ValueError):
         GridLine(from_bus='bus_0', to_bus='bus_0', admittance=20)
+
 
 if __name__ == '__main__':
     test_simulation_series = TestSimulationTimeSeries()

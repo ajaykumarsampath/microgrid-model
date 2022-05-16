@@ -12,6 +12,7 @@ def generate_mock_generator_config(name: str, bus_id: str):
         name, initial_timestamp=10, data_loader_data=data_loader_data, bus_id=BUS_ID(bus_id))
     return MockGeneratorConfig(config_data)
 
+
 class TestMicrogridModel:
     def test_component_addition(self):
         microgrid_model_data = MicrogridModelDataLoader(name='mock_mg')
@@ -19,7 +20,6 @@ class TestMicrogridModel:
         expected_generator_name = ['mock_generator', 'mock_generator_1',
                                    'mock_generator_2']
         expected_bus_id = ['bus_0', 'bus_1', 'bus_2', 'bus_0']
-        expected_demand_names = ['mock_unit']
 
         data = ComponentSimulationData('mock_unit', values={'power': 1})
         mock_data_loader_data = MockComponentDataLoaderData(data=data)
@@ -31,7 +31,6 @@ class TestMicrogridModel:
         mock_unit_config = MockUnitConfig(config)
 
         microgrid_model_data.add_demand_unit(mock_unit_config)
-
 
         mock_generator_configs = []
         for name, bus_id in zip(expected_generator_name, expected_bus_id):

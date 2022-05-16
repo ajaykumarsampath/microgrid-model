@@ -14,7 +14,6 @@ class TestSamplePointsToPowerTable:
         assert sample_point_table.maximum() == power_values[-1]
         assert sample_point_table.minimum() == power_values[0]
 
-
     def test_unequal_sample_point_to_table(self):
         points = list(range(0, 5))
         power_values = list(range(0, 50))
@@ -39,7 +38,7 @@ class TestUnitDataLoader:
 
         assert generator_loader.droop_gain == 0
         assert generator_loader.power_bounds == power_bounds
-        assert generator_loader.grid_forming_unit_flag == False
+        assert not generator_loader.grid_forming_unit_flag
 
     def test_grid_forming_data_loader(self):
         power_bounds = Bounds(0, 10)
@@ -50,4 +49,4 @@ class TestUnitDataLoader:
 
         assert generator_loader.droop_gain == 1
         assert generator_loader.power_bounds == power_bounds
-        assert generator_loader.grid_forming_unit_flag == True
+        assert generator_loader.grid_forming_unit_flag

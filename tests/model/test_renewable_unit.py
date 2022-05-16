@@ -42,7 +42,6 @@ class TestRenewableUnit(TestCase):
 
         assert pv_model.current_power == power_setpoint
 
-
     def test_current_power_available_power(self):
         initial_timestamp = 1639396720
         available_power = 5
