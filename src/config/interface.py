@@ -47,10 +47,11 @@ class IGridNetworkConfig:
         return self.config_data.component_type
 
     def create_grid_network(self) -> IGridNetwork:
-       raise NotImplementedError
+        raise NotImplementedError
 
     def create_data_loader(self):
         raise NotImplementedError
+
 
 class IGeneratorComponentConfig(IUnitConfig):
     def __init__(self, config_data: IGeneratorConfigData):
@@ -67,24 +68,9 @@ class IGeneratorComponentConfig(IUnitConfig):
     def create_data_loader(self) -> IGeneratorDataLoader:
         raise NotImplementedError
 
+
 Reference = str
 
-"""
-from importlib import import_module
-
-
-    def import_class(path):
-        package, klass = path.rsplit('.', 1)
-        module = import_module(package)
-        return getattr(module, klass)
-    
-    
-    def import_instance(path):
-        package, class_name = path.rsplit('.', 1)
-        module = import_module(package)
-        klass = getattr(module, class_name)
-    return klass()
-"""
 
 class ClassImportModuler:
     def __init__(self, module: str, value: str):
@@ -93,10 +79,10 @@ class ClassImportModuler:
 
     def create_class(self) -> Any:
         try:
-           import importlib
-           module = importlib.import_module(self.module)
-           class_ = getattr(module, self.value)
-           return class_
+            import importlib
+            module = importlib.import_module(self.module)
+            class_ = getattr(module, self.value)
+            return class_
         except ImportError as e:
             raise WrongComponentConfigImporter(f'config error {e}')
 
@@ -119,7 +105,7 @@ class ComponentConfigRegistryData:
     config_class_module: ClassImportModuler
     config_data_module: ClassImportModuler
 
-    def create_config_class(self, dict_: dict) -> Any: # IUnitConfig:
+    def create_config_class(self, dict_: dict) -> Any:
         try:
             config_data_type = self.config_data_module.create_class()
             config_class_type = self.config_class_module.create_class()
@@ -138,8 +124,10 @@ class ComponentConfigRegistryData:
 class UnknownComponentConfigType(Exception):
     pass
 
+
 class WrongComponentConfigData(Exception):
     pass
+
 
 class WrongComponentConfigImporter(Exception):
     pass

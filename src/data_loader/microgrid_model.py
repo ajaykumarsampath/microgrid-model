@@ -14,16 +14,16 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class MicrogridModelDataReference:
-    generator_config_reference: List[Reference] = field(default_factory= lambda : [])
-    load_config_reference: List[Reference] = field(default_factory= lambda : [])
-    grid_config_reference: List[Reference] = field(default_factory=lambda : [])
+    generator_config_reference: List[Reference] = field(default_factory=lambda: [])
+    load_config_reference: List[Reference] = field(default_factory=lambda: [])
+    grid_config_reference: List[Reference] = field(default_factory=lambda: [])
 
 
 class MicrogridModelDataLoader:
     def __init__(self, name: str):
         self._name = name
-        self._generators:List[IGeneratorComponent] = []
-        self._loads:List[IComponent] = []
+        self._generators: List[IGeneratorComponent] = []
+        self._loads: List[IComponent] = []
         self._grid_model: Optional[IGridNetwork] = None
         self._generator_bus_ids: List[BUS_ID] = []
         self._load_bus_ids: List[BUS_ID] = []
@@ -33,7 +33,6 @@ class MicrogridModelDataLoader:
         self._renewable_unit_index: List[int] = []
         self._microgrid_config_reference: MicrogridModelDataReference = \
             MicrogridModelDataReference()
-
 
     def microgrid_model_data(self):
         return MicrogridModelData(
@@ -46,7 +45,7 @@ class MicrogridModelDataLoader:
         )
 
     def add_demand_unit(self, unit_config: IUnitConfig,
-                        config_reference: Optional[Reference]=None):
+                        config_reference: Optional[Reference] = None):
         bus_id = unit_config.bus_id
         current_unit_name = [id for id, bus_id in self._unit_bus_mapper]
         if unit_config.name not in current_unit_name:
@@ -59,7 +58,7 @@ class MicrogridModelDataLoader:
             raise DuplicateUnitNameError(f'{unit_config.name} of the unit must be unique')
 
     def _add_unit(self, unit_config: IGeneratorComponentConfig,
-                  config_reference: Optional[Reference]=None):
+                  config_reference: Optional[Reference] = None):
         bus_id = unit_config.bus_id
         current_unit_name = [id for id, bus_id in self._unit_bus_mapper]
         if unit_config.name not in current_unit_name:
@@ -72,25 +71,25 @@ class MicrogridModelDataLoader:
             raise DuplicateUnitNameError(f'{unit_config.name} of the unit must be unique')
 
     def add_thermal_power_plant(self, unit_config: IGeneratorComponentConfig,
-                                config_reference: Optional[Reference]=None):
+                                config_reference: Optional[Reference] = None):
         current_number_unit = len(self._generators)
         self._add_unit(unit_config, config_reference)
         self._thermal_generator_index.append(current_number_unit)
 
     def add_storage_power_plant(self, unit_config: IGeneratorComponentConfig,
-                                config_reference: Optional[Reference]=None):
+                                config_reference: Optional[Reference] = None):
         current_number_unit = len(self._generators)
         self._add_unit(unit_config, config_reference)
         self._storage_power_plant_index.append(current_number_unit)
 
     def add_renewable_unit(self, unit_config: IGeneratorComponentConfig,
-                           config_reference: Optional[Reference]=None):
+                           config_reference: Optional[Reference] = None):
         current_number_unit = len(self._generators)
         self._add_unit(unit_config, config_reference)
         self._renewable_unit_index.append(current_number_unit)
 
     def add_grid_model(self, grid_config: IGridNetworkConfig,
-                       config_reference: Optional[Reference]=None):
+                       config_reference: Optional[Reference] = None):
         if self._grid_model is None:
             self._grid_model = grid_config.create_grid_network()
             self._microgrid_config_reference.generator_config_reference.append(config_reference)
@@ -134,7 +133,7 @@ class MicrogridModelDataLoader:
 
     def get_component_bus_id(self, generator_id: str):
         generator_name = [g.name for g in self._generators]
-        load_name = [l.name for l in self._loads]
+        load_name = [g.name for g in self._loads]
         try:
             if generator_id in generator_name:
                 return self._generator_bus_ids[generator_name.index(generator_id)]
