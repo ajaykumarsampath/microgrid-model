@@ -1,10 +1,6 @@
-from dataclasses import dataclass, asdict
-
 from config.microgrid import MicrogridModelConfigBuilder, MicrogridModelConfig
 from config.registry import default_component_registry
 import numpy as np
-
-from dacite import from_dict
 
 from data_loader.domain import SamplePointsToPowerTable
 from model.microgrid_model import MicrogridModel
@@ -28,6 +24,7 @@ def solar_data():
     }
     return data
 
+
 def wind_data():
     timestamps = np.arange(0, 100, 10).tolist()
     values = np.arange(0, 5, 1).tolist()
@@ -44,6 +41,7 @@ def wind_data():
                  }
             }
     return data
+
 
 def storage_data():
     data = {'name': 'battery', 'initial_timestamp': 0, 'bus_id': '2',
@@ -66,6 +64,7 @@ def load_data():
             }
     return data
 
+
 def thermal_data():
     data = {'name': 'thermal', 'initial_timestamp': 0, 'bus_id': '4',
             'data_loader_data':
@@ -76,21 +75,21 @@ def thermal_data():
 
 def grid_network_data():
     data = {'name': 'grid', 'initial_timestamp': 0,
-            'data_loader_data': {'grid_lines':
-                [{'from_bus': '1', 'to_bus': '2', 'admittance': 20, 'bounds':{'min': -1, 'max': 1}},
+            'data_loader_data': {
+                'grid_lines':
+                [{'from_bus': '1', 'to_bus': '2', 'admittance': 20, 'bounds': {'min': -1, 'max': 1}},
                  {'from_bus': '1', 'to_bus': '3', 'admittance': 20, 'bounds': {'min': -1, 'max': 1}},
                  {'from_bus': '2', 'to_bus': '3', 'admittance': 20, 'bounds': {'min': -1, 'max': 1}},
-                 {'from_bus': '4', 'to_bus': '3', 'admittance': 20, 'bounds': {'min': -1, 'max': 1}},
-                ]
+                 {'from_bus': '4', 'to_bus': '3', 'admittance': 20, 'bounds': {'min': -1, 'max': 1}}]
+                }
             }
-        }
     return data
+
 
 def mercury_model_config():
     registry = default_component_registry()
     builder = MicrogridModelConfigBuilder(registry)
     microgrid_config = MicrogridModelConfig('mercury', [], [], [], [], [])
-
 
     # add load
     microgrid_config = builder.add_unit_config_data(
@@ -127,6 +126,7 @@ def mercury_model_config():
 
     return microgrid_config
 
+
 def mercury_model():
     registry = default_component_registry()
     builder = MicrogridModelConfigBuilder(registry)
@@ -141,4 +141,3 @@ def mercury_model():
 
 if __name__ == '__main__':
     mercury_config = mercury_model_config()
-
