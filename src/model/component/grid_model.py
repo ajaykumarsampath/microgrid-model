@@ -18,7 +18,7 @@ class GridNetwork(IGridNetwork):
         self._data_loader = data_loader
         self._bus_power = np.array([])
 
-        if data_loader.check_grid_network_connected() == False:
+        if not data_loader.check_grid_network_connected():
             logger.warning("grid network is not connected and therefore cannot form")
             self._validate_flag = False
         else:
@@ -58,7 +58,7 @@ class GridNetwork(IGridNetwork):
     def buses_power(self):
         return self._bus_power
 
-    def set_bus_power(self, bus_id:BUS_ID, power: float):
+    def set_bus_power(self, bus_id: BUS_ID, power: float):
         try:
             self._bus_power[self.buses.index(bus_id)] = power
         except Exception:
@@ -75,8 +75,8 @@ class GridNetwork(IGridNetwork):
         return list(set(neighbour_ids))
 
     def get_bus_grid_line(self, bus_id: BUS_ID) -> List[GridLine]:
-        return [ line for line in self.grid_lines if bus_id == line.to_bus or
-                 bus_id == line.from_bus]
+        return [line for line in self.grid_lines
+                if bus_id == line.to_bus or bus_id == line.from_bus]
 
     def _calculate_admittance_matrix(self):
         admittance_matrix = np.zeros((len(self.buses), len(self.buses)))
@@ -91,8 +91,7 @@ class GridNetwork(IGridNetwork):
                     admittance_matrix[count, to_bus_index] = -line.admittance
 
         admittance_matrix = admittance_matrix + \
-                            np.diag([-admittance_matrix[i, :].sum()
-                                     for i in range(0, len(self.buses))])
+            np.diag([-admittance_matrix[i, :].sum() for i in range(0, len(self.buses))])
         return admittance_matrix
 
     def calculate_line_power(self):
@@ -100,19 +99,17 @@ class GridNetwork(IGridNetwork):
         if len(self.grid_lines) > 0:
             line_power = np.zeros(len(self.grid_lines))
 
-            phase_angle = self._dc_power_flow_matrix@power.T
+            phase_angle = self._dc_power_flow_matrix @ power.T
             phase_angle[0] = 0
 
             for count, line in enumerate(self.grid_lines):
                 to_bus_index = self.buses.index(line.to_bus)
                 from_bus_index = self.buses.index(line.from_bus)
-                line_power[count] = line.admittance*(phase_angle[from_bus_index] -
-                                                          phase_angle[to_bus_index])
-
+                line_power[count] = line.admittance * \
+                    (phase_angle[from_bus_index] - phase_angle[to_bus_index])
             return line_power
         else:
             return np.array([])
-
 
     def _calculate_dc_power_flow_matrix(self):
         num_buses = len(self.buses)
@@ -125,7 +122,6 @@ class GridNetwork(IGridNetwork):
             return dc_power_flow
         else:
             return np.array([])
-
 
     def step(self, timestamp: int):
         self._check_step_timestamp(timestamp)

@@ -1,8 +1,9 @@
 numpy
-oct2py
+scipy
 pandas
 matplotlib
 pytest
 coverage
 dacite
 pydantic
+flake8

@@ -7,6 +7,7 @@ from shared.timeseries import SimulationTimeseriesError
 from utils.storage import HistoricalData
 from tests.utils.test_mocks import MockGeneratorUnit, MockComponentDataLoader, MockComponent
 
+
 def test_wrong_historical_data():
     wrong_timestamp = list(range(0, 10))
     wrong_timestamp[-1] = 8
@@ -21,6 +22,7 @@ def test_wrong_historical_data():
     with pytest.raises(SimulationTimeseriesError):
         HistoricalData(timestamps=wrong_timestamp, data=data[0: 5])
 
+
 def test_historical_data():
     timestamp = list(range(0, 10))
     data = [ComponentSimulationData(name='a', values={'power': t}) for t in timestamp]
@@ -32,8 +34,9 @@ def test_historical_data():
 
     historical_data.add_data(timestamp=12, data=current_data)
 
-    assert len(historical_data.timestamps) ==  11
+    assert len(historical_data.timestamps) == 11
     assert len(historical_data.data) == 11
+
 
 def test_component_interface():
     initial_timestamp = 10
@@ -51,6 +54,7 @@ def test_component_interface():
 
     assert data.values == mock_data.values
 
+
 def test_wrong_simulation_timestamp():
     initial_timestamp = 10
 
@@ -67,7 +71,7 @@ def test_wrong_simulation_timestamp():
 
 class TestPowerUnit:
     def test_power_set_points(self):
-        data_loader =  IGeneratorDataLoader(initial_timestamp=10, power_bounds=Bounds(0, 10))
+        data_loader = IGeneratorDataLoader(initial_timestamp=10, power_bounds=Bounds(0, 10))
         mock_power_unit = MockGeneratorUnit(name='mock', data_loader=data_loader)
 
         mock_power_unit.power_setpoint = 4
@@ -86,7 +90,7 @@ class TestPowerUnit:
         mock_power_unit = MockGeneratorUnit(name='mock', data_loader=data_loader)
 
         assert mock_power_unit.droop_gain == droop_gain
-        assert mock_power_unit.droop_gain_inverse() == 1/droop_gain
+        assert mock_power_unit.droop_gain_inverse() == 1 / droop_gain
 
     def test_zero_droop_value(self):
         droop_gain = 0

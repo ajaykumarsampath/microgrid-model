@@ -11,7 +11,7 @@ class SamplePointsToPowerTable:
         self._points = points
         self._power_values = power_values
         try:
-            self.point_to_power_function = interp1d(x=self._points, y = self._power_values)
+            self.point_to_power_function = interp1d(x=self._points, y=self._power_values)
         except Exception:
             raise ValueError("Input data is not of the same length ")
 
@@ -27,14 +27,18 @@ class SamplePointsToPowerTable:
         except ValueError:
             raise ValueError("point is not part of the table and cannot be extrapolated")
 
+
 class DuplicateUnitNameError(ValueError):
     pass
+
 
 class UnitDataLoaderError(Exception):
     pass
 
+
 class DuplicateGridModelError(ValueError):
     pass
+
 
 class UnknownComponentQueryError(ValueError):
     pass

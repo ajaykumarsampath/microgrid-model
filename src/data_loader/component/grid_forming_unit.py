@@ -1,5 +1,5 @@
 from data_loader.domain import UnitDataLoaderError
-from data_loader.interface import IGeneratorDataLoader, IThermalGeneratorDataLoader, IStoragePowerPlantDataLoader
+from data_loader.interface import IThermalGeneratorDataLoader, IStoragePowerPlantDataLoader
 from shared.component import Bounds
 import logging
 
@@ -15,10 +15,11 @@ class GridFormingUnitDataLoader(IGeneratorDataLoader):
             super().__init__(initial_timestamp, power_bounds, droop_gain, grid_forming_unit_flag)
 """
 
+
 class StoragePowerPlantDataLoader(IStoragePowerPlantDataLoader):
     def __init__(self, initial_timestamp: int, power_bounds: Bounds, droop_gain: float,
-                 energy_bounds:Bounds, initial_energy: float = 0, charge_efficiency: float = 1,
-                 discharge_efficiency: float=1):
+                 energy_bounds: Bounds, initial_energy: float = 0, charge_efficiency: float = 1,
+                 discharge_efficiency: float = 1):
         self._energy_bounds = energy_bounds
 
         if droop_gain < 0:
@@ -30,7 +31,8 @@ class StoragePowerPlantDataLoader(IStoragePowerPlantDataLoader):
         if self.energy_bounds.min <= initial_energy <= self.energy_bounds.max:
             self._initial_energy = initial_energy
         else:
-            raise UnitDataLoaderError('storage: initial energy is not contained in the energy bounds')
+            raise UnitDataLoaderError('storage: initial energy is not '
+                                      'contained in the energy bounds')
 
         if 0 < charge_efficiency <= 1:
             self._charge_efficiency = charge_efficiency
@@ -64,6 +66,7 @@ class StoragePowerPlantDataLoader(IStoragePowerPlantDataLoader):
             self._initial_energy = value
         else:
             logger.warning("current value is not energy bounds")
+
 
 class ThermalGeneratorDataLoader(IThermalGeneratorDataLoader):
     def __init__(self, initial_timestamp, power_bounds: Bounds, droop_gain: float,

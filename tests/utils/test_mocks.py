@@ -13,8 +13,9 @@ from model.generator_interface import IGeneratorComponent
 from model.component.renewable_unit import RenewablePowerUnit
 from config.interface import IUnitConfig, IGeneratorComponentConfig
 
-from shared.data_loader import IComponentDataLoader, IUnitConfigData, IComponentDataLoaderData, IGeneratorConfigData
-from shared.component import ComponentSimulationData, ComponentType, BUS_ID, Bounds
+from shared.data_loader import IComponentDataLoader, IUnitConfigData, IComponentDataLoaderData,\
+    IGeneratorConfigData
+from shared.component import ComponentSimulationData, BUS_ID, Bounds
 from shared.timeseries import SimulationTimeSeries
 from shared.storage import IComponentDataStorage
 
@@ -22,45 +23,49 @@ from utils.storage import HistoricalData
 
 
 class MockDataStorage(IComponentDataStorage):
-    def __init__(self, data: HistoricalData=HistoricalData([], [])):
+    def __init__(self, data: HistoricalData = HistoricalData([], [])):
         self._data = data
 
     def add_simulation_data(self, current_timestamp: int, data: ComponentSimulationData):
         self._data.add_data(current_timestamp, data)
 
-    def get_historical_data(self, unit_id: str, since: int, until: int=None) -> List[ComponentSimulationData]:
+    def get_historical_data(self, unit_id: str, since: int, until: int = None)\
+            -> List[ComponentSimulationData]:
         return [d for t, d in zip(self._data.timestamps, self._data.data) if t > since]
 
 
-def generate_solar_irradiance_days(days:int=14, scale:int=100, resolution:int=900) -> np.ndarray:
-    values = np.zeros((days, int(24*3600/resolution)))
+def generate_solar_irradiance_days(days: int = 14, scale: int = 100, resolution: int = 900)\
+        -> np.ndarray:
+    values = np.zeros((days, int(24 * 3600 / resolution)))
     r = default_rng()
-    samples = int(24*3600/resolution)
+    samples = int(24 * 3600 / resolution)
 
     for day in range(0, days):
-        start_sun_rise = int(samples/8) + r.integers(int(samples/4))
-        end_sun_rise = int(samples/2) + r.integers(int(samples/3))
-        day_scale = scale*r.random(1)
+        start_sun_rise = int(samples / 8) + r.integers(int(samples / 4))
+        end_sun_rise = int(samples / 2) + r.integers(int(samples / 3))
+        day_scale = scale * r.random(1)
         per_day_values = np.zeros(samples)
         per_day_values[start_sun_rise:end_sun_rise] = \
-            day_scale * np.sin([i*np.pi/(end_sun_rise - start_sun_rise)
-                            for i in range(0, end_sun_rise - start_sun_rise )])
+            day_scale * np.sin([i * np.pi / (end_sun_rise - start_sun_rise)
+                                for i in range(0, end_sun_rise - start_sun_rise)])
         values[day, :] = per_day_values
 
     return values
 
 
-def generate_wind_speed_days(days:int=14, scale:int=100, resolution:int=900) -> np.ndarray:
-    values = np.zeros((days, int(24*3600/resolution)))
+def generate_wind_speed_days(days: int = 14, scale: int = 100, resolution: int = 900) \
+        -> np.ndarray:
+    values = np.zeros((days, int(24 * 3600 / resolution)))
     r = default_rng()
-    samples = int(24*3600/resolution)
+    samples = int(24 * 3600 / resolution)
 
     for day in range(0, days):
-        day_scale = scale*r.random(1)
-        per_day_values = day_scale * np.sin(r.uniform(size=samples, low= -np.pi,high=np.pi))
+        day_scale = scale * r.random(1)
+        per_day_values = day_scale * np.sin(r.uniform(size=samples, low=-np.pi, high=np.pi))
         values[day, :] = per_day_values
 
     return values
+
 
 def create_pv_plant(initial_timestamp: int = 1639396720, past_days: int = 4, future_days: int = 10):
     power = [p if p <= 1000 else 1000 for p in list(range(0, 1500, 100))]
@@ -71,8 +76,8 @@ def create_pv_plant(initial_timestamp: int = 1639396720, past_days: int = 4, fut
     irradiance_values = generate_solar_irradiance_days(days=14, resolution=900, scale=100)
     irradiance_values = irradiance_values.reshape((1, irradiance_values.size))[0]
     irradiance_time_series = SimulationTimeSeries(
-        timestamps=list(range(initial_timestamp - past_days*24*3600,
-                              initial_timestamp + future_days*24*3600, 900)),
+        timestamps=list(range(initial_timestamp - past_days * 24 * 3600,
+                              initial_timestamp + future_days * 24 * 3600, 900)),
         values=irradiance_values
     )
     pv_data_loader = RenewableUnitDataLoader(initial_timestamp=initial_timestamp,
@@ -82,7 +87,6 @@ def create_pv_plant(initial_timestamp: int = 1639396720, past_days: int = 4, fut
     pv_plant = RenewablePowerUnit(name='pv_model', data_loader=pv_data_loader)
 
     return pv_plant
-
 
 
 class MockComponentDataLoader(IComponentDataLoader):
@@ -111,6 +115,7 @@ class MockGeneratorUnit(IGeneratorComponent):
     def step(self, timestamp: int):
         self._check_step_timestamp(timestamp)
         self._current_power = self.power_setpoint
+
 
 class MockGridNetwork(IGridNetwork):
     def __init__(self, name: str, data_loader: MockComponentDataLoader,

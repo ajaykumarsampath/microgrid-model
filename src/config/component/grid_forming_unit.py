@@ -2,9 +2,10 @@ from dataclasses import dataclass
 
 from data_loader.component.grid_forming_unit import StoragePowerPlantDataLoader, \
     ThermalGeneratorDataLoader
-from shared.component import ComponentType,  Bounds
+from shared.component import ComponentType, Bounds
 from model.component.grid_forming_unit import StoragePowerPlant, ThermalGenerator
-from config.interface import IGeneratorComponentConfig, ComponentConfigRegistryData, ClassImportModuler
+from config.interface import IGeneratorComponentConfig, ComponentConfigRegistryData, \
+    ClassImportModuler
 from shared.data_loader import IGeneratorConfigData, IComponentDataLoaderData
 
 
@@ -16,6 +17,7 @@ class StoragePowerPlantDataLoaderData(IComponentDataLoaderData):
     initial_energy: float = 0
     charge_efficiency: float = 1
     discharge_efficiency: float = 1
+
 
 @dataclass
 class StoragePowerPlantConfigData(IGeneratorConfigData):
@@ -51,6 +53,7 @@ class ThermalGeneratorDataLoaderData(IComponentDataLoaderData):
     droop_gain: float
     switch_state: bool = False
 
+
 @dataclass
 class ThermalGeneratorConfigData(IGeneratorConfigData):
     data_loader_data: ThermalGeneratorDataLoaderData
@@ -71,7 +74,8 @@ class ThermalGeneratorConfig(IGeneratorComponentConfig):
     def create_data_loader(self) -> ThermalGeneratorDataLoader:
         return ThermalGeneratorDataLoader(
             self.config_data.initial_timestamp, self.config_data.data_loader_data.power_bounds,
-            self.config_data.data_loader_data.droop_gain, self.config_data.data_loader_data.switch_state
+            self.config_data.data_loader_data.droop_gain,
+            self.config_data.data_loader_data.switch_state
         )
 
 

@@ -1,7 +1,8 @@
 import pytest
 
 from data_loader.domain import UnitDataLoaderError
-from data_loader.component.grid_forming_unit import StoragePowerPlantDataLoader, ThermalGeneratorDataLoader
+from data_loader.component.grid_forming_unit import StoragePowerPlantDataLoader,\
+    ThermalGeneratorDataLoader
 from shared.component import Bounds
 
 
@@ -23,7 +24,7 @@ class TestStoragePowerPlantDataLoader:
         assert storage_data_loader.initial_energy == initial_energy
         assert storage_data_loader.power_bounds == power_bounds
         assert storage_data_loader.droop_gain == droop_gain
-        assert storage_data_loader.grid_forming_unit_flag == True
+        assert storage_data_loader.grid_forming_unit_flag
 
     @pytest.mark.parametrize('initial_energy, charge_efficiency, discharge_efficiency',
                              modelling_error_data_scenario)
@@ -55,5 +56,5 @@ class TestThermalGeneratorDataLoader:
 
         assert thermal_data_loader.power_bounds == power_bounds
         assert thermal_data_loader.droop_gain == droop_gain
-        assert thermal_data_loader.grid_forming_unit_flag == True
-        assert thermal_data_loader.switch_state == True
+        assert thermal_data_loader.grid_forming_unit_flag
+        assert thermal_data_loader.switch_state

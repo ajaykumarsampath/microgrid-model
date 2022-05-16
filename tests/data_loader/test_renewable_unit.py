@@ -16,7 +16,7 @@ class TestRenewableUnitDataLoader:
             points=points, power_values=power_values
         )
         renewable_data_loader = RenewableUnitDataLoader(
-            initial_timestamp= 0, simulation_time_series=simulation_time_series,
+            initial_timestamp=0, simulation_time_series=simulation_time_series,
             sample_point_to_power=sample_point_to_power
         )
 
@@ -39,7 +39,7 @@ class TestRenewableUnitDataLoader:
             sample_point_to_power=sample_point_to_power
         )
 
-        data = renewable_data_loader.get_data(1000)
+        renewable_data_loader.get_data(1000)
         assert caplog.records[0].message == 'cannot get data at the timestamp'
 
     def test_demand_modelling_error_initial_timestamp(self):
@@ -54,6 +54,6 @@ class TestRenewableUnitDataLoader:
 
         with pytest.raises(UnitDataLoaderError):
             RenewableUnitDataLoader(
-            initial_timestamp=600, simulation_time_series=simulation_time_series,
-            sample_point_to_power=sample_point_to_power
-        )
+                initial_timestamp=600, simulation_time_series=simulation_time_series,
+                sample_point_to_power=sample_point_to_power
+            )

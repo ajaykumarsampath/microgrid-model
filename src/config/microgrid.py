@@ -11,8 +11,10 @@ from config.component.load_demand import LoadDemandConfig
 
 logger = logging.getLogger(__name__)
 
+
 class UnitConfigurationNameBusMapperError(ValueError):
     pass
+
 
 @dataclass
 class MicrogridModelConfig:
@@ -22,7 +24,6 @@ class MicrogridModelConfig:
     renewable_config: List[RenewableUnitConfig]
     load_config: List[LoadDemandConfig]
     grid_network_config: List[IGridNetworkConfig]
-
 
 
 class MicrogridModelConfigBuilder:
@@ -84,7 +85,7 @@ class MicrogridModelConfigBuilder:
         references = data_loader.get_generator_references()
 
         for reference, bus_id, generator in zip(references, microgrid_data.generator_bus_ids,
-                                                 microgrid_data.generators):
+                                                microgrid_data.generators):
             data_ = {'name': generator.name, 'initial_timestamp': generator.get_initial_timestamp(),
                      'bus_id': bus_id, 'data_loader': generator.data_loader}
             microgrid_config = self.add_unit_config_data(microgrid_config, reference, data_)
@@ -92,7 +93,7 @@ class MicrogridModelConfigBuilder:
         references = data_loader.get_load_references()
 
         for reference, bus_id, load in zip(references, microgrid_data.load_bus_ids,
-                                                 microgrid_data.loads):
+                                           microgrid_data.loads):
             data_ = {'name': load.name, 'initial_timestamp': load.get_initial_timestamp(),
                      'bus_id': bus_id, 'data_loader': load.data_loader}
             microgrid_config = self.add_unit_config_data(microgrid_config, reference, data_)

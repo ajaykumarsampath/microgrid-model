@@ -12,6 +12,7 @@ class MockLoadDemandDataLoader(ILoadDemandDataLoader):
     def get_data(self, timestamp: int):
         return self._value
 
+
 class TestLoadDemand(TestCase):
     def test_step_simulation_timestamp(self):
         initial_timestamp = 1639396720

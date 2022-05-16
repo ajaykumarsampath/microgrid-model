@@ -8,9 +8,8 @@ from model.component_interface import IComponent, IGridNetwork
 from model.generator_interface import IGeneratorComponent
 from shared.component import BUS_ID
 
-# GRID_LINE = Tuple[BUS_ID, BUS_ID, float]
 UNIT_BUS_ID_MAP = [str, BUS_ID]
-SEC_TO_HOUR_FACTOR = 1/3600
+SEC_TO_HOUR_FACTOR = 1 / 3600
 
 
 @dataclass(frozen=True)

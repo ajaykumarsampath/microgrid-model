@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from shared.component import BUS_ID, ComponentType
 from shared.timeseries import Timestamp
@@ -9,7 +9,7 @@ class IComponentDataLoader:
         self._initial_timestamp = initial_timestamp
 
     @property
-    def initial_timestamp(self)  -> Timestamp:
+    def initial_timestamp(self) -> Timestamp:
         return self._initial_timestamp
 
 
@@ -28,9 +28,11 @@ class IUnitConfigData:
     def __post_init__(self):
         self.component_type: ComponentType = ComponentType.Unknown
 
+
 @dataclass
 class IGeneratorConfigData(IUnitConfigData):
     pass
+
 
 @dataclass
 class IGridNetworkConfigData:

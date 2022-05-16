@@ -19,11 +19,13 @@ class MemoryDataStorage(IComponentDataStorage):
     def current_timestamp(self):
         return self._current_timestamp
 
-    def add_simulation_data(self, current_timestamp, data: ComponentSimulationData):
+    def add_simulation_data(
+            self, current_timestamp, data: ComponentSimulationData):
         self._current_timestamp = current_timestamp
         self.historical_data.timestamps.append(current_timestamp)
         self.historical_data.data.append(data)
 
-    def get_historical_data(self, since: int, until:int=None, unit_id: str=None) \
+    def get_historical_data(self, since: int, until: int = None,
+                            unit_id: str = None) \
             -> List[ComponentSimulationData]:
         pass
