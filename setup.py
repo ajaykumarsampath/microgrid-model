@@ -6,6 +6,9 @@ setup(
     description='Package to build microgrid model',
     package_dir={"": "src"},
     packages=find_packages(where="src"),
+    author='Ajay Kumar',
+    author_email='ajaykumarsampath@gmail.com',
+    url="https://github.com/ajaykumarsampath/microgrid-model",
     install_requires=[
         'numpy',
         'scipy',
@@ -14,8 +17,15 @@ setup(
         'dacite',
         'pydantic'
     ],
+    setup_requires=['flake8'],
     extras_require={  
         "dev": ["check-manifest"],
-        "test": ["coverage"],
+        "test": [
+            "pytest",
+            "numpy",
+            "scipy",
+            "coverage",
+            "pytest-cov"
+        ],
     },
 )
