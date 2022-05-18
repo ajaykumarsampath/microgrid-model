@@ -8,7 +8,10 @@ setup(
     packages=find_packages(where="src"),
     author='Ajay Kumar',
     author_email='ajaykumarsampath@gmail.com',
+    license='MIT',
+    keywords='microgird model, energy management system',
     url="https://github.com/ajaykumarsampath/microgrid-model",
+    python_requires=">=3.7",
     install_requires=[
         'numpy',
         'scipy',

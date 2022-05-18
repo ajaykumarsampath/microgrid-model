@@ -1,0 +1,5 @@
+include *.toml
+include *.txt
+include tox.ini
+recursive-include tests *.py
+recursive-include example *.py
