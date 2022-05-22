@@ -4,22 +4,20 @@ from typing import List
 import numpy as np
 from numpy.random._generator import default_rng
 
-from data_loader.domain import SamplePointsToPowerTable
-from data_loader.interface import IGeneratorDataLoader
-from data_loader.component.renewable_unit import RenewableUnitDataLoader
+from microgrid.config.interface import IUnitConfig, IGeneratorComponentConfig
+from microgrid.data_loader.component.renewable_unit import RenewableUnitDataLoader
+from microgrid.data_loader.domain import SamplePointsToPowerTable
+from microgrid.data_loader.interface import IGeneratorDataLoader
+from microgrid.model.component.renewable_unit import RenewablePowerUnit
 
-from model.component_interface import IComponent, IGridNetwork
-from model.generator_interface import IGeneratorComponent
-from model.component.renewable_unit import RenewablePowerUnit
-from config.interface import IUnitConfig, IGeneratorComponentConfig
-
-from shared.data_loader import IComponentDataLoader, IUnitConfigData, IComponentDataLoaderData,\
+from microgrid.model.component_interface import IComponent, IGridNetwork
+from microgrid.model.generator_interface import IGeneratorComponent
+from microgrid.shared.component import ComponentSimulationData, BUS_ID, Bounds
+from microgrid.shared.data_loader import IComponentDataLoader, IComponentDataLoaderData, IUnitConfigData, \
     IGeneratorConfigData
-from shared.component import ComponentSimulationData, BUS_ID, Bounds
-from shared.timeseries import SimulationTimeSeries
-from shared.storage import IComponentDataStorage
-
-from utils.storage import HistoricalData
+from microgrid.shared.timeseries import SimulationTimeSeries
+from microgrid.shared.storage import IComponentDataStorage
+from microgrid.utils.memory_storage import HistoricalData
 
 
 class MockDataStorage(IComponentDataStorage):

@@ -1,10 +1,9 @@
 from unittest import TestCase
 
-from data_loader.interface import IRenewableUnitDataLoader
-from model.exception import StepPreviousTimestamp
-from shared.component import Bounds
-
-from model.component.renewable_unit import RenewablePowerUnit
+from microgrid.data_loader.interface import IRenewableUnitDataLoader
+from microgrid.model.component.renewable_unit import RenewablePowerUnit
+from microgrid.model.exception import StepPreviousTimestamp
+from microgrid.shared.component import Bounds
 from tests.utils.test_mocks import MockDataStorage
 
 

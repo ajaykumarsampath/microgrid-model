@@ -1,5 +1,5 @@
-from data_loader.microgrid_model import MicrogridModelDataLoader
-from shared.component import ComponentSimulationData, Bounds, BUS_ID
+from microgrid.data_loader.microgrid_model import MicrogridModelDataLoader
+from microgrid.shared.component import ComponentSimulationData, Bounds, BUS_ID
 from tests.utils.test_mocks import MockUnitConfig, MockGeneratorConfig, \
     MockUnitConfigData, MockComponentDataLoaderData, MockGeneratorDataLoaderData, \
     MockGeneratorConfigData

@@ -2,12 +2,12 @@ import time
 
 import numpy as np
 
-from model.exception import UnknownComponentError
-from model.component.grid_model import GridNetwork
-from data_loader.component.grid_model import GridNetworkDataLoader, SingleBusGridNetworkDataLoader
+from microgrid.model.component.grid_model import GridNetwork
+from microgrid.data_loader.component.grid_model import GridNetworkDataLoader, SingleBusGridNetworkDataLoader
 import pytest
 
-from shared.component import GridLine
+from microgrid.model.exception import UnknownComponentError
+from microgrid.shared.component import GridLine
 
 
 class TestGridModel:

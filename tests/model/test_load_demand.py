@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from data_loader.interface import ILoadDemandDataLoader
-from model.component.load_demand import LoadDemand
+from microgrid.data_loader.interface import ILoadDemandDataLoader
+from microgrid.model.component.load_demand import LoadDemand
 
 
 class MockLoadDemandDataLoader(ILoadDemandDataLoader):
