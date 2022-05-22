@@ -1,5 +1,5 @@
 from microgrid.data_loader.interface import IRenewableUnitDataLoader
-from microgrid.shared.component import ComponentSimulationData
+from microgrid.shared.component import ComponentSimulationData, ComponentType
 from microgrid.model.generator_interface import IGeneratorComponent
 import logging
 
@@ -12,6 +12,7 @@ class RenewablePowerUnit(IGeneratorComponent):
         super().__init__(name, data_loader)
         self._data_loader = data_loader
         self._available_power = 0
+        self._component_type = ComponentType.Renewable
 
     def calculate_available_power(self, timestamp: int):
         return self._data_loader.get_data(timestamp)

@@ -3,7 +3,7 @@ from typing import List
 
 from microgrid.data_loader.interface import IGridNetworkDataLoader
 from microgrid.model.exception import UnknownComponentError, SimulationGridError
-from microgrid.shared.component import ComponentSimulationData, GridLine, BUS_ID
+from microgrid.shared.component import ComponentSimulationData, GridLine, BUS_ID, ComponentType
 import numpy as np
 
 from microgrid.model.component_interface import IGridNetwork
@@ -17,6 +17,7 @@ class GridNetwork(IGridNetwork):
         self._current_power = np.mat([])
         self._data_loader = data_loader
         self._bus_power = np.array([])
+        self._component_type = ComponentType.Grid
 
         if not data_loader.check_grid_network_connected():
             logger.warning("grid network is not connected and therefore cannot form")

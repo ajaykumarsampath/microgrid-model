@@ -3,7 +3,7 @@ import logging
 from microgrid.data_loader.component.grid_forming_unit import StoragePowerPlantDataLoader, ThermalGeneratorDataLoader
 from microgrid.data_loader.interface import IGeneratorDataLoader
 from microgrid.model.domain import SEC_TO_HOUR_FACTOR
-from microgrid.shared.component import ComponentSimulationData
+from microgrid.shared.component import ComponentSimulationData, ComponentType
 from microgrid.model.generator_interface import IGeneratorComponent
 
 logger = logging.getLogger(__name__)
@@ -20,6 +20,7 @@ class StoragePowerPlant(GridFormingPowerUnit):
         super().__init__(name, data_loader)
         self._data_loader = data_loader
         self._current_energy = self._data_loader.initial_energy
+        self._component_type = ComponentType.Storage
 
     @property
     def charge_efficiency(self):
@@ -69,6 +70,7 @@ class ThermalGenerator(GridFormingPowerUnit):
         self._data_loader = data_loader
         self._switch_state = data_loader.switch_state
         self._power_setpoint = 0
+        self._component_type = ComponentType.Thermal
 
     @property
     def switch_state(self):

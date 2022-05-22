@@ -1,7 +1,7 @@
 import logging
 
 from microgrid.data_loader.interface import ILoadDemandDataLoader
-from microgrid.shared.component import ComponentSimulationData
+from microgrid.shared.component import ComponentSimulationData, ComponentType
 from microgrid.model.component_interface import IComponent
 
 logger = logging.getLogger('__name__')
@@ -12,6 +12,7 @@ class LoadDemand(IComponent):
 
         super().__init__(name, data_loader)
         self._data_loader = data_loader
+        self._component_type = ComponentType.Load
 
     def current_simulation_data(self) -> ComponentSimulationData:
         values = {'current_power': self._current_power}
