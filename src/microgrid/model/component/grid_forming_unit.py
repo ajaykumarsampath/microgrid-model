@@ -1,9 +1,11 @@
 import logging
 
-from microgrid.data_loader.component.grid_forming_unit import StoragePowerPlantDataLoader, ThermalGeneratorDataLoader
+from microgrid.data_loader.component.grid_forming_unit import StoragePowerPlantDataLoader, \
+    ThermalGeneratorDataLoader
 from microgrid.data_loader.interface import IGeneratorDataLoader
 from microgrid.model.domain import SEC_TO_HOUR_FACTOR
-from microgrid.shared.component import ComponentSimulationData, ComponentType
+from microgrid.shared.component import ComponentSimulationData, ComponentType, ControlComponentData, \
+    ControlComponentParameters
 from microgrid.model.generator_interface import IGeneratorComponent
 
 logger = logging.getLogger(__name__)
@@ -33,6 +35,18 @@ class StoragePowerPlant(GridFormingPowerUnit):
     @property
     def current_energy(self):
         return self._current_energy
+
+    @property
+    def control_component_data(self) -> ControlComponentData:
+        return ControlComponentData(
+            self._name, self._component_type, self._current_timestamp,
+            self._data_loader.power_bounds, energy_bound=self._data_loader.energy_bounds,
+            measurements={'energy': self._current_energy},
+            parameters=ControlComponentParameters(
+                self._data_loader._grid_forming_unit_flag, self._data_loader.droop_gain,
+                self._data_loader.charge_efficiency, self._data_loader.discharge_efficiency
+            )
+        )
 
     def step(self, timestamp: int):
         prev_timestamp = self.current_timestamp
@@ -64,7 +78,7 @@ class StoragePowerPlant(GridFormingPowerUnit):
 
 
 class ThermalGenerator(GridFormingPowerUnit):
-    def __init(self, name: str, data_loader: ThermalGeneratorDataLoader):
+    def __init__(self, name: str, data_loader: ThermalGeneratorDataLoader):
 
         super().__init__(name, data_loader)
         self._data_loader = data_loader
@@ -79,6 +93,17 @@ class ThermalGenerator(GridFormingPowerUnit):
     @property
     def power_setpoint(self):
         return self._power_setpoint
+
+    @property
+    def control_component_data(self) -> ControlComponentData:
+        return ControlComponentData(
+            self._name, self._component_type, self._current_timestamp,
+            self._data_loader.power_bounds,
+            measurements={'switch_state': self._switch_state},
+            parameters=ControlComponentParameters(
+                self._data_loader._grid_forming_unit_flag, self._data_loader.droop_gain
+            )
+        )
 
     @power_setpoint.setter
     def power_setpoint(self, value: float):

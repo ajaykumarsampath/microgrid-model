@@ -2,6 +2,7 @@ from unittest import TestCase
 
 from microgrid.data_loader.interface import ILoadDemandDataLoader
 from microgrid.model.component.load_demand import LoadDemand
+from microgrid.shared.component import ComponentType
 
 
 class MockLoadDemandDataLoader(ILoadDemandDataLoader):
@@ -17,15 +18,27 @@ class TestLoadDemand(TestCase):
     def test_step_simulation_timestamp(self):
         initial_timestamp = 1639396720
         value = -4
-        mock_renewable_loader = MockLoadDemandDataLoader(
+        mock_load_demand_loader = MockLoadDemandDataLoader(
             initial_timestamp=initial_timestamp, value=value)
 
-        load_model = LoadDemand('load_model', mock_renewable_loader)
+        load_model = LoadDemand('load_model', mock_load_demand_loader)
 
         load_model.step(initial_timestamp + 900)
 
         assert load_model.current_power == value
         assert load_model.current_timestamp == initial_timestamp + 900
+
+    def test_control_component_data(self):
+        initial_timestamp = 1639396720
+        value = -4
+        mock_renewable_loader = MockLoadDemandDataLoader(
+            initial_timestamp=initial_timestamp, value=value)
+
+        load_model = LoadDemand('load_model', mock_renewable_loader)
+
+        control_component_data = load_model.control_component_data
+        assert control_component_data.name == 'load_model'
+        assert control_component_data.component_type == ComponentType.Load
 
     def test_current_simulation_data(self):
         initial_timestamp = 1639396720

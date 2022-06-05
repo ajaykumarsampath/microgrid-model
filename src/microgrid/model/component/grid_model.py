@@ -3,7 +3,8 @@ from typing import List
 
 from microgrid.data_loader.interface import IGridNetworkDataLoader
 from microgrid.model.exception import UnknownComponentError, SimulationGridError
-from microgrid.shared.component import ComponentSimulationData, GridLine, BUS_ID, ComponentType
+from microgrid.shared.component import ComponentSimulationData, GridLine, BUS_ID, ComponentType, \
+    GridControlComponentData
 import numpy as np
 
 from microgrid.model.component_interface import IGridNetwork
@@ -43,6 +44,13 @@ class GridNetwork(IGridNetwork):
     @property
     def grid_lines(self) -> List[GridLine]:
         return self._data_loader.grid_lines
+
+    @property
+    def control_component_data(self) -> GridControlComponentData:
+        return GridControlComponentData(
+            name=self.name, component_type=self.component_type,
+            grid_lines=self.grid_lines
+        )
 
     @property
     def admittance_matrix(self) -> np.mat:

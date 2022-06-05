@@ -6,6 +6,7 @@ import numpy as np
 from microgrid.model.domain import MicrogridModelData
 from microgrid.model.exception import StepPreviousTimestamp, UnknownComponentError, \
     SimulationGridError, MicrogirdModellingError
+from microgrid.shared.component import ControlComponentData
 from microgrid.shared.storage import IComponentDataStorage
 
 logger = logging.getLogger(__name__)
@@ -55,6 +56,16 @@ class MicrogridModel:
 
         return power
 
+    def control_component_data(self) -> List[ControlComponentData]:
+        control_component_data = []
+        for generator in self.generators:
+            control_component_data.append(generator.control_component_data)
+
+        for load in self.loads:
+            control_component_data.append(load.control_component_data)
+
+        return control_component_data
+
     def get_current_power(self, unit_id: str):
         if unit_id in self._generator_ids:
             return self.generators[self._generator_ids.index[unit_id]].current_power
@@ -62,6 +73,9 @@ class MicrogridModel:
             return self.loads[self._load_ids.index[unit_id]].current_power
         else:
             raise UnknownComponentError(f'unit {unit_id} to getting is not in microgrid')
+
+    def get_control_component_data(self, unit_id: str):
+        pass
 
     def convert_unit_power_bus_power(self, power: np.array):
         try:

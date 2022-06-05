@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional
+from typing import Optional, Dict, List
+
+from microgrid.shared.timeseries import Timestamp
 
 BUS_ID = str
 
@@ -53,3 +55,31 @@ class ComponentType(Enum):
     Thermal = 'Thermal'
     Grid = 'Grid'
     Unknown = 'None'
+
+
+@dataclass
+class ControlComponentParameters:
+    grid_forming_flag: bool = False
+    droop_gain: float = 0
+    charging_efficiency: float = 1
+    discharging_efficiency: float = 1
+
+
+@dataclass
+class ControlComponentData:
+    name: str
+    component_type: ComponentType
+    timestamp: Timestamp
+    power_bound: Optional[Bounds] = None
+    measurements: Optional[Dict] = None
+    parameters: Optional[ControlComponentParameters] = ControlComponentParameters()
+    energy_bound: Optional[Bounds] = None
+
+
+@dataclass
+class GridControlComponentData:
+    name: str
+    component_type: ComponentType
+    grid_lines: List[GridLine]
+
+

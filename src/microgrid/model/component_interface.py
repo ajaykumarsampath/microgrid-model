@@ -1,7 +1,9 @@
 from microgrid.model.exception import StepPreviousTimestamp
-from microgrid.shared.component import BUS_ID, ComponentSimulationData, ComponentType
+from microgrid.shared.component import BUS_ID, ComponentSimulationData, ComponentType, \
+    ControlComponentData, GridControlComponentData
 from microgrid.shared.data_loader import IComponentDataLoader
 from microgrid.shared.storage import IComponentDataStorage
+from microgrid.shared.timeseries import Timestamp
 
 
 class IComponent:
@@ -9,7 +11,7 @@ class IComponent:
         self._name = name
         self._data_loader = data_loader
         self._current_power = 0
-        self._current_timestamp = self._data_loader.initial_timestamp
+        self._current_timestamp: Timestamp = self._data_loader.initial_timestamp
         self._component_type = ComponentType.Unknown
 
     @property
@@ -25,6 +27,10 @@ class IComponent:
         return self._component_type
 
     def step(self, timestamp: int):
+        raise NotImplementedError
+
+    @property
+    def control_component_data(self) -> ControlComponentData:
         raise NotImplementedError
 
     @property
@@ -57,6 +63,10 @@ class IComponent:
 
 
 class IGridNetwork(IComponent):
+    @property
+    def control_component_data(self) -> GridControlComponentData:
+        raise NotImplementedError
+
     @property
     def buses(self):
         raise NotImplementedError
