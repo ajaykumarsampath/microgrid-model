@@ -1,10 +1,9 @@
 from unittest import TestCase
 
-from data_loader.interface import IRenewableUnitDataLoader
-from model.exception import StepPreviousTimestamp
-from shared.component import Bounds
-
-from model.component.renewable_unit import RenewablePowerUnit
+from microgrid.data_loader.interface import IRenewableUnitDataLoader
+from microgrid.model.component.renewable_unit import RenewablePowerUnit
+from microgrid.model.exception import StepPreviousTimestamp
+from microgrid.shared.component import Bounds, ComponentType
 from tests.utils.test_mocks import MockDataStorage
 
 
@@ -18,6 +17,19 @@ class MockRenewableUnitDataLoader(IRenewableUnitDataLoader):
 
 
 class TestRenewableUnit(TestCase):
+    def test_control_component_data(self):
+        initial_timestamp = 1639396720
+        value = 4
+        mock_renewable_loader = MockRenewableUnitDataLoader(
+            initial_timestamp=initial_timestamp, power_bounds=Bounds(0, 10), value=value)
+
+        pv_model = RenewablePowerUnit('pv_model', mock_renewable_loader)
+
+        control_component_data = pv_model.control_component_data
+        assert control_component_data.name == 'pv_model'
+        assert control_component_data.component_type == ComponentType.Renewable
+        assert control_component_data.power_bound == mock_renewable_loader.power_bounds
+
     def test_renewable_available_power(self):
         initial_timestamp = 1639396720
         value = 4

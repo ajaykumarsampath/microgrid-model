@@ -1,9 +1,9 @@
 import pytest
 
-from data_loader.domain import UnitDataLoaderError
-from data_loader.component.grid_forming_unit import StoragePowerPlantDataLoader,\
+from microgrid.data_loader.component.grid_forming_unit import StoragePowerPlantDataLoader, \
     ThermalGeneratorDataLoader
-from shared.component import Bounds
+from microgrid.data_loader.domain import UnitDataLoaderError
+from microgrid.shared.component import Bounds
 
 
 class TestStoragePowerPlantDataLoader:

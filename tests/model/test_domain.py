@@ -1,9 +1,9 @@
 import numpy as np
 
 import pytest
-from shared.component import ComponentSimulationData, GridLine
-from shared.timeseries import SimulationTimeseriesError, SimulationTimeSeries
-from utils.storage import HistoricalData
+from microgrid.shared.component import ComponentSimulationData, GridLine
+from microgrid.shared.timeseries import SimulationTimeseriesError, SimulationTimeSeries
+from microgrid.utils.memory_storage import HistoricalData
 
 from tests.data_loader.test_domain import TestSamplePointsToPowerTable
 

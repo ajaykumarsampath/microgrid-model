@@ -1,8 +1,8 @@
 import pytest
 
-from data_loader.component.renewable_unit import RenewableUnitDataLoader
-from data_loader.domain import SamplePointsToPowerTable, UnitDataLoaderError
-from shared.timeseries import SimulationTimeSeries
+from microgrid.data_loader.component.renewable_unit import RenewableUnitDataLoader
+from microgrid.data_loader.domain import SamplePointsToPowerTable, UnitDataLoaderError
+from microgrid.shared.timeseries import SimulationTimeSeries
 
 
 class TestRenewableUnitDataLoader:

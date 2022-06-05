@@ -1,10 +1,10 @@
-from config.microgrid import MicrogridModelConfigBuilder, MicrogridModelConfig
-from config.registry import default_component_registry
+from microgrid.config.microgrid import MicrogridModelConfigBuilder, MicrogridModelConfig
+from microgrid.config.registry import default_component_registry
 import numpy as np
 
-from data_loader.domain import SamplePointsToPowerTable
-from model.microgrid_model import MicrogridModel
-from shared.timeseries import SimulationTimeSeries
+from microgrid.data_loader.domain import SamplePointsToPowerTable
+from microgrid.model.microgrid_model import MicrogridModel
+from microgrid.shared.timeseries import SimulationTimeSeries
 
 
 def solar_data():

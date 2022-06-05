@@ -1,8 +1,8 @@
 import pytest
 
-from data_loader.domain import UnitDataLoaderError
-from data_loader.component.load_demand import LoadDemandDataLoader
-from shared.timeseries import SimulationTimeSeries
+from microgrid.data_loader.component.load_demand import LoadDemandDataLoader
+from microgrid.data_loader.domain import UnitDataLoaderError
+from microgrid.shared.timeseries import SimulationTimeSeries
 
 
 class TestLoadDemandDataLoader:

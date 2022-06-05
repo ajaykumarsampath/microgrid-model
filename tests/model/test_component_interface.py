@@ -1,10 +1,10 @@
 import pytest
 
-from data_loader.interface import IGeneratorDataLoader
-from model.exception import StepPreviousTimestamp
-from shared.component import ComponentSimulationData, Bounds
-from shared.timeseries import SimulationTimeseriesError
-from utils.storage import HistoricalData
+from microgrid.data_loader.interface import IGeneratorDataLoader
+from microgrid.model.exception import StepPreviousTimestamp
+from microgrid.shared.component import ComponentSimulationData, Bounds
+from microgrid.shared.timeseries import SimulationTimeseriesError
+from microgrid.utils.memory_storage import HistoricalData
 from tests.utils.test_mocks import MockGeneratorUnit, MockComponentDataLoader, MockComponent
 
 
