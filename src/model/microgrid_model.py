@@ -57,9 +57,9 @@ class MicrogridModel:
 
     def get_current_power(self, unit_id: str):
         if unit_id in self._generator_ids:
-            return self.generators[self._generator_ids.index[unit_id]].current_power
+            return self.generators[self._generator_ids.index(unit_id)].current_power
         elif unit_id in self._load_ids:
-            return self.loads[self._load_ids.index[unit_id]].current_power
+            return self.loads[self._load_ids.index(unit_id)].current_power
         else:
             raise UnknownComponentError(f'unit {unit_id} to getting is not in microgrid')
 
