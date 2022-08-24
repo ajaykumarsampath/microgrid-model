@@ -64,7 +64,7 @@ class StoragePowerPlant(GridFormingPowerUnit):
 
 
 class ThermalGenerator(GridFormingPowerUnit):
-    def __init(self, name: str, data_loader: ThermalGeneratorDataLoader):
+    def __init__(self, name: str, data_loader: ThermalGeneratorDataLoader):
 
         super().__init__(name, data_loader)
         self._data_loader = data_loader
