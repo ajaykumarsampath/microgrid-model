@@ -2,11 +2,11 @@ import copy
 
 import pytest
 
+from common.timeseries.domain import Bounds
 from microgrid.model.domain import MicrogridModelData
 from microgrid.model.exception import MicrogirdModellingError, StepPreviousTimestamp
 from microgrid.model.microgrid_model import MicrogridModel
-from microgrid.shared.component import ComponentSimulationData
-from microgrid.shared.component import Bounds
+from microgrid.shared.simulation_data import ComponentSimulationData
 
 from tests.utils.test_mocks import MockGeneratorUnit, MockComponent, MockComponentDataLoader, \
     MockGeneratorDataLoader, MockGridNetwork

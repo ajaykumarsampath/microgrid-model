@@ -1,8 +1,8 @@
 import pytest
 
+from common.timeseries.domain import Bounds
 from microgrid.data_loader.domain import SamplePointsToPowerTable
 from microgrid.data_loader.interface import IGeneratorDataLoader
-from microgrid.shared.component import Bounds
 
 
 class TestSamplePointsToPowerTable:

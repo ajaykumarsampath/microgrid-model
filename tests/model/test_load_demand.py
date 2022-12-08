@@ -1,8 +1,8 @@
 from unittest import TestCase
 
+from common.model.component import ComponentType
 from microgrid.data_loader.interface import ILoadDemandDataLoader
 from microgrid.model.component.load_demand import LoadDemand
-from microgrid.shared.component import ComponentType
 
 
 class MockLoadDemandDataLoader(ILoadDemandDataLoader):

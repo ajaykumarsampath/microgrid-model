@@ -1,12 +1,12 @@
 import logging
 
+from common.model.component import ComponentType, ControlComponentData, ControlComponentParameters
 from microgrid.data_loader.component.grid_forming_unit import StoragePowerPlantDataLoader, \
     ThermalGeneratorDataLoader
 from microgrid.data_loader.interface import IGeneratorDataLoader
 from microgrid.model.domain import SEC_TO_HOUR_FACTOR
-from microgrid.shared.component import ComponentSimulationData, ComponentType, ControlComponentData, \
-    ControlComponentParameters
 from microgrid.model.generator_interface import IGeneratorComponent
+from microgrid.shared.simulation_data import ComponentSimulationData
 
 logger = logging.getLogger(__name__)
 

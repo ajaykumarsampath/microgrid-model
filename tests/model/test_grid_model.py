@@ -2,13 +2,13 @@ import time
 
 import numpy as np
 
+from common.model.component import GridLine, ComponentType
 from microgrid.model.component.grid_model import GridNetwork
 from microgrid.data_loader.component.grid_model import GridNetworkDataLoader, \
     SingleBusGridNetworkDataLoader
 import pytest
 
 from microgrid.model.exception import UnknownComponentError
-from microgrid.shared.component import GridLine, ComponentType
 
 
 class TestGridModel:
@@ -35,7 +35,7 @@ class TestGridModel:
         single_control_component_data = single_grid_network.control_component_data
 
         admittance = 20
-        grid_lines = [GridLine(from_bus='bus_0', to_bus='bus_1', admittance=admittance),]
+        grid_lines = [GridLine(from_bus='bus_0', to_bus='bus_1', admittance=admittance)]
         grid_network_data = GridNetworkDataLoader(
             initial_timestamp=initial_timestamp, grid_line=grid_lines)
         grid_network = GridNetwork(name='grid', data_loader=grid_network_data)
@@ -158,5 +158,6 @@ class TestGridModel:
 if __name__ == '__main__':
 
     test_grid = TestGridModel()
-    test_grid.test_calculate_line_power()
+    # test_grid.test_calculate_line_power()
+    test_grid.test_single_bus_grid_model()
     print("completed")

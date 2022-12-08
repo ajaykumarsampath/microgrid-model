@@ -1,5 +1,7 @@
+from common.model.component import BUS_ID
+from common.timeseries.domain import Bounds
 from microgrid.data_loader.microgrid_model import MicrogridModelDataLoader
-from microgrid.shared.component import ComponentSimulationData, Bounds, BUS_ID
+from microgrid.shared.simulation_data import ComponentSimulationData
 from tests.utils.test_mocks import MockUnitConfig, MockGeneratorConfig, \
     MockUnitConfigData, MockComponentDataLoaderData, MockGeneratorDataLoaderData, \
     MockGeneratorConfigData

@@ -1,8 +1,9 @@
 import logging
 
+from common.model.component import ComponentType, ControlComponentData
 from microgrid.data_loader.interface import ILoadDemandDataLoader
-from microgrid.shared.component import ComponentSimulationData, ComponentType, ControlComponentData
 from microgrid.model.component_interface import IComponent
+from microgrid.shared.simulation_data import ComponentSimulationData
 
 logger = logging.getLogger('__name__')
 

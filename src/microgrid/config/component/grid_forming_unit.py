@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 
+from common.model.component import ComponentType
+from common.timeseries.domain import Bounds
 from microgrid.data_loader.component.grid_forming_unit import StoragePowerPlantDataLoader, \
     ThermalGeneratorDataLoader
 from microgrid.model.component.grid_forming_unit import StoragePowerPlant, ThermalGenerator
-from microgrid.shared.component import ComponentType, Bounds
 from microgrid.config.interface import IGeneratorComponentConfig, ComponentConfigRegistryData, \
     ClassImportModuler
 from microgrid.shared.data_loader import IComponentDataLoaderData, IGeneratorConfigData

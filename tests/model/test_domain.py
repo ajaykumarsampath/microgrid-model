@@ -1,7 +1,9 @@
 import numpy as np
 
 import pytest
-from microgrid.shared.component import ComponentSimulationData, GridLine
+
+from common.model.component import GridLine
+from microgrid.shared.simulation_data import ComponentSimulationData
 from microgrid.shared.timeseries import SimulationTimeseriesError, SimulationTimeSeries
 from microgrid.utils.memory_storage import HistoricalData
 

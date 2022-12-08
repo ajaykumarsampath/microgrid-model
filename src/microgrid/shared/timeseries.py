@@ -2,7 +2,7 @@ from typing import List
 
 from scipy.interpolate import interp1d
 
-Timestamp = int
+from common.timeseries.domain import Timestamp
 
 
 class SimulationTimeSeries:

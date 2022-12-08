@@ -1,6 +1,5 @@
-from microgrid.shared.component import Bounds
+from common.timeseries.domain import Bounds, Timestamp
 from microgrid.shared.data_loader import IComponentDataLoader
-from microgrid.shared.timeseries import Timestamp
 
 
 class IGeneratorDataLoader(IComponentDataLoader):

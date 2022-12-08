@@ -3,7 +3,7 @@ from typing import List
 
 import numpy as np
 
-from microgrid.shared.component import ComponentSimulationData
+from microgrid.shared.simulation_data import ComponentSimulationData
 from microgrid.shared.storage import IComponentDataStorage
 from microgrid.shared.timeseries import Timestamp, SimulationTimeseriesError
 

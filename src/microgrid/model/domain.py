@@ -4,9 +4,9 @@ from typing import List
 
 import numpy as np
 
+from common.model.component import BUS_ID
 from microgrid.model.component_interface import IComponent, IGridNetwork
 from microgrid.model.generator_interface import IGeneratorComponent
-from microgrid.shared.component import BUS_ID
 
 UNIT_BUS_ID_MAP = [str, BUS_ID]
 SEC_TO_HOUR_FACTOR = 1 / 3600

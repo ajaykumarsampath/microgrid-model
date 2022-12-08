@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from microgrid.shared.component import BUS_ID, ComponentType
-from microgrid.shared.timeseries import Timestamp
+from common.model.component import BUS_ID, ComponentType
+from common.timeseries.domain import Timestamp
 
 
 class IComponentDataLoader:

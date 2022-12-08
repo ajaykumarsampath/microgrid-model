@@ -2,11 +2,11 @@ import logging
 from dataclasses import dataclass, field
 from typing import List, Optional
 
+from common.model.component import BUS_ID
 from microgrid.config.interface import Reference, IUnitConfig, IGeneratorComponentConfig,\
     IGridNetworkConfig
 from microgrid.data_loader.domain import DuplicateUnitNameError
 from microgrid.model.domain import UNIT_BUS_ID_MAP, MicrogridModelData
-from microgrid.shared.component import BUS_ID
 from microgrid.model.component_interface import IComponent, IGridNetwork
 from microgrid.model.generator_interface import IGeneratorComponent
 

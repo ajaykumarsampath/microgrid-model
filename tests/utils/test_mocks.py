@@ -4,6 +4,7 @@ from typing import List
 import numpy as np
 from numpy.random._generator import default_rng
 
+from common.model.component import BUS_ID
 from microgrid.config.interface import IUnitConfig, IGeneratorComponentConfig
 from microgrid.data_loader.component.renewable_unit import RenewableUnitDataLoader
 from microgrid.data_loader.domain import SamplePointsToPowerTable
@@ -12,7 +13,7 @@ from microgrid.model.component.renewable_unit import RenewablePowerUnit
 
 from microgrid.model.component_interface import IComponent, IGridNetwork
 from microgrid.model.generator_interface import IGeneratorComponent
-from microgrid.shared.component import ComponentSimulationData, BUS_ID, Bounds
+from microgrid.shared.simulation_data import ComponentSimulationData
 from microgrid.shared.data_loader import IComponentDataLoader, IComponentDataLoaderData, IUnitConfigData, \
     IGeneratorConfigData
 from microgrid.shared.timeseries import SimulationTimeSeries

@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from typing import List
 
+from common.model.component import GridLine, ComponentType
 from microgrid.data_loader.component.grid_model import SingleBusGridNetworkDataLoader, GridNetworkDataLoader
 from microgrid.model.component.grid_model import GridNetwork
 from microgrid.config.interface import IGridNetworkConfig, ComponentConfigRegistryData, ClassImportModuler
-from microgrid.shared.component import ComponentType, GridLine
 from microgrid.shared.data_loader import IComponentDataLoaderData, IGridNetworkConfigData
 from microgrid.shared.timeseries import Timestamp
 

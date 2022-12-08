@@ -1,9 +1,9 @@
+from common.model.component import ComponentType, ControlComponentData
 from microgrid.data_loader.interface import IRenewableUnitDataLoader
-from microgrid.shared.component import ComponentSimulationData, ComponentType, ControlComponentData, \
-    ControlComponentParameters
 from microgrid.model.generator_interface import IGeneratorComponent
 import logging
 
+from microgrid.shared.simulation_data import ComponentSimulationData
 from microgrid.shared.timeseries import Timestamp
 
 logger = logging.getLogger(__name__)

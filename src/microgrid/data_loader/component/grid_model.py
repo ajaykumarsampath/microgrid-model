@@ -1,11 +1,11 @@
 from typing import List
 
+from common.model.component import GridLine
+from common.timeseries.domain import Timestamp
 from microgrid.data_loader.domain import DuplicateGridModelError
 from microgrid.data_loader.interface import IGridNetworkDataLoader
 import logging
 
-from microgrid.shared.component import GridLine
-from microgrid.shared.timeseries import Timestamp
 
 logger = logging.getLogger(__name__)
 
@@ -112,7 +112,6 @@ class GridNetworkDataLoader(IGridNetworkDataLoader):
                 to_bus_set_index = to_bus_set_flag.index(True)
                 from_bus_set_index = from_bus_set_flag.index(True)
                 if to_bus_set_index == from_bus_set_index:
-                    # logger.warning(f"duplicate line {line}")
                     pass
                 else:
                     from_bus_set = list_set_buses.pop(from_bus_set_index)

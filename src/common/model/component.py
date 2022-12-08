@@ -2,19 +2,21 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Optional, Dict, List
 
-from microgrid.shared.timeseries import Timestamp
+from common.timeseries.domain import Timestamp, Bounds
+
 
 BUS_ID = str
 
 
-@dataclass
-class Bounds:
-    min: float
-    max: float
-
-    def __post_init__(self):
-        if self.min > self.max:
-            raise ValueError('Bounds are not correct: min should be less than max')
+class ComponentType(Enum):
+    Load = 'Load'
+    Renewable = 'Renewable'
+    PV = 'PVPlant'
+    WIND = 'WindPlant'
+    Storage = 'Storage'
+    Thermal = 'Thermal'
+    Grid = 'Grid'
+    Unknown = 'None'
 
 
 @dataclass
@@ -39,22 +41,9 @@ class GridLine:
         if self.to_bus == self.from_bus:
             raise ValueError('to_bus and from_bus of the line are same')
 
+    def is_connected_to_bus(self, bus_id: BUS_ID):
+        return bus_id == self.to_bus or bus_id == self.from_bus
 
-@dataclass
-class ComponentSimulationData:
-    name: str
-    values: dict
-
-
-class ComponentType(Enum):
-    Load = 'Load'
-    Renewable = 'Renewable'
-    PV = 'PVPlant'
-    WIND = 'WindPlant'
-    Storage = 'Storage'
-    Thermal = 'Thermal'
-    Grid = 'Grid'
-    Unknown = 'None'
 
 
 @dataclass
@@ -75,11 +64,13 @@ class ControlComponentData:
     parameters: Optional[ControlComponentParameters] = ControlComponentParameters()
     energy_bound: Optional[Bounds] = None
 
+    def __post_init__(self):
+        if self.component_type == ComponentType.Storage and self.energy_bound is None:
+            raise ValueError('')
+
 
 @dataclass
 class GridControlComponentData:
     name: str
     component_type: ComponentType
     grid_lines: List[GridLine]
-
-

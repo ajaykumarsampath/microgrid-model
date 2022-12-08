@@ -1,9 +1,10 @@
 from unittest import TestCase
 
+from common.model.component import ComponentType
+from common.timeseries.domain import Bounds
 from microgrid.data_loader.component.grid_forming_unit import StoragePowerPlantDataLoader, \
     ThermalGeneratorDataLoader
 from microgrid.model.component.grid_forming_unit import StoragePowerPlant, ThermalGenerator
-from microgrid.shared.component import Bounds, ComponentType
 
 
 class TestStoragePowerPlant(TestCase):
@@ -39,7 +40,7 @@ class TestStoragePowerPlant(TestCase):
         assert control_component_data.energy_bound == data_loader.energy_bounds
         assert control_component_data.measurements['energy'] == initial_energy
         assert control_component_data.parameters.droop_gain == 1
-        assert control_component_data.parameters.grid_forming_flag == True
+        assert control_component_data.parameters.grid_forming_flag
         assert control_component_data.parameters.charging_efficiency \
                == storage_plant.charge_efficiency
         assert control_component_data.parameters.discharging_efficiency \
@@ -127,7 +128,6 @@ class TestThermalGenerator(TestCase):
         assert thermal_plant.power_setpoint == power_setpoint
         assert thermal_plant.switch_state
 
-
     def test_control_component_data(self):
         initial_timestamp = 1639396720
         data_loader = ThermalGeneratorDataLoader(
@@ -140,9 +140,9 @@ class TestThermalGenerator(TestCase):
         assert control_component_data.name == 'thermal'
         assert control_component_data.component_type == ComponentType.Thermal
         assert control_component_data.power_bound == data_loader.power_bounds
-        assert control_component_data.measurements['switch_state'] == False
+        assert not control_component_data.measurements['switch_state']
         assert control_component_data.parameters.droop_gain == 1
-        assert control_component_data.parameters.grid_forming_flag == True
+        assert control_component_data.parameters.grid_forming_flag
 
     def test_step_simulation_timestamp(self):
         initial_timestamp = 1639396720

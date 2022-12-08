@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 
+from common.model.component import BUS_ID, ComponentType
 from microgrid.data_loader.component.load_demand import LoadDemandDataLoader
 from microgrid.model.component.load_demand import LoadDemand
 from microgrid.config.interface import IUnitConfig, ComponentConfigRegistryData, ClassImportModuler
-from microgrid.shared.component import BUS_ID, ComponentType
 from microgrid.shared.data_loader import IUnitConfigData, IComponentDataLoaderData
 from microgrid.shared.timeseries import SimulationTimeSeries, Timestamp
 

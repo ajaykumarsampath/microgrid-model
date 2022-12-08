@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 
+from common.model.component import ComponentType
 from microgrid.data_loader.component.renewable_unit import RenewableUnitDataLoader
 from microgrid.data_loader.domain import SamplePointsToPowerTable
 from microgrid.model.component.renewable_unit import RenewablePowerUnit
 from microgrid.config.interface import IGeneratorComponentConfig, ComponentConfigRegistryData,\
     ClassImportModuler
-from microgrid.shared.component import ComponentType
 from microgrid.shared.data_loader import IComponentDataLoaderData, IGeneratorConfigData
 from microgrid.shared.timeseries import SimulationTimeSeries
 

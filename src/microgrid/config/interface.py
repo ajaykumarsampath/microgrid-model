@@ -4,10 +4,10 @@ from typing import Any
 import pydantic
 from dacite import from_dict
 
+from common.model.component import ComponentType
 from microgrid.data_loader.interface import IGeneratorDataLoader
 from microgrid.model.component_interface import IComponent, IGridNetwork
 from microgrid.model.generator_interface import IGeneratorComponent
-from microgrid.shared.component import ComponentType
 from microgrid.shared.data_loader import IUnitConfigData, IGridNetworkConfigData, IGeneratorConfigData
 
 

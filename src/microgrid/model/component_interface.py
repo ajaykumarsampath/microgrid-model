@@ -1,6 +1,6 @@
+from common.model.component import ComponentType, ControlComponentData, GridControlComponentData, BUS_ID
 from microgrid.model.exception import StepPreviousTimestamp
-from microgrid.shared.component import BUS_ID, ComponentSimulationData, ComponentType, \
-    ControlComponentData, GridControlComponentData
+from microgrid.shared.simulation_data import ComponentSimulationData
 from microgrid.shared.data_loader import IComponentDataLoader
 from microgrid.shared.storage import IComponentDataStorage
 from microgrid.shared.timeseries import Timestamp

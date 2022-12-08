@@ -1,13 +1,14 @@
 import logging
 from typing import List
 
+from common.model.component import ComponentType, GridLine, GridControlComponentData, BUS_ID
 from microgrid.data_loader.interface import IGridNetworkDataLoader
 from microgrid.model.exception import UnknownComponentError, SimulationGridError
-from microgrid.shared.component import ComponentSimulationData, GridLine, BUS_ID, ComponentType, \
-    GridControlComponentData
+from microgrid.shared.simulation_data import ComponentSimulationData
 import numpy as np
 
 from microgrid.model.component_interface import IGridNetwork
+from common.model.grid_network_util import GridNetworkUtils
 
 logger = logging.getLogger(__name__)
 
@@ -19,16 +20,19 @@ class GridNetwork(IGridNetwork):
         self._data_loader = data_loader
         self._bus_power = np.array([])
         self._component_type = ComponentType.Grid
-
         if not data_loader.check_grid_network_connected():
             logger.warning("grid network is not connected and therefore cannot form")
             self._validate_flag = False
         else:
+            self._validate_flag = True
             num_grid_lines = len(self.grid_lines)
             num_buses = len(self.buses)
-            self._validate_flag = True
-            self._admittance_matrix = self._calculate_admittance_matrix()
-            self._dc_power_flow_matrix = self._calculate_dc_power_flow_matrix()
+            self._admittance_matrix = GridNetworkUtils.calculate_admittance_matrix(
+                self.buses, self.grid_lines
+            )
+            self._dc_power_flow_matrix = GridNetworkUtils.calculate_dc_power_flow_matrix(
+                self.buses, self.grid_lines
+            )
             self._current_power = np.zeros(num_grid_lines)
             self._data_loader = data_loader
             self._bus_power = np.zeros(num_buses)
@@ -85,23 +89,7 @@ class GridNetwork(IGridNetwork):
 
     def get_bus_grid_line(self, bus_id: BUS_ID) -> List[GridLine]:
         return [line for line in self.grid_lines
-                if bus_id == line.to_bus or bus_id == line.from_bus]
-
-    def _calculate_admittance_matrix(self):
-        admittance_matrix = np.zeros((len(self.buses), len(self.buses)))
-        for count, bus_id in enumerate(self.buses):
-            lines = self.get_bus_grid_line(bus_id)
-            for line in lines:
-                if line.to_bus == bus_id:
-                    from_bus_index = self.buses.index(line.from_bus)
-                    admittance_matrix[count, from_bus_index] = -line.admittance
-                else:
-                    to_bus_index = self.buses.index(line.to_bus)
-                    admittance_matrix[count, to_bus_index] = -line.admittance
-
-        admittance_matrix = admittance_matrix + \
-            np.diag([-admittance_matrix[i, :].sum() for i in range(0, len(self.buses))])
-        return admittance_matrix
+                if line.is_connected_to_bus(bus_id)]
 
     def calculate_line_power(self):
         power = self._bus_power
@@ -117,18 +105,6 @@ class GridNetwork(IGridNetwork):
                 line_power[count] = line.admittance * \
                     (phase_angle[from_bus_index] - phase_angle[to_bus_index])
             return line_power
-        else:
-            return np.array([])
-
-    def _calculate_dc_power_flow_matrix(self):
-        num_buses = len(self.buses)
-        if len(self.grid_lines) > 0:
-            dc_power_flow = self._admittance_matrix.copy()
-            dc_power_flow[0, :] = np.zeros((1, num_buses))
-            dc_power_flow[:, 0] = np.zeros((num_buses,))
-            dc_power_flow[0, 0] = 1
-            dc_power_flow = np.linalg.inv(dc_power_flow)
-            return dc_power_flow
         else:
             return np.array([])
 

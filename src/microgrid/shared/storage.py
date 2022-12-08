@@ -1,6 +1,6 @@
 from typing import List
 
-from microgrid.shared.component import ComponentSimulationData
+from microgrid.shared.simulation_data import ComponentSimulationData
 
 
 class IComponentDataStorage:

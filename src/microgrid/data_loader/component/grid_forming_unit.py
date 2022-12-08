@@ -1,6 +1,6 @@
+from common.timeseries.domain import Bounds
 from microgrid.data_loader.domain import UnitDataLoaderError
 from microgrid.data_loader.interface import IThermalGeneratorDataLoader, IStoragePowerPlantDataLoader
-from microgrid.shared.component import Bounds
 import logging
 
 logger = logging.getLogger(__name__)

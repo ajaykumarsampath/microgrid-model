@@ -1,9 +1,9 @@
+from common.timeseries.domain import Bounds, Timestamp
 from microgrid.data_loader.interface import IRenewableUnitDataLoader
 from microgrid.data_loader.domain import SamplePointsToPowerTable, UnitDataLoaderError
 import logging
 
-from microgrid.shared.component import Bounds
-from microgrid.shared.timeseries import SimulationTimeSeries, Timestamp
+from microgrid.shared.timeseries import SimulationTimeSeries
 
 logger = logging.getLogger(__name__)
 

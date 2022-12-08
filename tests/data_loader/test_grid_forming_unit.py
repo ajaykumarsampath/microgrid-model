@@ -1,9 +1,9 @@
 import pytest
 
+from common.timeseries.domain import Bounds
 from microgrid.data_loader.component.grid_forming_unit import StoragePowerPlantDataLoader, \
     ThermalGeneratorDataLoader
 from microgrid.data_loader.domain import UnitDataLoaderError
-from microgrid.shared.component import Bounds
 
 
 class TestStoragePowerPlantDataLoader:

@@ -6,7 +6,7 @@ import numpy as np
 from microgrid.model.domain import MicrogridModelData
 from microgrid.model.exception import StepPreviousTimestamp, UnknownComponentError, \
     SimulationGridError, MicrogirdModellingError
-from microgrid.shared.component import ControlComponentData
+from microgrid.shared.simulation_data import ControlComponentData
 from microgrid.shared.storage import IComponentDataStorage
 
 logger = logging.getLogger(__name__)
