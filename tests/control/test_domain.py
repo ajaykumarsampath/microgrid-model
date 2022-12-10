@@ -67,18 +67,18 @@ class TestVariableInterface:
     def test_product_expression(self):
         a = MockBaseVariable(2)
         b = MockBaseVariable(3)
-        c = a*b
-        d = c*-1
+        c = a * b
+        d = c * -1
         assert c.value == 6
         assert d.value == -6
 
     def test_division_expression(self):
         a = MockBaseVariable(2)
         b = MockBaseVariable(3)
-        c = a/b
-        d = c/-3
-        assert c.value == 2/3
-        assert d.value == -2/9
+        c = a / b
+        d = c / -3
+        assert c.value == 2 / 3
+        assert d.value == -2 / 9
 
     def test_greater_expression(self):
         a = MockBaseVariable(2)
@@ -93,8 +93,8 @@ class TestVariableInterface:
         b = MockBaseVariable(3)
         c = a < b
         d = a >= 2
-        assert c.value == True
-        assert d.value == True
+        assert c.value
+        assert d.value
 
     def test_algorithm_expression_timeindex_model(self):
         timestamps = Timestamps(values=[1, 2, 3, 4])
@@ -104,10 +104,9 @@ class TestVariableInterface:
         b = MockTimeseriesData(timestamps, value)
         c = MockTimeseriesData(timestamps, [MockBaseVariable(0) for _ in value])
         d = a + b + c
-        assert all([d[i] == 2*value_1[i] for i, _ in enumerate(timestamps)])
-        d = 0*d + 1
+        assert all([d[i] == 2 * value_1[i] for i, _ in enumerate(timestamps)])
+        d = 0 * d + 1
         assert all([d[i] == 1 for i, _ in enumerate(timestamps)])
-
 
     def test_logical_expression_timeindex_model(self):
         timestamps = Timestamps(values=[1, 2, 3, 4])
@@ -116,6 +115,6 @@ class TestVariableInterface:
         a = MockTimeseriesData(timestamps, value)
         b = MockTimeseriesData(timestamps, value)
         d = a == b
-        assert all([d[i] == True for i, t in enumerate(timestamps)])
+        assert all([d[i] for i, t in enumerate(timestamps)])
         d = a <= 1
-        assert all([d[i] == False for i, t in enumerate(timestamps)])
+        assert all([not d[i] for i, t in enumerate(timestamps)])

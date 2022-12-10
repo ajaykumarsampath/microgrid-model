@@ -3,9 +3,11 @@ from typing import Union, Any, List
 
 from common.timeseries.domain import Timestamps, Timestamp
 
+
 class VariableType(Enum):
     Binary = 'binary'
     Continuous = 'continuous'
+
 
 class OptimisationVaraibleType(Enum):
     variable = 'variable'
@@ -462,7 +464,7 @@ class DivisionTimeIndexExpression(ITimeIndexExpression):
         value_1 = self._get_value(self._variable_1)
         value_2 = self._get_value(self._variable_2)
 
-        return OptimisationExpression([v_1/v_2 for v_1, v_2 in zip(value_1, value_2)])
+        return OptimisationExpression([v_1 / v_2 for v_1, v_2 in zip(value_1, value_2)])
 
     def get_expression(self):
         var_1, var_2 = self._get_indexed_variables()

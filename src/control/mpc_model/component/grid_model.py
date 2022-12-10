@@ -44,10 +44,10 @@ class GridNetwork(IControlComponent):
         for line in self._data.lines:
             power = TimeIndexVariable(
                 f'{self.name}_line_power_{line.to_bus}{line.from_bus}',
-                bounds= BoundTimeseries(
+                bounds=BoundTimeseries(
                     min=ConstantTimeseriesData(self.timestamps, line.bounds.min),
-                    max=ConstantTimeseriesData(self.timestamps, line.bounds.max)
-                ), initial_value=ConstantTimeseriesData(self.timestamps, 0)
+                    max=ConstantTimeseriesData(self.timestamps, line.bounds.max)),
+                initial_value=ConstantTimeseriesData(self.timestamps, 0)
             )
             line_power.append(power)
 
@@ -65,7 +65,6 @@ class GridNetwork(IControlComponent):
 
         self._bus_power = bus_power
 
-
     def _calculate_line_power(self, bus_power_var_ts: VariableArray,
                               line_power_var_ts: VariableArray):
         phase_angle = matmul(self._dc_power_flow_matrix, bus_power_var_ts)
@@ -82,7 +81,7 @@ class GridNetwork(IControlComponent):
         return constraint
 
     def _pf_constraint(self, bus_power_var_ts: VariableArray,
-                              line_power_var_ts: VariableArray):
+                       line_power_var_ts: VariableArray):
         phase_angle = matmul(self._dc_power_flow_matrix, bus_power_var_ts)
         phase_angle[0] = 0
 
@@ -99,7 +98,7 @@ class GridNetwork(IControlComponent):
     def _generate_pf_constraint(self):
         pf_constraint = []
         for t in self.timestamps:
-            line_var_ts = VariableArray([l.get_value_timestamp(t) for l in self._line_power])
+            line_var_ts = VariableArray([l_.get_value_timestamp(t) for l_ in self._line_power])
             bus_var_ts = VariableArray([b.get_value_timestamp(t) for b in self._bus_power])
 
             pf_constraint_ts = self._pf_constraint(bus_var_ts, line_var_ts)

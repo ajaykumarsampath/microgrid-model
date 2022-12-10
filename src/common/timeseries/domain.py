@@ -44,7 +44,6 @@ class Timestamps:
         return Timestamps(self.values[from_index:to_index:delta])
 
 
-
 @dataclass
 class TimeseriesData:
     timestamps: Timestamps
@@ -113,7 +112,6 @@ class BoundTimeseries:
     @property
     def timestamps(self):
         return self.min.timestamps
-
 
 
 class UnknownTimestampError(Exception):

@@ -45,7 +45,6 @@ class GridLine:
         return bus_id == self.to_bus or bus_id == self.from_bus
 
 
-
 @dataclass
 class ControlComponentParameters:
     grid_forming_flag: bool = False

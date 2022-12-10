@@ -3,13 +3,13 @@ from typing import List, Callable, Any
 import cvxpy as cp
 import numpy as np
 
-from common.timeseries.domain import Bounds, BoundTimeseries
+from common.timeseries.domain import Bounds
 from control.optimisation_engine.domain import IOptimisationVariable, IOptimisationIndexVariable, \
-    OptimisationVaraibleType, VariableType, OptimisationExpression
+    VariableType, OptimisationExpression
 
 
 class CvxVariable(IOptimisationVariable):
-    def __init__(self, name: str, value: float, variable_type: VariableType=VariableType.Continuous):
+    def __init__(self, name: str, value: float, variable_type: VariableType = VariableType.Continuous):
         if variable_type == variable_type.Binary:
             self._value = cp.Variable((1,), name=name, value=[value], boolean=True)
         else:
@@ -27,18 +27,6 @@ class CvxVariable(IOptimisationVariable):
 
     def evaluate(self):
         return self._value.value
-
-
-class MockVariable(IOptimisationVariable):
-    def __init__(self, value: float):
-        self._value = value
-
-    @property
-    def value(self):
-        return self._value
-
-    def evaluate(self):
-        return self._value
 
 
 class CvxParameter(IOptimisationVariable):
@@ -177,7 +165,7 @@ class CvxIndexVariable(IOptimisationIndexVariable):
 
 
 class CvxIndexConstraint(IOptimisationIndexVariable):
-    def __init__(self, name:str, constraint: List[OptimisationExpression]):
+    def __init__(self, name: str, constraint: List[OptimisationExpression]):
         self._value = [c.value for c in constraint]
         self._name = name
 
@@ -197,6 +185,7 @@ class CvxIndexConstraint(IOptimisationIndexVariable):
             return self._value[index]
         except IndexError as e:
             raise IndexError(f'cvx index parameter {e}')
+
 
 class CvxIndexObjective(IOptimisationVariable):
     def __init__(self, objective: OptimisationExpression):
@@ -228,10 +217,11 @@ class CvxIndexObjective(IOptimisationVariable):
             UndefinedObjective('Objective can be linear or quadratic now')
 
 
-def generate_cvx_bound_constraint(variable , bounds):
+def generate_cvx_bound_constraint(variable: CvxVariable.value, bounds: Bounds):
     constraint_ = [bounds.min <= variable.value]
     constraint_.append(variable.value <= bounds.max)
     return constraint_
+
 
 def generate_cvx_index_bound_constraint(variable, bounds):
     constraint_ = [
@@ -239,7 +229,7 @@ def generate_cvx_index_bound_constraint(variable, bounds):
         for i, t in enumerate(bounds.timestamps)
     ]
     constraint_.extend(
-        [ variable[i].value <= bounds.max.get_value(t) for i, t in enumerate(bounds.timestamps) ]
+        [variable[i].value <= bounds.max.get_value(t) for i, t in enumerate(bounds.timestamps)]
     )
     return constraint_
 
@@ -256,11 +246,11 @@ if __name__ == '__main__':
 
     # c = cp.quad_form(x_temp, np.mat([[1, 0], [0, 1]]))
     # c = cp.quad_form(x - p, np.mat([1]))
-    c = x*2
+    c = x * 2
 
     ob = cp.Minimize(c)
     print(ob)
-    c_1 = [x >= 0, x >= 3, x_1 >=0]
+    c_1 = [x >= 0, x >= 3, x_1 >= 0]
     c_1.extend([x_temp[0] == x, x_temp[1] == x_1])
 
     # print(c_1[1].value)
@@ -269,9 +259,3 @@ if __name__ == '__main__':
     prob.solve()
     print(prob.status)
     print(x.value)
-    """
-    print(c)
-    print(ob)
-    
-    print(ob.is_dcp)
-    """

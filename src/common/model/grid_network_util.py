@@ -21,7 +21,6 @@ class GridNetworkUtils:
             except AttributeError:
                 return False
 
-
     @staticmethod
     def _get_bus_grid_line(bus_id: BUS_ID, grid_lines: List[GridLine]) -> List[GridLine]:
         return [line for line in grid_lines if line.is_connected_to_bus(bus_id)]
@@ -40,8 +39,9 @@ class GridNetworkUtils:
                         to_bus_index = buses.index(line.to_bus)
                         admittance_matrix[count, to_bus_index] = -line.admittance
 
-            admittance_matrix = admittance_matrix + \
-                                np.diag([-admittance_matrix[i, :].sum() for i in range(0, len(buses))])
+            admittance_matrix = \
+                admittance_matrix + \
+                np.diag([-admittance_matrix[i, :].sum() for i in range(0, len(buses))])
             return admittance_matrix
 
     @classmethod

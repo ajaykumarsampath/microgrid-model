@@ -5,6 +5,7 @@ import numpy as np
 from numpy.random._generator import default_rng
 
 from common.model.component import BUS_ID
+from common.timeseries.domain import Bounds
 from microgrid.config.interface import IUnitConfig, IGeneratorComponentConfig
 from microgrid.data_loader.component.renewable_unit import RenewableUnitDataLoader
 from microgrid.data_loader.domain import SamplePointsToPowerTable

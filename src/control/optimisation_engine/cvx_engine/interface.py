@@ -9,6 +9,7 @@ from control.optimisation_engine.domain import IOptimisationVariable, Optimisati
 from control.optimisation_engine.interface import IOptimisationEngine
 import cvxpy as cp
 
+
 class CvxEngine(IOptimisationEngine):
     def __init__(self):
         self._variable = []
@@ -30,11 +31,10 @@ class CvxEngine(IOptimisationEngine):
 
     def add_variable(self, name: str, bounds: Bounds, initial_value: float) -> IOptimisationVariable:
         variable = CvxVariable(name, initial_value)
-        constraint =  bounds.min <= variable.value <= bounds.max
+        constraint = bounds.min <= variable.value <= bounds.max
         self._variable.append(variable.value)
         self._constraint.append(constraint)
         return variable
-
 
     def add_binary_variable(self, name: str, initial_value: float) -> IOptimisationVariable:
         variable = CvxVariable(name, initial_value, VariableType.Binary)
@@ -71,7 +71,6 @@ class CvxEngine(IOptimisationEngine):
             generate_cvx_index_bound_constraint(cvx_power_var.value, bound)
         )
         return cvx_power_var
-
 
     def add_timeindex_binary_variable(self, name: str, initial_value: TimeseriesModel):
         index = [i for i, _ in enumerate(initial_value.timestamps)]

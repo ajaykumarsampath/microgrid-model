@@ -71,9 +71,9 @@ class ControlStoragePowerPlant(IControlComponent):
             f'{self.name}_dynamic_constraint', self.timestamps.slice(0, len(self.timestamps) - 1),
             constraint
         )
-        self._initial_energy_constraint = Constraint(f'{self.name}_initial_energy',
-                          self._energy[0] == self._data.current_energy)
-
+        self._initial_energy_constraint = Constraint(
+            f'{self.name}_initial_energy', self._energy[0] == self._data.current_energy
+        )
 
     def extend_optimisation_model(self, optimisation_engine: IOptimisationEngine):
         self._power.optimisation_value = optimisation_engine.add_timeindex_variable(
@@ -134,9 +134,9 @@ class ControlThermalGenerator(IControlComponent):
 
         self._power = TimeIndexVariable(
             f'{self.name}_power', bounds=BoundTimeseries(
-            ConstantTimeseriesData(self.timestamps, 0),
-            ConstantTimeseriesData(self.timestamps, self._data.power_bounds.max)
-            ),initial_value=ConstantTimeseriesData(self.timestamps, 0)
+                ConstantTimeseriesData(self.timestamps, 0),
+                ConstantTimeseriesData(self.timestamps, self._data.power_bounds.max)
+            ), initial_value=ConstantTimeseriesData(self.timestamps, 0)
         )
 
         self._switch_state = TimeIndexVariable(
@@ -146,13 +146,12 @@ class ControlThermalGenerator(IControlComponent):
             ), initial_value=ConstantTimeseriesData(self.timestamps, 0)
         )
 
-
     def _generate_constraint(self):
         self._lb_constraint = TimeIndexConstraint(
             f'{self.name}_lb_constraint', self.timestamps,
             constraint_expression=[
-                self._power_lb.get_value_timestamp(t) ==
-                self._switch_state.get_value_timestamp(t)*self._data.power_bounds.min
+                self._power_lb.get_value_timestamp(t) == self._switch_state.get_value_timestamp(t) *
+                self._data.power_bounds.min
                 for t in self.timestamps]
         )
         self._ub_constraint = TimeIndexConstraint(
@@ -160,20 +159,19 @@ class ControlThermalGenerator(IControlComponent):
             constraint_expression=[
                 self._power_ub.get_value_timestamp(t) ==
                 self._switch_state.get_value_timestamp(t) * self._data.power_bounds.max
-                for t in self.timestamps
-            ]
+                for t in self.timestamps]
         )
         self._power_lb_constraint = TimeIndexConstraint(
             f'{self.name}_ub_constraint', self.timestamps,
             constraint_expression=[
-                self._power.get_value_timestamp(t) >= self._power_lb.get_value_timestamp(t) \
+                self._power.get_value_timestamp(t) >= self._power_lb.get_value_timestamp(t)
                 for t in self.timestamps
             ]
         )
         self._power_ub_constraint = TimeIndexConstraint(
             f'{self.name}_ub_constraint', self.timestamps,
             constraint_expression=[
-                self._power.get_value_timestamp(t) <= self._power_ub.get_value_timestamp(t) \
+                self._power.get_value_timestamp(t) <= self._power_ub.get_value_timestamp(t)
                 for t in self.timestamps
             ]
         )

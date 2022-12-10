@@ -18,7 +18,8 @@ setup(
         'pandas',
         'matplotlib',
         'dacite',
-        'pydantic'
+        'pydantic',
+        'cvxpy'
     ],
     setup_requires=['flake8'],
     extras_require={  

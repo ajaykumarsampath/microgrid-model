@@ -7,3 +7,4 @@ coverage
 dacite
 pydantic
 flake8
+cvxpy

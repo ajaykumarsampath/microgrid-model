@@ -20,8 +20,7 @@ def test_timestamps():
         timestamps.get_timestamp_index(100)
 
     with pytest.raises(AssertionError):
-        timestamp = [(datetime(2022, 10, 1) - timedelta(minutes=i)).timestamp()
-                 for i in range(0, 3)]
+        timestamp = [(datetime(2022, 10, 1) - timedelta(minutes=i)).timestamp() for i in range(0, 3)]
         Timestamps(timestamp)
 
 
@@ -46,7 +45,6 @@ def test_timeseries():
         constant_data.get_value(100)
 
 
-
 def test_bounds():
     bound = Bounds(0, 10)
     assert bound.min == 0
@@ -54,8 +52,7 @@ def test_bounds():
     with pytest.raises(ValueError):
         Bounds(10, 0)
 
-    t = [(datetime(2022, 10, 1) + timedelta(minutes=i)).timestamp()
-                 for i in range(0, 3)]
+    t = [(datetime(2022, 10, 1) + timedelta(minutes=i)).timestamp() for i in range(0, 3)]
     timestamps = Timestamps(t)
 
     time_series_bounds = BoundTimeseries(
