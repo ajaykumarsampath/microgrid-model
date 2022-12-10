@@ -1,7 +1,7 @@
 from typing import List, Union
 
 from control.optimisation_engine.domain import IBaseVariable, IExpression, BaseVariable, ITimeIndexBaseModel, \
-    UnknownTimestampError
+    UnknownTimestampError, ConstraintType
 from control.optimisation_engine.variable import TimeIndexConstraint
 from microgrid.shared.timeseries import Timestamp
 from common.timeseries.domain import Timestamps
@@ -60,9 +60,10 @@ class MockTimeseriesParameter(ITimeIndexBaseModel):
 
 
 class MockTimeseriesConstraint(TimeIndexConstraint):
-    def __init__(self, name: str, timestamps: Timestamps, value: List[IExpression]):
-        super().__init__(name, timestamps)
-        self._value = value
+    def __init__(self, name: str, timestamps: Timestamps,
+                 constraint_expression: List[ConstraintType]):
+        super().__init__(name, timestamps, constraint_expression)
+        self._value = constraint_expression
 
     @property
     def timestamps(self) -> Timestamps:
@@ -82,7 +83,8 @@ class TestTimeseriesData:
         timeseries_parameter_1 = MockTimeseriesParameter(timestamps, values)
 
         constraint_1 = [vb + va <= 0 for vb, va in zip(variable_1, values)]
-        timeseries_constraint_1 = MockTimeseriesConstraint('constraint', timestamps, constraint_1)
+        timeseries_constraint_1 = MockTimeseriesConstraint(
+            'constraint', timestamps, constraint_1)
 
         for i, t in enumerate(timestamps.values):
             v = timeseries_variable_1.get_value_timestamp(t)

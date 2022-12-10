@@ -3,10 +3,10 @@ from functools import cached_property
 from typing import List
 import numpy as np
 
+from common.model.component import ControlComponentData
 from microgrid.model.domain import MicrogridModelData
 from microgrid.model.exception import StepPreviousTimestamp, UnknownComponentError, \
     SimulationGridError, MicrogirdModellingError
-from microgrid.shared.simulation_data import ControlComponentData
 from microgrid.shared.storage import IComponentDataStorage
 
 logger = logging.getLogger(__name__)

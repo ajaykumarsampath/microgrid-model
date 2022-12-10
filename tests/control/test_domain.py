@@ -1,7 +1,7 @@
 from typing import List
 
 from common.timeseries.domain import Timestamps, Timestamp
-from control.optimisation_engine.domain import IBaseVariable, ITimeIndexBaseModel
+from control.optimisation_engine.domain import IBaseVariable, ITimeIndexBaseModel, OptimisationExpression
 
 
 class MockBaseVariable(IBaseVariable):
@@ -15,7 +15,7 @@ class MockBaseVariable(IBaseVariable):
 
     @property
     def value(self):
-        return self._value
+        return OptimisationExpression(self._value)
 
 
 class MockTimeseriesData(ITimeIndexBaseModel):
@@ -53,48 +53,49 @@ class TestVariableInterface:
         b = MockBaseVariable(3)
         c = a + b
         d = c + 1
-        assert c.value == 5
-        assert d.value == 6
+
+        assert c.value.value == 5
+        assert d.value.value == 6
 
     def test_subtraction_expression(self):
         a = MockBaseVariable(2)
         b = MockBaseVariable(3)
         c = a - b
         d = c - 1
-        assert c.value == -1
-        assert d.value == -2
+        assert c.value.value == -1
+        assert d.value.value == -2
 
     def test_product_expression(self):
         a = MockBaseVariable(2)
         b = MockBaseVariable(3)
         c = a * b
         d = c * -1
-        assert c.value == 6
-        assert d.value == -6
+        assert c.value.value == 6
+        assert d.value.value == -6
 
     def test_division_expression(self):
         a = MockBaseVariable(2)
         b = MockBaseVariable(3)
         c = a / b
         d = c / -3
-        assert c.value == 2 / 3
-        assert d.value == -2 / 9
+        assert c.value.value == 2 / 3
+        assert d.value.value == -2 / 9
 
     def test_greater_expression(self):
         a = MockBaseVariable(2)
         b = MockBaseVariable(3)
         c = b > a
         d = a <= 2
-        assert c.value
-        assert d.value
+        assert c.value.value
+        assert d.value.value
 
     def test_lesser_expression(self):
         a = MockBaseVariable(2)
         b = MockBaseVariable(3)
         c = a < b
         d = a >= 2
-        assert c.value
-        assert d.value
+        assert c.value.value
+        assert d.value.value
 
     def test_algorithm_expression_timeindex_model(self):
         timestamps = Timestamps(values=[1, 2, 3, 4])

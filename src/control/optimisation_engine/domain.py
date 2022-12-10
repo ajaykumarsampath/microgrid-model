@@ -371,13 +371,6 @@ class ITimeIndexExpression(ITimeIndexBaseModel):
                     else:
                         v_.append(v)
 
-                """
-                [v.value
-                        if isinstance(v, IBaseVariable) or isinstance(v, OptimisationExpression)
-                        else v for v in variable
-                        ]
-                """
-
                 return v_
         except TypeError:
             return [variable] * len(self.timestamps)
