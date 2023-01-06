@@ -121,6 +121,6 @@ class GridNetwork(IControlComponent):
             )
 
         for line in self._pf_constraint:
-            line.optimisation_value = optimisation_engine.add_timeindex_constraint(
+            line.optimisation_value = optimisation_engine.add_index_constraint(
                 line.name, [v.constraint_expression.value for v in line.value]
             )

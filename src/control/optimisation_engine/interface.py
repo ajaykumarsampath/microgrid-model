@@ -1,8 +1,8 @@
-from typing import List
+from typing import List, Callable
 
 from common.timeseries.domain import Bounds, Timestamps, TimeseriesModel, BoundTimeseries
 from control.optimisation_engine.domain import IOptimisationVariable, OptimisationExpression, \
-    TimeIndexObjectiveType
+    TimeIndexObjectiveType, ConstraintType, ObjectiveType
 
 
 class IOptimisationEngine:
@@ -26,10 +26,13 @@ class IOptimisationEngine:
     def add_binary_variable(self, name: str, initial_value: float) -> IOptimisationVariable:
         raise NotImplementedError
 
-    def add_constraint(self, name: str, constraint: OptimisationExpression) -> IOptimisationVariable:
+    def add_constraint(self, name: str, constraint: ConstraintType) -> IOptimisationVariable:
         raise NotImplementedError
 
     def add_objective(self, name: str, objective: OptimisationExpression):
+        raise NotImplementedError
+
+    def update_objective(self, variable: IOptimisationVariable, obj_callable: Callable):
         raise NotImplementedError
 
     def add_timeindex_parameter(self, name: str, value: TimeseriesModel):
@@ -41,8 +44,5 @@ class IOptimisationEngine:
     def add_timeindex_binary_variable(self, name: str, initial_value: TimeseriesModel):
         raise NotImplementedError
 
-    def add_timeindex_constraint(self, name: str, constraint: List[OptimisationExpression]):
-        raise NotImplementedError
-
-    def add_timeindex_objective(self, name: str, objective: TimeIndexObjectiveType):
+    def add_index_constraint(self, name: str, constraint: List[ConstraintType]):
         raise NotImplementedError

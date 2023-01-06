@@ -84,7 +84,7 @@ class ControlStoragePowerPlant(IControlComponent):
             self._energy.name, self._energy.bounds, self._energy.initial_value
         )
 
-        self._dynamics_constraint.optimisation_value = optimisation_engine.add_timeindex_constraint(
+        self._dynamics_constraint.optimisation_value = optimisation_engine.add_index_constraint(
             self._dynamics_constraint.name,
             [v.constraint_expression.value for v in self._dynamics_constraint.value]
         )
@@ -191,19 +191,19 @@ class ControlThermalGenerator(IControlComponent):
         )
 
         # constraints
-        self._lb_constraint.optimisation_value = optimisation_engine.add_timeindex_constraint(
+        self._lb_constraint.optimisation_value = optimisation_engine.add_index_constraint(
             self._lb_constraint.name,
             [v.constraint_expression.value for v in self._lb_constraint.value]
         )
-        self._ub_constraint.optimisation_value = optimisation_engine.add_timeindex_constraint(
+        self._ub_constraint.optimisation_value = optimisation_engine.add_index_constraint(
             self._ub_constraint.name,
             [v.constraint_expression.value for v in self._ub_constraint.value]
         )
-        self._power_lb_constraint.optimisation_value = optimisation_engine.add_timeindex_constraint(
+        self._power_lb_constraint.optimisation_value = optimisation_engine.add_index_constraint(
             self._lb_constraint.name,
             [v.constraint_expression.value for v in self._power_lb_constraint.value]
         )
-        self._power_ub_constraint.optimisation_value = optimisation_engine.add_timeindex_constraint(
+        self._power_ub_constraint.optimisation_value = optimisation_engine.add_index_constraint(
             self._ub_constraint.name,
             [v.constraint_expression.value for v in self._power_ub_constraint.value]
         )

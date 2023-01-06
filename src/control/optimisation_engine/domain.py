@@ -56,7 +56,7 @@ class OptimisationExpression:
 
 class IBaseVariable:
     @property
-    def value(self) -> Union[IOptimisationVariable, float]:
+    def value(self) -> IOptimisationVariable:
         raise NotImplementedError
 
     @property
@@ -407,6 +407,7 @@ class SumTimeIndexExpression(ITimeIndexExpression):
     def value(self) -> OptimisationExpression:
         value_1 = self._get_value(self._variable_1)
         value_2 = self._get_value(self._variable_2)
+
         return OptimisationExpression([v_1 + v_2 for v_1, v_2 in zip(value_1, value_2)])
 
     def get_expression(self):

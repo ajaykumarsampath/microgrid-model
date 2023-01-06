@@ -103,6 +103,13 @@ class BoundTimeseries:
             raise AssertionError('min value, max value have either unequal to timestamps '
                                  'or max value less than min value')
 
+    @classmethod
+    def constant_bound_timeseries(cls, timestamps: Timestamps, min_value: float,
+                                  max_value: float) -> 'BoundTimeseries':
+        return cls(ConstantTimeseriesData(timestamps, min_value),
+                   ConstantTimeseriesData(timestamps, max_value))
+
+
     def get_value(self, timestamp: Timestamp) -> (float, float):
         return (self.min.get_value(timestamp), self.max.get_value(timestamp))
 

@@ -51,7 +51,7 @@ class RenewablePowerUnit(IControlComponent):
             self._power.name, self._power.bounds, self._power.initial_value
         )
 
-        self._power_constraint.optimisation_value = optimisation_engine.add_timeindex_constraint(
+        self._power_constraint.optimisation_value = optimisation_engine.add_index_constraint(
             self._power_constraint.name,
             [v.constraint_expression.value for v in self._power_constraint.value]
         )
