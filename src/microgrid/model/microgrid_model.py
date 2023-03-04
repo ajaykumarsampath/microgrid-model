@@ -5,8 +5,12 @@ import numpy as np
 
 from common.model.component import ControlComponentData
 from microgrid.model.domain import MicrogridModelData
-from microgrid.model.exception import StepPreviousTimestamp, UnknownComponentError, \
-    SimulationGridError, MicrogirdModellingError
+from microgrid.model.exception import (
+    StepPreviousTimestamp,
+    UnknownComponentError,
+    SimulationGridError,
+    MicrogirdModellingError,
+)
 from microgrid.shared.storage import IComponentDataStorage
 
 logger = logging.getLogger(__name__)
@@ -23,8 +27,7 @@ class MicrogridModel:
             self._generator_ids = [g.name for g in self._model_data.generators]
             self._load_ids = [g.name for g in self._model_data.loads]
         else:
-            raise MicrogirdModellingError(f'Microgrid data is not valid at '
-                                          f'{microgrid_model_data.name}')
+            raise MicrogirdModellingError(f"Microgrid data is not valid at " f"{microgrid_model_data.name}")
 
     @property
     def name(self):
@@ -72,7 +75,7 @@ class MicrogridModel:
         elif unit_id in self._load_ids:
             return self.loads[self._load_ids.index[unit_id]].current_power
         else:
-            raise UnknownComponentError(f'unit {unit_id} to getting is not in microgrid')
+            raise UnknownComponentError(f"unit {unit_id} to getting is not in microgrid")
 
     def get_control_component_data(self, unit_id: str):
         pass
@@ -81,13 +84,13 @@ class MicrogridModel:
         try:
             return self._unit_to_bus.T @ power
         except Exception as err:
-            raise UnknownComponentError(f'input power and bus dimension does not match {err}')
+            raise UnknownComponentError(f"input power and bus dimension does not match {err}")
 
     def set_power_setpoint(self, unit_id: str, power: float):
         try:
             self.generators[self._generator_ids.index(unit_id)].power_setpoint = power
         except IndexError:
-            raise UnknownComponentError(f'unit {unit_id} trying to set power is not in microgrid')
+            raise UnknownComponentError(f"unit {unit_id} trying to set power is not in microgrid")
 
     def set_power_setpoints(self, power_setpoints: List[float]):
         try:
@@ -143,9 +146,9 @@ class MicrogridModel:
             self.grid_model.step(timestamp)
 
         except StepPreviousTimestamp:
-            raise StepPreviousTimestamp(f'timestamps at {self.name} is at historical timestamp')
+            raise StepPreviousTimestamp(f"timestamps at {self.name} is at historical timestamp")
         except SimulationGridError as err:
-            raise SimulationGridError(f'{err}')
+            raise SimulationGridError(f"{err}")
 
     def add_simulation_data(self, data_storage: IComponentDataStorage):
         for generator in self.generators:

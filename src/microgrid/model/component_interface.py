@@ -1,4 +1,9 @@
-from common.model.component import ComponentType, ControlComponentData, GridControlComponentData, BUS_ID
+from common.model.component import (
+    ComponentType,
+    ControlComponentData,
+    GridControlComponentData,
+    BUS_ID,
+)
 from microgrid.model.exception import StepPreviousTimestamp
 from microgrid.shared.simulation_data import ComponentSimulationData
 from microgrid.shared.data_loader import IComponentDataLoader
@@ -46,13 +51,11 @@ class IComponent:
 
     def add_simulation_data(self, data_storage: IComponentDataStorage):
         data = self.current_simulation_data()
-        data_storage.add_simulation_data(
-            current_timestamp=self._current_timestamp, data=data
-        )
+        data_storage.add_simulation_data(current_timestamp=self._current_timestamp, data=data)
 
     def _check_step_timestamp(self, timestamp: int):
         if timestamp <= self._current_timestamp:
-            raise StepPreviousTimestamp('Cannot step to past timestamp than current timestamp')
+            raise StepPreviousTimestamp("Cannot step to past timestamp than current timestamp")
         self._current_timestamp = timestamp
 
     def current_simulation_data(self) -> ComponentSimulationData:

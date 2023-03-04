@@ -32,7 +32,7 @@ class ControlGridNetworkData:
 
     def __post_init__(self):
         if not GridNetworkUtils.check_bus_grid_lines(self.buses, self.lines):
-            print('Something is wrong in grid model')
+            print("Something is wrong in grid model")
 
 
 @dataclass

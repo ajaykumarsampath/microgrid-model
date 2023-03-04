@@ -39,9 +39,9 @@ class GridNetworkUtils:
                         to_bus_index = buses.index(line.to_bus)
                         admittance_matrix[count, to_bus_index] = -line.admittance
 
-            admittance_matrix = \
-                admittance_matrix + \
-                np.diag([-admittance_matrix[i, :].sum() for i in range(0, len(buses))])
+            admittance_matrix = admittance_matrix + np.diag(
+                [-admittance_matrix[i, :].sum() for i in range(0, len(buses))]
+            )
             return admittance_matrix
 
     @classmethod
@@ -96,7 +96,6 @@ class GridNetworkUtils:
                     pass
                 else:
                     from_bus_set = list_set_buses.pop(from_bus_set_index)
-                    list_set_buses[to_bus_set_index] = \
-                        list_set_buses[to_bus_set_index] + from_bus_set
+                    list_set_buses[to_bus_set_index] = list_set_buses[to_bus_set_index] + from_bus_set
 
         return list_set_buses

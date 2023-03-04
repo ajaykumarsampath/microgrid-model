@@ -1,8 +1,14 @@
 import logging
 
-from common.model.component import ComponentType, ControlComponentData, ControlComponentParameters
-from microgrid.data_loader.component.grid_forming_unit import StoragePowerPlantDataLoader, \
-    ThermalGeneratorDataLoader
+from common.model.component import (
+    ComponentType,
+    ControlComponentData,
+    ControlComponentParameters,
+)
+from microgrid.data_loader.component.grid_forming_unit import (
+    StoragePowerPlantDataLoader,
+    ThermalGeneratorDataLoader,
+)
 from microgrid.data_loader.interface import IGeneratorDataLoader
 from microgrid.model.domain import SEC_TO_HOUR_FACTOR
 from microgrid.model.generator_interface import IGeneratorComponent
@@ -39,13 +45,18 @@ class StoragePowerPlant(GridFormingPowerUnit):
     @property
     def control_component_data(self) -> ControlComponentData:
         return ControlComponentData(
-            self._name, self._component_type, self._current_timestamp,
-            self._data_loader.power_bounds, energy_bound=self._data_loader.energy_bounds,
-            measurements={'energy': self._current_energy},
+            self._name,
+            self._component_type,
+            self._current_timestamp,
+            self._data_loader.power_bounds,
+            energy_bound=self._data_loader.energy_bounds,
+            measurements={"energy": self._current_energy},
             parameters=ControlComponentParameters(
-                self._data_loader._grid_forming_unit_flag, self._data_loader.droop_gain,
-                self._data_loader.charge_efficiency, self._data_loader.discharge_efficiency
-            )
+                self._data_loader._grid_forming_unit_flag,
+                self._data_loader.droop_gain,
+                self._data_loader.charge_efficiency,
+                self._data_loader.discharge_efficiency,
+            ),
         )
 
     def step(self, timestamp: int):
@@ -56,23 +67,22 @@ class StoragePowerPlant(GridFormingPowerUnit):
         self._current_power = self.power_setpoint + self.power_sharing
 
         if self.current_power >= 0:
-            energy = self.current_energy - \
-                time_delta_hrs * (1 / self.discharge_efficiency) * self.current_power
+            energy = self.current_energy - time_delta_hrs * (1 / self.discharge_efficiency) * self.current_power
         else:
-            energy = self.current_energy - \
-                time_delta_hrs * (self.charge_efficiency) * self.current_power
+            energy = self.current_energy - time_delta_hrs * (self.charge_efficiency) * self.current_power
 
-        if energy < self._data_loader.energy_bounds.min or energy > \
-                self._data_loader.energy_bounds.max:
+        if energy < self._data_loader.energy_bounds.min or energy > self._data_loader.energy_bounds.max:
             logger.warning(f"energy update in the unit {self._name} violating the energy bounds")
 
         self._current_energy = energy
 
     def current_simulation_data(self) -> ComponentSimulationData:
-        values = {'current_energy': self.current_energy,
-                  'power_sharing': self.power_sharing,
-                  'power_setpoint': self.power_setpoint,
-                  'current_power': self.current_power}
+        values = {
+            "current_energy": self.current_energy,
+            "power_sharing": self.power_sharing,
+            "power_setpoint": self.power_setpoint,
+            "current_power": self.current_power,
+        }
 
         return ComponentSimulationData(self._name, values=values)
 
@@ -97,12 +107,14 @@ class ThermalGenerator(GridFormingPowerUnit):
     @property
     def control_component_data(self) -> ControlComponentData:
         return ControlComponentData(
-            self._name, self._component_type, self._current_timestamp,
+            self._name,
+            self._component_type,
+            self._current_timestamp,
             self._data_loader.power_bounds,
-            measurements={'switch_state': self._switch_state},
+            measurements={"switch_state": self._switch_state},
             parameters=ControlComponentParameters(
                 self._data_loader._grid_forming_unit_flag, self._data_loader.droop_gain
-            )
+            ),
         )
 
     @power_setpoint.setter
@@ -114,10 +126,7 @@ class ThermalGenerator(GridFormingPowerUnit):
             self._power_setpoint = 0
             self._switch_state = False
         else:
-            raise \
-                ValueError(
-                    f"power set point to set in not satisfying "
-                    f"the bounds in the unit {self._name}")
+            raise ValueError(f"power set point to set in not satisfying " f"the bounds in the unit {self._name}")
 
     def droop_gain_inverse(self):
         if self.switch_state:
@@ -130,9 +139,11 @@ class ThermalGenerator(GridFormingPowerUnit):
         self._current_power = self.power_sharing + self._power_setpoint
 
     def current_simulation_data(self) -> ComponentSimulationData:
-        values = {'power_setpoint': self.power_setpoint,
-                  'power_sharing': self.power_sharing,
-                  'current_power': self.current_power,
-                  'switch_state': self.switch_state}
+        values = {
+            "power_setpoint": self.power_setpoint,
+            "power_sharing": self.power_sharing,
+            "current_power": self.current_power,
+            "switch_state": self.switch_state,
+        }
 
         return ComponentSimulationData(name=self._name, values=values)

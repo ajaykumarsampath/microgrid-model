@@ -9,8 +9,7 @@ class MPCModelController:
         self._optimisation_engine = optimisation_engine
         self._horizon = horizon
 
-        self._timestamps = self._optimisation_engine.add_timeindex_parameter(
-            'timestamps', horizon.timestamps)
+        self._timestamps = self._optimisation_engine.add_timeindex_parameter("timestamps", horizon.timestamps)
 
     def solve(self, component_model: List[IControlComponent]):
         for model in component_model:

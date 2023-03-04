@@ -39,8 +39,7 @@ class IGeneratorComponent(IComponent):
         if self._data_loader.power_bounds.min <= value <= self._data_loader.power_bounds.max:
             self._power_setpoint = value
         else:
-            raise ValueError(f"power set point to set in not satisfying the bounds "
-                             f"in the unit {self._name}")
+            raise ValueError(f"power set point to set in not satisfying the bounds " f"in the unit {self._name}")
 
     def participate_power_sharing(self, delta_frequency):
         if self.droop_gain_inverse() > 0:

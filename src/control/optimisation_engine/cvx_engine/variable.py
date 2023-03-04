@@ -1,16 +1,26 @@
-from typing import List, Callable, Any, TypeVar
+from typing import List, Callable, Any
 
 import cvxpy as cp
 import numpy as np
 
 from common.timeseries.domain import Bounds
-from control.optimisation_engine.domain import IOptimisationVariable, IOptimisationIndexVariable, \
-    VariableType, OptimisationExpression, ConstraintType
+from control.optimisation_engine.domain import (
+    IOptimisationVariable,
+    IOptimisationIndexVariable,
+    VariableType,
+    OptimisationExpression,
+    ConstraintType,
+)
 
 
 class CvxVariable(IOptimisationVariable):
-    def __init__(self, name: str, value: float, bounds: Bounds,
-                 variable_type: VariableType = VariableType.Continuous):
+    def __init__(
+        self,
+        name: str,
+        value: float,
+        bounds: Bounds,
+        variable_type: VariableType = VariableType.Continuous,
+    ):
         if variable_type == variable_type.Binary:
             self._value = cp.Variable((1,), name=name, value=[value], boolean=True)
         else:
@@ -32,8 +42,10 @@ class CvxVariable(IOptimisationVariable):
 
     @property
     def bounds(self):
-        return Bounds(min=self._min_constraint.args[0].value,
-                      max=self._max_constraint.args[1].value)
+        return Bounds(
+            min=self._min_constraint.args[0].value,
+            max=self._max_constraint.args[1].value,
+        )
 
     @bounds.setter
     def bounds(self, bounds: Bounds):
@@ -94,12 +106,13 @@ class CvxObjective(IOptimisationVariable):
                 self._value = objective.value
             else:
                 raise UndefinedObjective(
-                    'Only linear objective is allowed as optimisation expression'
-                    'Use update functionality to add other forms of'
+                    "Only linear objective is allowed as optimisation expression"
+                    "Use update functionality to add other forms of"
                 )
         else:
-            raise UndefinedObjective(f'Optimisation expressions should either be a '
-                                     f'cvxpy expression or int, float or none')
+            raise UndefinedObjective(
+                "Optimisation expressions should either be a cvxpy expression or int, float or none"
+            )
 
     @property
     def value(self):
@@ -116,20 +129,18 @@ class CvxObjective(IOptimisationVariable):
         try:
             _value = self._value + objective_expr.value
         except Exception as e:
-            raise Exception(f'Cannot update the objective {e}')
+            raise Exception(f"Cannot update the objective {e}")
 
         if _value.is_dcp():
             self._value = _value
             print(self._value)
         else:
-            UndefinedObjective('Objective can be linear or quadratic now')
+            UndefinedObjective("Objective can be linear or quadratic now")
 
 
 class CvxIndexParameter(IOptimisationIndexVariable):
     def __init__(self, name: str, index: List[int], value: List[float]):
-        self._value = cp.Parameter(
-            (len(index), ), name=name, value=np.array(value)
-        )
+        self._value = cp.Parameter((len(index),), name=name, value=np.array(value))
         self._index = index
         self.name = name
 
@@ -143,26 +154,27 @@ class CvxIndexParameter(IOptimisationIndexVariable):
     def _at_index(self, index: int):
         try:
             id = self._index.index(index)
-            parameter = CvxParameter(f'{self.name}_{id}', self.value[id])
+            parameter = CvxParameter(f"{self.name}_{id}", self.value[id])
             parameter.value = self.value[id]
             return parameter
         except IndexError as e:
-            raise IndexError(f'cvx index parameter {e}')
+            raise IndexError(f"cvx index parameter {e}")
 
 
 class CvxIndexVariable(IOptimisationIndexVariable):
-    def __init__(self, name: str, index: List[int], value: List[float], bounds: List[Bounds],
-                 variable_type: VariableType = VariableType.Continuous):
+    def __init__(
+        self,
+        name: str,
+        index: List[int],
+        value: List[float],
+        bounds: List[Bounds],
+        variable_type: VariableType = VariableType.Continuous,
+    ):
 
         if variable_type == VariableType.Continuous:
-            self._value = cp.Variable(
-                (len(index), ), name=name, value=np.array(value)
-            )
+            self._value = cp.Variable((len(index),), name=name, value=np.array(value))
         else:
-            self._value = cp.Variable(
-                (len(index),), name=name, value=np.array(value),
-                boolean=True
-            )
+            self._value = cp.Variable((len(index),), name=name, value=np.array(value), boolean=True)
 
         self._min_bounds = [b.min <= self._value[i] for i, b in enumerate(bounds)]
         self._max_bounds = [self._value[i] <= b.max for i, b in enumerate(bounds)]
@@ -175,8 +187,12 @@ class CvxIndexVariable(IOptimisationIndexVariable):
             id_bound_min = self._get_expression_value(self.name, self._min_bounds[id])
             id_bound_max = self._get_expression_value(self.name, self._max_bounds[id])
 
-            variable = CvxVariable(f'{self.name}_{id}', self.value[id].value,
-                                   Bounds(id_bound_min, id_bound_max), self.variable_type)
+            variable = CvxVariable(
+                f"{self.name}_{id}",
+                self.value[id].value,
+                Bounds(id_bound_min, id_bound_max),
+                self.variable_type,
+            )
             variable.value = self.value[id]
             self._variable.append(variable)
 
@@ -185,7 +201,7 @@ class CvxIndexVariable(IOptimisationIndexVariable):
         return self._value
 
     def _get_expression_value(self, name, value):
-        return [i.value for i in value.args if i.name()[:len(name)] != name][0]
+        return [i.value for i in value.args if i.name()[: len(name)] != name][0]
 
     @property
     def bounds(self) -> List[Bounds]:
@@ -208,7 +224,7 @@ class CvxIndexVariable(IOptimisationIndexVariable):
             id = self._index.index(index)
             return self._variable[id]
         except IndexError as e:
-            raise IndexError(f'cvx index parameter {e}')
+            raise IndexError(f"cvx index parameter {e}")
 
 
 class CvxIndexConstraint(IOptimisationIndexVariable):
@@ -217,7 +233,7 @@ class CvxIndexConstraint(IOptimisationIndexVariable):
         self.name = name
         self._constraint = []
         for i, c_type in enumerate(constraint):
-            self._constraint.append(CvxConstraint(f'{name}_{i}', c_type))
+            self._constraint.append(CvxConstraint(f"{name}_{i}", c_type))
 
     @property
     def value(self):
@@ -234,7 +250,7 @@ class CvxIndexConstraint(IOptimisationIndexVariable):
         try:
             return self._constraint[index]
         except IndexError as e:
-            raise IndexError(f'cvx index parameter {e}')
+            raise IndexError(f"cvx index parameter {e}")
 
 
 class CvxIndexObjective(IOptimisationVariable):
@@ -242,8 +258,10 @@ class CvxIndexObjective(IOptimisationVariable):
         if objective.value.is_dcp():
             self._value = objective.value
         else:
-            raise UndefinedObjective('Only linear objective is allowed as optimisation expression'
-                                     'Use update functionality to add other forms of')
+            raise UndefinedObjective(
+                "Only linear objective is allowed as optimisation expression"
+                "Use update functionality to add other forms of"
+            )
 
     @property
     def value(self):
@@ -259,12 +277,12 @@ class CvxIndexObjective(IOptimisationVariable):
         try:
             _value = self._value + objective_expr.value
         except Exception as e:
-            raise Exception(f'Cannot update the objective {e}')
+            raise Exception(f"Cannot update the objective {e}")
 
         if _value.is_dcp():
             self._value = _value
         else:
-            UndefinedObjective('Objective can be linear or quadratic now')
+            UndefinedObjective("Objective can be linear or quadratic now")
 
 
 def generate_cvx_bound_constraint(variable: CvxVariable.value, bounds: Bounds):
@@ -274,17 +292,12 @@ def generate_cvx_bound_constraint(variable: CvxVariable.value, bounds: Bounds):
 
 
 def generate_cvx_index_bound_constraint(variable, bounds):
-    constraint_ = [
-        bounds.min.get_value(t) <= variable[i].value
-        for i, t in enumerate(bounds.timestamps)
-    ]
-    constraint_.extend(
-        [variable[i].value <= bounds.max.get_value(t) for i, t in enumerate(bounds.timestamps)]
-    )
+    constraint_ = [bounds.min.get_value(t) <= variable[i].value for i, t in enumerate(bounds.timestamps)]
+    constraint_.extend([variable[i].value <= bounds.max.get_value(t) for i, t in enumerate(bounds.timestamps)])
     return constraint_
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     x = cp.Variable((1,), value=[0])
     x_1 = cp.Variable((1,), value=[0])

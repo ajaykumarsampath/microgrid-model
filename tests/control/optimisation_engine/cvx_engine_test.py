@@ -1,54 +1,13 @@
-from typing import Union, List
-
 from common.timeseries.domain import Bounds, BoundTimeseries, Timestamps, ConstantTimeseriesData
-from control.optimisation_engine.cvx_engine.interface import CvxEngine, DuplicateOptimisationEngineValue, \
+from control.optimisation_engine.cvx_engine.cvx_engine import CvxEngine, DuplicateOptimisationEngineValue, \
     OptimisationEngineStatus
-from control.optimisation_engine.domain import IBaseVariable, OptimisationExpression, \
-    IOptimisationIndexVariable, ITimeIndexBaseModel
+from control.optimisation_engine.domain import OptimisationExpression
 import cvxpy as cp
 
 import pytest
 
-
-class MockBaseVariable(IBaseVariable):
-    def __init__(self, name: str, value: Union[float, cp.Variable, OptimisationExpression]):
-        self._value = value
-        self._name = name
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def value(self):
-        return self._value
-
-
-class MockIndexVariable(IOptimisationIndexVariable):
-    def __init__(self, name: str, index: List[int], value: Union[List[float], cp.Variable]):
-        self._value = value
-        self._name = name
-        self._variable = [
-            MockBaseVariable(f'{name}_{id}', OptimisationExpression(value[id])) for id in index
-        ]
-
-    @property
-    def value(self):
-        return self._value
-
-    def evaluate(self):
-        return self._value.value
-
-    @property
-    def name(self):
-        return self._name
-
-    def _at_index(self, index: int):
-        return self._variable[index]
-
-    @property
-    def variable(self):
-        return self._variable
+from tests.control.mock_optimisation_engine import MockBaseVariable, \
+    MockOptimisationVariable, MockIndexVariable
 
 
 class TestCvxEngineInterface:
@@ -72,29 +31,34 @@ class TestCvxEngineInterface:
         assert variable.bounds == Bounds(0, 1)
         assert variable.value.name() == 'test'
 
-
     def test_create_cvx_constraint(self):
         cvx_engine = CvxEngine()
-        var_1 = MockBaseVariable('var_1', cp.Variable(1, name='var_1'))
+        var_1 = MockBaseVariable('var_1', MockOptimisationVariable(cp.Variable(1, name='var_1')))
         expr = var_1 <= 2
         cvx_constraint = cvx_engine.add_constraint('const_1', expr)
         assert cvx_constraint.value.name() == expr.value.value.name()
 
     def test_create_cvx_objective(self):
         cvx_engine = CvxEngine()
-        var_1 = MockBaseVariable('var_1', cp.Variable(1, name='var_1'))
+        var_1 = MockBaseVariable(
+            'var_1', MockOptimisationVariable(cp.Variable(1, name='var_1'))
+        )
 
-        cvx_engine.add_objective('obj_1', OptimisationExpression(2*var_1.value))
+        cvx_engine.add_objective('obj_1', OptimisationExpression(2 * var_1.value.value))
         expected_objective_name = '2.0 @ var_1'
         assert cvx_engine.objective.evaluate().args[0].name() == expected_objective_name
 
     def test_update_cvx_objective(self):
         cvx_engine = CvxEngine()
-        var_1 = MockBaseVariable('var_1', cp.Variable(1, name='var_1'))
-        var_2 = MockBaseVariable('var_2', cp.Variable(1, name='var_2'))
+        var_1 = MockBaseVariable(
+            'var_1', MockOptimisationVariable(cp.Variable(1, name='var_1'))
+        )
+        var_2 = MockBaseVariable(
+            'var_2', MockOptimisationVariable(cp.Variable(1, name='var_2'))
+        )
 
-        cvx_engine.add_objective('obj_1', OptimisationExpression(2*var_1.value))
-        cvx_engine.update_objective(var_2, lambda x:x)
+        cvx_engine.add_objective('obj_1', OptimisationExpression(2 * var_1.value.value))
+        cvx_engine.update_objective(var_2.value, lambda x: x)
         expected_objective_name = '2.0 @ var_1 + var_2'
 
         assert cvx_engine.objective.value.name() == expected_objective_name
@@ -121,7 +85,9 @@ class TestCvxEngineInterface:
     def test_create_index_cvx_constraint(self):
         cvx_engine = CvxEngine()
         timestamps = Timestamps([1, 2, 3])
-        var_list = [MockBaseVariable(f'var_{i}', cp.Variable(1, name=f'var_{i}', value=[i]))
+        var_list = [
+            MockBaseVariable(
+                f'var_{i}', MockOptimisationVariable(cp.Variable(1, name=f'var_{i}', value=[i])))
             for i, t in enumerate(timestamps)]
         constraint_expr = [v <= 1 for v in var_list]
         cvx_constraint = cvx_engine.add_index_constraint('test', constraint_expr)
@@ -129,7 +95,7 @@ class TestCvxEngineInterface:
         expected_name = ['var_0 <= 1.0', 'var_1 <= 1.0', 'var_2 <= 1.0']
 
         assert all([v.name() in expected_name for v in cvx_constraint.value])
-        assert len(cvx_engine.constraint) == 0
+        assert len(cvx_engine.constraint) == 1
 
     def test_duplicate_optimisation_value(self):
         cvx_engine = CvxEngine()
@@ -194,7 +160,7 @@ class TestCvxEngineInterface:
         cvx_engine = CvxEngine()
         timestamps = Timestamps([1, 2, 3, 4])
 
-        cvx_var_1 =cvx_engine.add_timeindex_variable(
+        cvx_var_1 = cvx_engine.add_timeindex_variable(
             'var_1', BoundTimeseries.constant_bound_timeseries(timestamps, 0, 1),
             ConstantTimeseriesData(timestamps, 1)
         )
@@ -204,17 +170,14 @@ class TestCvxEngineInterface:
             ConstantTimeseriesData(timestamps, 1)
         )
 
-        index = [i for i, _ in enumerate(timestamps)]
+        var_1 = MockIndexVariable('var_1', timestamps, cvx_var_1.value)
+        var_2 = MockIndexVariable('var_2', timestamps, cvx_var_2.value)
 
-        var_1 = MockIndexVariable('var_1', index, cvx_var_1.value)
-        var_2 = MockIndexVariable('var_2', index, cvx_var_2.value)
-
-        constraint_expr = [v_1 + v_2 == 1.5  for v_1, v_2 in zip(var_1.variable, var_2.variable)]
+        constraint_expr = [v_1 + v_2 == 1.5 for v_1, v_2 in zip(var_1.variable, var_2.variable)]
 
         cvx_engine.add_index_constraint('test', constraint_expr)
 
-        objective_expr = sum([v_1 + 0.3*v_2 for v_1, v_2 in zip(var_1.variable, var_2.variable)])
-
+        objective_expr = sum([v_1 + 0.3 * v_2 for v_1, v_2 in zip(var_1.variable, var_2.variable)])
         cvx_engine.add_objective(
             'obj', OptimisationExpression(objective_expr.value.value)
         )
@@ -223,12 +186,12 @@ class TestCvxEngineInterface:
         cvx_engine.solve()
 
         expected_objective = sum(
-            [v_1 + 0.3*v_2 for v_1, v_2 in zip(var_1.value.value, var_2.value.value)]
+            [v_1 + 0.3 * v_2 for v_1, v_2 in zip(var_1.value, var_2.value)]
         )
 
         assert cvx_engine.status == OptimisationEngineStatus.Optimal
-        assert all([pytest.approx(v, 0.5, 1e-3) == 0.5 for v in var_1.value.value])
-        assert all([pytest.approx(v, 1, 1e-3) == 1 for v in var_2.value.value])
+        assert all([pytest.approx(v, 0.5, 1e-3) == 0.5 for v in var_1.value])
+        assert all([pytest.approx(v, 1, 1e-3) == 1 for v in var_2.value])
         assert pytest.approx(
             expected_objective, cvx_engine.objective.value.value, 1e-3) == expected_objective
         assert len(cvx_engine.constraint) == 1

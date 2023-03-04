@@ -13,18 +13,19 @@ class Timestamps:
 
     def __post_init__(self):
         try:
-            assert all([self.values[i + 1] - self.values[i] > 0
-                        for i, t in enumerate(self.values) if i < len(self.values) - 1])
+            assert all(
+                [self.values[i + 1] - self.values[i] > 0 for i, t in enumerate(self.values) if i < len(self.values) - 1]
+            )
             assert all([t >= 0 for t in self.values])
             self._iter = 0
         except AssertionError:
-            raise AssertionError('Timestamp values can take only positive and increasing values')
+            raise AssertionError("Timestamp values can take only positive and increasing values")
 
     def get_timestamp_index(self, timestamp: Timestamp):
         try:
             return self.values.index(timestamp)
         except ValueError:
-            raise UnknownTimestampError(f'timestamp {timestamp} is not part of the timestamps')
+            raise UnknownTimestampError(f"timestamp {timestamp} is not part of the timestamps")
 
     def __next__(self):
         self._iter = self._iter + 1
@@ -53,7 +54,7 @@ class TimeseriesData:
         try:
             assert len(self.values) == len(self.timestamps.values)
         except AssertionError:
-            raise AssertionError('data and timestamps are not of the same size')
+            raise AssertionError("data and timestamps are not of the same size")
 
     def get_value(self, timestamp: Timestamp):
         index = self.timestamps.get_timestamp_index(timestamp)
@@ -81,7 +82,7 @@ class Bounds:
 
     def __post_init__(self):
         if self.min > self.max:
-            raise ValueError('Bounds are not correct: min should be less than max')
+            raise ValueError("Bounds are not correct: min should be less than max")
 
 
 TimeseriesModel = Union[TimeseriesData, ConstantTimeseriesData]
@@ -95,20 +96,19 @@ class BoundTimeseries:
     def __post_init__(self):
         try:
             assert len(self.min.timestamps.values) == len(self.max.timestamps.values)
-            assert all([t_1 == t_2 for t_1, t_2 in zip(self.min.timestamps.values,
-                                                       self.max.timestamps.values)])
-            assert all([self.min.get_value(t) < self.max.get_value(t)
-                        for t in self.min.timestamps.values])
+            assert all([t_1 == t_2 for t_1, t_2 in zip(self.min.timestamps.values, self.max.timestamps.values)])
+            assert all([self.min.get_value(t) <= self.max.get_value(t) for t in self.min.timestamps.values])
         except AssertionError:
-            raise AssertionError('min value, max value have either unequal to timestamps '
-                                 'or max value less than min value')
+            raise AssertionError(
+                "min value, max value have either unequal to timestamps " "or max value less than min value"
+            )
 
     @classmethod
-    def constant_bound_timeseries(cls, timestamps: Timestamps, min_value: float,
-                                  max_value: float) -> 'BoundTimeseries':
-        return cls(ConstantTimeseriesData(timestamps, min_value),
-                   ConstantTimeseriesData(timestamps, max_value))
-
+    def constant_bound_timeseries(cls, timestamps: Timestamps, min_value: float, max_value: float) -> "BoundTimeseries":
+        return cls(
+            ConstantTimeseriesData(timestamps, min_value),
+            ConstantTimeseriesData(timestamps, max_value),
+        )
 
     def get_value(self, timestamp: Timestamp) -> (float, float):
         return (self.min.get_value(timestamp), self.max.get_value(timestamp))

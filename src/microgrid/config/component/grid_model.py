@@ -2,10 +2,20 @@ from dataclasses import dataclass
 from typing import List
 
 from common.model.component import GridLine, ComponentType
-from microgrid.data_loader.component.grid_model import SingleBusGridNetworkDataLoader, GridNetworkDataLoader
+from microgrid.data_loader.component.grid_model import (
+    SingleBusGridNetworkDataLoader,
+    GridNetworkDataLoader,
+)
 from microgrid.model.component.grid_model import GridNetwork
-from microgrid.config.interface import IGridNetworkConfig, ComponentConfigRegistryData, ClassImportModuler
-from microgrid.shared.data_loader import IComponentDataLoaderData, IGridNetworkConfigData
+from microgrid.config.interface import (
+    IGridNetworkConfig,
+    ComponentConfigRegistryData,
+    ClassImportModuler,
+)
+from microgrid.shared.data_loader import (
+    IComponentDataLoaderData,
+    IGridNetworkConfigData,
+)
 from microgrid.shared.timeseries import Timestamp
 
 
@@ -67,18 +77,19 @@ class GridNetworkConfig(IGridNetworkConfig):
 
     def create_data_loader(self) -> GridNetworkDataLoader:
         return GridNetworkDataLoader(
-            self.config_data.initial_timestamp, self.config_data.data_loader_data.grid_lines
+            self.config_data.initial_timestamp,
+            self.config_data.data_loader_data.grid_lines,
         )
 
 
 default_single_grid_network_registry = ComponentConfigRegistryData(
-    'SINGLE_GRID_NETWORK',
+    "SINGLE_GRID_NETWORK",
     ClassImportModuler(SingleGridNetworkConfig.__module__, SingleGridNetworkConfig.__name__),
-    ClassImportModuler(SingleGridNetworkConfigData.__module__, SingleGridNetworkConfigData.__name__)
+    ClassImportModuler(SingleGridNetworkConfigData.__module__, SingleGridNetworkConfigData.__name__),
 )
 
 default_grid_network_registry = ComponentConfigRegistryData(
-    'GRID_NETWORK',
+    "GRID_NETWORK",
     ClassImportModuler(GridNetworkConfig.__module__, GridNetworkConfig.__name__),
-    ClassImportModuler(GridNetworkConfigData.__module__, GridNetworkConfigData.__name__)
+    ClassImportModuler(GridNetworkConfigData.__module__, GridNetworkConfigData.__name__),
 )

@@ -23,9 +23,7 @@ class LoadDemand(IControlComponent):
         return self._data.timestamps
 
     def _generate_variables(self):
-        self._power = TimeIndexParameter(
-            f'{self.name}_power', parameter_value=self._data.power_forecast
-        )
+        self._power = TimeIndexParameter(f"{self.name}_power", parameter_value=self._data.power_forecast)
 
     def extend_optimisation_model(self, optimisation_engine: IOptimisationEngine):
         self._power.optimisation_value = optimisation_engine.add_timeindex_parameter(

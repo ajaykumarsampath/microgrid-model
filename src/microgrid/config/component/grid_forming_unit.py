@@ -2,11 +2,19 @@ from dataclasses import dataclass
 
 from common.model.component import ComponentType
 from common.timeseries.domain import Bounds
-from microgrid.data_loader.component.grid_forming_unit import StoragePowerPlantDataLoader, \
-    ThermalGeneratorDataLoader
-from microgrid.model.component.grid_forming_unit import StoragePowerPlant, ThermalGenerator
-from microgrid.config.interface import IGeneratorComponentConfig, ComponentConfigRegistryData, \
-    ClassImportModuler
+from microgrid.data_loader.component.grid_forming_unit import (
+    StoragePowerPlantDataLoader,
+    ThermalGeneratorDataLoader,
+)
+from microgrid.model.component.grid_forming_unit import (
+    StoragePowerPlant,
+    ThermalGenerator,
+)
+from microgrid.config.interface import (
+    IGeneratorComponentConfig,
+    ComponentConfigRegistryData,
+    ClassImportModuler,
+)
 from microgrid.shared.data_loader import IComponentDataLoaderData, IGeneratorConfigData
 
 
@@ -29,7 +37,6 @@ class StoragePowerPlantConfigData(IGeneratorConfigData):
 
 
 class StoragePowerPlantConfig(IGeneratorComponentConfig):
-
     def __init__(self, config_data: StoragePowerPlantConfigData):
         super().__init__(config_data)
         self.config_data = config_data
@@ -41,10 +48,13 @@ class StoragePowerPlantConfig(IGeneratorComponentConfig):
     def create_data_loader(self) -> StoragePowerPlantDataLoader:
         data_loader_data = self.config_data.data_loader_data
         return StoragePowerPlantDataLoader(
-            self.config_data.initial_timestamp, data_loader_data.power_bounds,
-            data_loader_data.droop_gain, data_loader_data.energy_bounds,
-            data_loader_data.initial_energy, data_loader_data.charge_efficiency,
-            data_loader_data.discharge_efficiency
+            self.config_data.initial_timestamp,
+            data_loader_data.power_bounds,
+            data_loader_data.droop_gain,
+            data_loader_data.energy_bounds,
+            data_loader_data.initial_energy,
+            data_loader_data.charge_efficiency,
+            data_loader_data.discharge_efficiency,
         )
 
 
@@ -74,20 +84,21 @@ class ThermalGeneratorConfig(IGeneratorComponentConfig):
 
     def create_data_loader(self) -> ThermalGeneratorDataLoader:
         return ThermalGeneratorDataLoader(
-            self.config_data.initial_timestamp, self.config_data.data_loader_data.power_bounds,
+            self.config_data.initial_timestamp,
+            self.config_data.data_loader_data.power_bounds,
             self.config_data.data_loader_data.droop_gain,
-            self.config_data.data_loader_data.switch_state
+            self.config_data.data_loader_data.switch_state,
         )
 
 
 default_thermal_config_registry = ComponentConfigRegistryData(
-    'THERMAL_GENERATOR',
+    "THERMAL_GENERATOR",
     ClassImportModuler(ThermalGeneratorConfig.__module__, ThermalGeneratorConfig.__name__),
-    ClassImportModuler(ThermalGeneratorConfigData.__module__, ThermalGeneratorConfigData.__name__)
+    ClassImportModuler(ThermalGeneratorConfigData.__module__, ThermalGeneratorConfigData.__name__),
 )
 
 default_storage_config_registry = ComponentConfigRegistryData(
-    'STORAGE_POWERPLANT',
+    "STORAGE_POWERPLANT",
     ClassImportModuler(StoragePowerPlantConfig.__module__, StoragePowerPlantConfig.__name__),
-    ClassImportModuler(StoragePowerPlantConfigData.__module__, StoragePowerPlantConfigData.__name__)
+    ClassImportModuler(StoragePowerPlantConfigData.__module__, StoragePowerPlantConfigData.__name__),
 )

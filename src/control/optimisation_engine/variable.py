@@ -1,9 +1,22 @@
 from typing import List, Union, Optional
 
-from control.optimisation_engine.domain import IExpression, IBaseVariable, \
-    ConstraintType, ObjectiveType, ITimeIndexBaseModel, IOptimisationVariable, \
-    IOptimisationIndexVariable, UnknownTimestampError
-from common.timeseries.domain import Timestamps, Timestamp, BoundTimeseries, Bounds, TimeseriesModel
+from control.optimisation_engine.domain import (
+    IExpression,
+    IBaseVariable,
+    ConstraintType,
+    ObjectiveType,
+    ITimeIndexBaseModel,
+    IOptimisationVariable,
+    IOptimisationIndexVariable,
+    UnknownTimestampError,
+)
+from common.timeseries.domain import (
+    Timestamps,
+    Timestamp,
+    BoundTimeseries,
+    Bounds,
+    TimeseriesModel,
+)
 
 
 class Parameter(IBaseVariable):
@@ -19,13 +32,13 @@ class Parameter(IBaseVariable):
     @property
     def value(self) -> IOptimisationVariable:
         if self._opt_parameter is None:
-            raise NotImplementedError(f'parameter {self._name} is not created')
+            raise NotImplementedError(f"parameter {self._name} is not created")
         else:
             return self._opt_parameter
 
     @value.setter
     def value(self, var: IOptimisationVariable):
-        self._opt_parameter = IOptimisationVariable
+        self._opt_parameter = var
 
     def evaluate(self):
         return self.value.evaluate()
@@ -53,7 +66,7 @@ class Variable(IBaseVariable):
     @property
     def value(self) -> IOptimisationVariable:
         if self._opt_variable is None:
-            raise NotImplementedError(f'Variable {self._name} is not created')
+            raise NotImplementedError(f"Variable {self._name} is not created")
         else:
             return self._opt_variable
 
@@ -82,7 +95,7 @@ class Constraint:
     @property
     def value(self) -> IOptimisationVariable:
         if self._opt_constraint is None:
-            raise NotImplementedError(f'Constraint {self.name} is not created')
+            raise NotImplementedError(f"Constraint {self.name} is not created")
         else:
             return self._opt_constraint
 
@@ -107,7 +120,7 @@ class Objective(IBaseVariable):
     @property
     def value(self) -> IOptimisationVariable:
         if self._opt_objective is None:
-            raise NotImplementedError(f'Objective {self.name} is not created')
+            raise NotImplementedError(f"Objective {self.name} is not created")
         else:
             return self._opt_objective
 
@@ -123,8 +136,9 @@ class TimeIndexParameter(ITimeIndexBaseModel):
     def __init__(self, name: str, parameter_value: TimeseriesModel):
         self._name = name
         self._value = parameter_value
-        self._parameter: List[Parameter] = [Parameter(f'{name}_{t}', self._value.get_value(t))
-                                            for t in self._value.timestamps]
+        self._parameter: List[Parameter] = [
+            Parameter(f"{name}_{t}", self._value.get_value(t)) for t in self._value.timestamps
+        ]
         self._opt_parameter: Optional[IOptimisationIndexVariable] = None
 
     @property
@@ -146,7 +160,7 @@ class TimeIndexParameter(ITimeIndexBaseModel):
     @property
     def optimisation_value(self) -> IOptimisationIndexVariable:
         if self._opt_parameter is None:
-            raise NotImplementedError(f'variable {self._name} is not created')
+            raise NotImplementedError(f"variable {self._name} is not created")
         else:
             return self._opt_parameter
 
@@ -173,10 +187,8 @@ class TimeIndexVariable(ITimeIndexBaseModel):
         self._initial_value = initial_value
         self._timestamps = initial_value.timestamps
         self._variable = [
-            Variable(
-                f'{name}_{t}', bounds.get_value(t), initial_value.get_value(t)
-            )
-            for t in self._timestamps]
+            Variable(f"{name}_{t}", bounds.get_value(t), initial_value.get_value(t)) for t in self._timestamps
+        ]
         self._opt_variable: Optional[IOptimisationIndexVariable] = None
 
     @property
@@ -202,7 +214,7 @@ class TimeIndexVariable(ITimeIndexBaseModel):
     @property
     def optimisation_value(self) -> IOptimisationIndexVariable:
         if self._opt_variable is None:
-            raise NotImplementedError(f'variable {self._name} is not created')
+            raise NotImplementedError(f"variable {self._name} is not created")
         else:
             return self._opt_variable
 
@@ -213,7 +225,7 @@ class TimeIndexVariable(ITimeIndexBaseModel):
             self.value[i].value = self._opt_variable[i]
 
     def evaluate(self) -> List[float]:
-        return [v.value.evaluate() for v in self.value]
+        return [v.evaluate() for v in self.value]
 
     def get_value_timestamp(self, timestamp: Timestamp) -> Variable:
         return self._get_value_timestamp(timestamp)
@@ -223,12 +235,16 @@ class TimeIndexVariable(ITimeIndexBaseModel):
 
 
 class TimeIndexConstraint:
-    def __init__(self, name: str, timestamps: Timestamps,
-                 constraint_expression: List[ConstraintType]):
+    def __init__(
+        self,
+        name: str,
+        timestamps: Timestamps,
+        constraint_expression: List[ConstraintType],
+    ):
         self._name = name
         self._timestamps = timestamps
         self._constraint: List[Constraint] = [
-            Constraint(f'{name}_{t}', constraint_expression[i]) for i, t in enumerate(self._timestamps)
+            Constraint(f"{name}_{t}", constraint_expression[i]) for i, t in enumerate(self._timestamps)
         ]
         self._constraint_expression = constraint_expression
         self._opt_constraint: Optional[IOptimisationIndexVariable] = None
@@ -252,7 +268,7 @@ class TimeIndexConstraint:
     @property
     def optimisation_value(self) -> IOptimisationIndexVariable:
         if self._opt_constraint is None:
-            raise NotImplementedError(f'variable {self._name} is not created')
+            raise NotImplementedError(f"variable {self._name} is not created")
         else:
             return self._opt_constraint
 
@@ -266,7 +282,7 @@ class TimeIndexConstraint:
         try:
             return self.value[self.timestamps.get_timestamp_index(timestamp)]
         except (IndexError, ValueError):
-            raise UnknownTimestampError(f'timestamp {timestamp} is not part of the timestamps defined')
+            raise UnknownTimestampError(f"timestamp {timestamp} is not part of the timestamps defined")
 
     def evaluate(self) -> List[bool]:
         return [v.value.evaluate() for v in self.value]
@@ -292,7 +308,7 @@ class TimeIndexObjective(ITimeIndexBaseModel):
     @property
     def value(self) -> List[ObjectiveType]:
         if self._objective is None:
-            raise NotImplementedError(f'objective {self._name} is not created')
+            raise NotImplementedError(f"objective {self._name} is not created")
         else:
             return self._objective
 

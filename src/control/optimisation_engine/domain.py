@@ -5,13 +5,13 @@ from common.timeseries.domain import Timestamps, Timestamp
 
 
 class VariableType(Enum):
-    Binary = 'binary'
-    Continuous = 'continuous'
+    Binary = "binary"
+    Continuous = "continuous"
 
 
 class OptimisationVaraibleType(Enum):
-    variable = 'variable'
-    parameter = 'parameter'
+    variable = "variable"
+    parameter = "parameter"
 
 
 class IOptimisationVariable:
@@ -24,6 +24,10 @@ class IOptimisationVariable:
 
     @property
     def type(self):
+        raise NotImplementedError
+
+    @property
+    def bounds(self):
         raise NotImplementedError
 
 
@@ -68,7 +72,7 @@ class IBaseVariable:
         raise NotImplementedError
 
     def __repr__(self):
-        return f'Control variable {self.name}'
+        return f"var_{self.name}"
 
     def __add__(self, other):
         return SumExpression(self, other)
@@ -80,7 +84,7 @@ class IBaseVariable:
         return SubtractExpression(self, other)
 
     def __rsub__(self, other):
-        return SubtractExpression(self, other)
+        return SubtractExpression(other, self)
 
     def __mul__(self, other):
         return MultiplicationExpression(self, other)
@@ -122,15 +126,18 @@ class IExpression(IBaseVariable):
         self.variable_2 = variable_2
 
     def _get_value(self, variable):
-        while isinstance(variable, OptimisationExpression) or isinstance(variable, IBaseVariable) or \
-                isinstance(variable, IOptimisationVariable):
+        while (
+            isinstance(variable, OptimisationExpression) or
+            isinstance(variable, IBaseVariable) or
+            isinstance(variable, IOptimisationVariable)
+        ):
             variable = variable.value
 
         return variable
 
     @property
     def name(self):
-        return 'Expression'
+        return "Expression"
 
     def _get_variable_values(self):
         try:
@@ -138,8 +145,7 @@ class IExpression(IBaseVariable):
             value_2 = self._get_value(self.variable_2)
             return value_1, value_2
         except NotImplementedError as e:
-            raise UndefinedValueError('cannot get values to evaluate the expression: '
-                                      f'{e}')
+            raise UndefinedValueError("cannot get values to evaluate the expression: " f"{e}")
 
     @property
     def value(self) -> OptimisationExpression:
@@ -159,7 +165,7 @@ class SumExpression(IExpression):
         return self.value.value
 
     def __repr__(self):
-        return f'{self.variable_1} + {self.variable_2}'
+        return f"{self.variable_1} + {self.variable_2}"
 
 
 class SubtractExpression(IExpression):
@@ -169,7 +175,7 @@ class SubtractExpression(IExpression):
         return OptimisationExpression(value_1 - value_2)
 
     def __repr__(self):
-        return f'{self.variable_1} - {self.variable_2}'
+        return f"{self.variable_1} - {self.variable_2}"
 
 
 class MultiplicationExpression(IExpression):
@@ -179,7 +185,7 @@ class MultiplicationExpression(IExpression):
         return OptimisationExpression(value_1 * value_2)
 
     def __repr__(self):
-        return f'{self.variable_1} * {self.variable_2}'
+        return f"{self.variable_1} * {self.variable_2}"
 
 
 class DivisionExpression(IExpression):
@@ -189,7 +195,7 @@ class DivisionExpression(IExpression):
         return OptimisationExpression(value_1 / value_2)
 
     def __repr__(self):
-        return f'{self.variable_1} / {self.variable_2}'
+        return f"{self.variable_1} / {self.variable_2}"
 
 
 class EqualExpression(IExpression):
@@ -199,7 +205,7 @@ class EqualExpression(IExpression):
         return OptimisationExpression(value_1 == value_2)
 
     def __repr__(self):
-        return f'{self.variable_1} == {self.variable_2}'
+        return f"{self.variable_1} == {self.variable_2}"
 
 
 class GreaterExpression(IExpression):
@@ -209,7 +215,7 @@ class GreaterExpression(IExpression):
         return OptimisationExpression(value_1 > value_2)
 
     def __repr__(self):
-        return f'{self.variable_1} > {self.variable_2}'
+        return f"{self.variable_1} > {self.variable_2}"
 
 
 class LesserExpression(IExpression):
@@ -219,7 +225,7 @@ class LesserExpression(IExpression):
         return OptimisationExpression(value_1 < value_2)
 
     def __repr__(self):
-        return f'{self.variable_1} < {self.variable_2}'
+        return f"{self.variable_1} < {self.variable_2}"
 
 
 class GreaterEqualExpression(IExpression):
@@ -229,7 +235,7 @@ class GreaterEqualExpression(IExpression):
         return OptimisationExpression(value_1 >= value_2)
 
     def __repr__(self):
-        return f'{self.variable_1} >= {self.variable_2}'
+        return f"{self.variable_1} >= {self.variable_2}"
 
 
 class LesserEqualExpression(IExpression):
@@ -239,13 +245,17 @@ class LesserEqualExpression(IExpression):
         return OptimisationExpression(value_1 <= value_2)
 
     def __repr__(self):
-        return f'{self.variable_1} <= {self.variable_2}'
+        return f"{self.variable_1} <= {self.variable_2}"
 
 
-ConstraintType = Union[EqualExpression, GreaterExpression, GreaterEqualExpression,
-                       LesserEqualExpression, LesserExpression]
-ObjectiveType = Union[SumExpression, SubtractExpression, MultiplicationExpression,
-                      DivisionExpression]
+ConstraintType = Union[
+    EqualExpression,
+    GreaterExpression,
+    GreaterEqualExpression,
+    LesserEqualExpression,
+    LesserExpression,
+]
+ObjectiveType = Union[SumExpression, SubtractExpression, MultiplicationExpression, DivisionExpression]
 
 
 class ITimeIndexBaseModel:
@@ -273,19 +283,19 @@ class ITimeIndexBaseModel:
         try:
             return self.value[self.timestamps.values.index(timestamp)]
         except (IndexError, ValueError):
-            raise UnknownTimestampError(f'timestamp {timestamp} is not part of the timestamps defined')
+            raise UnknownTimestampError(f"timestamp {timestamp} is not part of the timestamps defined")
 
     def _get_value_index(self, index: int):
         try:
             return self.value[index]
         except (IndexError, ValueError):
-            raise UnknownTimestampError(f'index {index} is not part of the timestamps defined')
+            raise UnknownTimestampError(f"index {index} is not part of the timestamps defined")
 
     def get_value_timestamp(self, timestamp: Timestamp):
         raise NotImplementedError
 
     def __repr__(self):
-        return f'Control variable {self.name}'
+        return f"var_{self.name}"
 
     def __getitem__(self, index):
         return self.value[index]
@@ -340,8 +350,12 @@ BaseTimeIndexModel = Union[ITimeIndexBaseModel, float, int, OptimisationExpressi
 
 
 class ITimeIndexExpression(ITimeIndexBaseModel):
-    def __init__(self, timestamps: Timestamps, variable_1: BaseTimeIndexModel,
-                 variable_2: BaseTimeIndexModel):
+    def __init__(
+        self,
+        timestamps: Timestamps,
+        variable_1: BaseTimeIndexModel,
+        variable_2: BaseTimeIndexModel,
+    ):
         self._variable_1 = variable_1
         self._variable_2 = variable_2
         self._timestamps = timestamps
@@ -352,16 +366,14 @@ class ITimeIndexExpression(ITimeIndexBaseModel):
 
     @property
     def name(self):
-        return 'TimeIndexExpression'
+        return "TimeIndexExpression"
 
     def _get_value(self, variable):
-        while isinstance(variable, ITimeIndexBaseModel) or \
-                isinstance(variable, OptimisationExpression):
+        while isinstance(variable, ITimeIndexBaseModel) or isinstance(variable, OptimisationExpression):
             variable = variable.value
 
         try:
             if len(variable) == len(self.timestamps):
-                # print([v.value for v in variable])
                 v_ = []
                 for v in variable:
                     if isinstance(v, IBaseVariable):
@@ -376,8 +388,8 @@ class ITimeIndexExpression(ITimeIndexBaseModel):
             return [variable] * len(self.timestamps)
         except AssertionError as e:
             raise UnequalTimeIndexExpression(
-                f'Variable {variable.name} timestamps is unequal to '
-                f'expression timestamps : {e}')
+                f"Variable {variable.name} timestamps is unequal to " f"expression timestamps : {e}"
+            )
 
     def get_value_timestamp(self, timestamp: Timestamp):
         return self._get_value_timestamp(timestamp)
@@ -416,7 +428,7 @@ class SumTimeIndexExpression(ITimeIndexExpression):
         return [SumExpression(v_1, v_2) for v_1, v_2 in zip(var_1, var_2)]
 
     def __repr__(self):
-        return f'{self._variable_1} + {self._variable_2}'
+        return f"{self._variable_1} + {self._variable_2}"
 
 
 class SubtractTimeIndexExpression(ITimeIndexExpression):
@@ -433,7 +445,7 @@ class SubtractTimeIndexExpression(ITimeIndexExpression):
         return [SubtractExpression(v_1, v_2) for v_1, v_2 in zip(var_1, var_2)]
 
     def __repr__(self):
-        return f'{self._variable_1.name} - {self._variable_1.name}'
+        return f"{self._variable_1.name} - {self._variable_1.name}"
 
 
 class MultiplicationTimeIndexExpression(ITimeIndexExpression):
@@ -449,7 +461,7 @@ class MultiplicationTimeIndexExpression(ITimeIndexExpression):
         return [MultiplicationExpression(v_1, v_2) for v_1, v_2 in zip(var_1, var_2)]
 
     def __repr__(self):
-        return f'{self._variable_1.name} * {self._variable_1.name}'
+        return f"{self._variable_1.name} * {self._variable_1.name}"
 
 
 class DivisionTimeIndexExpression(ITimeIndexExpression):
@@ -465,7 +477,7 @@ class DivisionTimeIndexExpression(ITimeIndexExpression):
         return [DivisionExpression(v_1, v_2) for v_1, v_2 in zip(var_1, var_2)]
 
     def __repr__(self):
-        return f'{self._variable_1.name} / {self._variable_1.name}'
+        return f"{self._variable_1.name} / {self._variable_1.name}"
 
 
 class EqualTimeIndexExpression(ITimeIndexExpression):
@@ -473,7 +485,6 @@ class EqualTimeIndexExpression(ITimeIndexExpression):
     def value(self) -> OptimisationExpression:
         value_1 = self._get_value(self._variable_1)
         value_2 = self._get_value(self._variable_2)
-
         return OptimisationExpression([v_1 == v_2 for v_1, v_2 in zip(value_1, value_2)])
 
     def get_expression(self):
@@ -481,7 +492,7 @@ class EqualTimeIndexExpression(ITimeIndexExpression):
         return [EqualExpression(v_1, v_2) for v_1, v_2 in zip(var_1, var_2)]
 
     def __repr__(self):
-        return f'{self._variable_1.name} == {self._variable_1.name}'
+        return f"{self._variable_1.name} == {self._variable_1.name}"
 
 
 class GreaterTimeIndexExpression(ITimeIndexExpression):
@@ -497,7 +508,7 @@ class GreaterTimeIndexExpression(ITimeIndexExpression):
         return [GreaterExpression(v_1, v_2) for v_1, v_2 in zip(var_1, var_2)]
 
     def __repr__(self):
-        return f'{self._variable_1.name} > {self._variable_1.name}'
+        return f"{self._variable_1.name} > {self._variable_1.name}"
 
 
 class LesserTimeIndexExpression(ITimeIndexExpression):
@@ -512,7 +523,7 @@ class LesserTimeIndexExpression(ITimeIndexExpression):
         return [LesserExpression(v_1, v_2) for v_1, v_2 in zip(var_1, var_2)]
 
     def __repr__(self):
-        return f'{self._variable_1.name} < {self._variable_1.name}'
+        return f"{self._variable_1.name} < {self._variable_1.name}"
 
 
 class GreaterEqualTimeIndexExpression(ITimeIndexExpression):
@@ -528,7 +539,7 @@ class GreaterEqualTimeIndexExpression(ITimeIndexExpression):
         return [GreaterEqualExpression(v_1, v_2) for v_1, v_2 in zip(var_1, var_2)]
 
     def __repr__(self):
-        return f'{self._variable_1.name} >= {self._variable_1.name}'
+        return f"{self._variable_1.name} >= {self._variable_1.name}"
 
 
 class LesserEqualTimeIndexExpression(ITimeIndexExpression):
@@ -550,14 +561,22 @@ class LesserEqualTimeIndexExpression(ITimeIndexExpression):
         return [LesserEqualExpression(v_1, v_2) for v_1, v_2 in zip(var_1, var_2)]
 
     def __repr__(self):
-        return f'{self._variable_1.name} <= {self._variable_1.name}'
+        return f"{self._variable_1.name} <= {self._variable_1.name}"
 
 
-TimeIndexConstraintType = Union[EqualTimeIndexExpression, GreaterTimeIndexExpression,
-                                GreaterEqualTimeIndexExpression, LesserEqualTimeIndexExpression,
-                                LesserTimeIndexExpression]
-TimeIndexObjectiveType = Union[SumTimeIndexExpression, SubtractTimeIndexExpression,
-                               MultiplicationTimeIndexExpression, DivisionTimeIndexExpression]
+TimeIndexConstraintType = Union[
+    EqualTimeIndexExpression,
+    GreaterTimeIndexExpression,
+    GreaterEqualTimeIndexExpression,
+    LesserEqualTimeIndexExpression,
+    LesserTimeIndexExpression,
+]
+TimeIndexObjectiveType = Union[
+    SumTimeIndexExpression,
+    SubtractTimeIndexExpression,
+    MultiplicationTimeIndexExpression,
+    DivisionTimeIndexExpression,
+]
 
 
 class UnknownTimestampError(Exception):

@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class SingleBusGridNetworkDataLoader(IGridNetworkDataLoader):
-    SLACK_BUS_ID = 'slack'
+    SLACK_BUS_ID = "slack"
 
     def __init__(self, initial_timestamp: Timestamp):
         super().__init__(initial_timestamp)
@@ -115,11 +115,10 @@ class GridNetworkDataLoader(IGridNetworkDataLoader):
                     pass
                 else:
                     from_bus_set = list_set_buses.pop(from_bus_set_index)
-                    list_set_buses[to_bus_set_index] = \
-                        list_set_buses[to_bus_set_index] + from_bus_set
+                    list_set_buses[to_bus_set_index] = list_set_buses[to_bus_set_index] + from_bus_set
 
         return list_set_buses
 
 
-if __name__ == '__main__':
-    a = {'GridNetworkDataLoader': GridNetworkDataLoader}
+if __name__ == "__main__":
+    a = {"GridNetworkDataLoader": GridNetworkDataLoader}

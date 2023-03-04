@@ -9,13 +9,14 @@ logger = logging.getLogger(__name__)
 
 
 class RenewableUnitDataLoader(IRenewableUnitDataLoader):
-    def __init__(self, initial_timestamp: Timestamp,
-                 sample_point_to_power: SamplePointsToPowerTable,
-                 simulation_time_series: SimulationTimeSeries):
+    def __init__(
+        self,
+        initial_timestamp: Timestamp,
+        sample_point_to_power: SamplePointsToPowerTable,
+        simulation_time_series: SimulationTimeSeries,
+    ):
 
-        power_bounds = Bounds(
-            min=sample_point_to_power.minimum(), max=sample_point_to_power.maximum()
-        )
+        power_bounds = Bounds(min=sample_point_to_power.minimum(), max=sample_point_to_power.maximum())
 
         super().__init__(initial_timestamp=initial_timestamp, power_bounds=power_bounds)
 
@@ -24,8 +25,7 @@ class RenewableUnitDataLoader(IRenewableUnitDataLoader):
         self._min_simulation_timestamp = min(simulation_time_series.timestamps)
         self._max_simulation_timestamp = max(simulation_time_series.timestamps)
         if initial_timestamp > self._max_simulation_timestamp:
-            raise UnitDataLoaderError('renewable unit simulation timestamps are '
-                                      'past compared to the initial time')
+            raise UnitDataLoaderError("renewable unit simulation timestamps are " "past compared to the initial time")
 
     def get_data(self, timestamp: int):
         if self._min_simulation_timestamp <= timestamp <= self._max_simulation_timestamp:

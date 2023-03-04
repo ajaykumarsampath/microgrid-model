@@ -9,14 +9,14 @@ BUS_ID = str
 
 
 class ComponentType(Enum):
-    Load = 'Load'
-    Renewable = 'Renewable'
-    PV = 'PVPlant'
-    WIND = 'WindPlant'
-    Storage = 'Storage'
-    Thermal = 'Thermal'
-    Grid = 'Grid'
-    Unknown = 'None'
+    Load = "Load"
+    Renewable = "Renewable"
+    PV = "PVPlant"
+    WIND = "WindPlant"
+    Storage = "Storage"
+    Thermal = "Thermal"
+    Grid = "Grid"
+    Unknown = "None"
 
 
 @dataclass
@@ -28,9 +28,11 @@ class GridLine:
 
     def __eq__(self, other):
         try:
-            if other.to_bus in [self.to_bus, self.from_bus] and \
-                    other.from_bus in [self.to_bus, self.from_bus] and \
-                    self.admittance == other.admittance:
+            if (
+                other.to_bus in [self.to_bus, self.from_bus] and
+                other.from_bus in [self.to_bus, self.from_bus] and
+                self.admittance == other.admittance
+            ):
                 return True
             else:
                 return False
@@ -39,7 +41,7 @@ class GridLine:
 
     def __post_init__(self):
         if self.to_bus == self.from_bus:
-            raise ValueError('to_bus and from_bus of the line are same')
+            raise ValueError("to_bus and from_bus of the line are same")
 
     def is_connected_to_bus(self, bus_id: BUS_ID):
         return bus_id == self.to_bus or bus_id == self.from_bus
@@ -65,7 +67,7 @@ class ControlComponentData:
 
     def __post_init__(self):
         if self.component_type == ComponentType.Storage and self.energy_bound is None:
-            raise ValueError('')
+            raise ValueError("")
 
 
 @dataclass

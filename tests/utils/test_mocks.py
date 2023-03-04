@@ -179,14 +179,9 @@ class MockGeneratorConfigData(IGeneratorConfigData):
 
 
 class MockGeneratorConfig(IGeneratorComponentConfig):
-    def __init__(self, config_data: MockGeneratorConfigData,
-                 # name: str, data_loader: MockGeneratorDataLoader, bus_id: BUS_ID,
-                 # component_type: ComponentType = ComponentType.Unknown
-                 ):
+    def __init__(self, config_data: MockGeneratorConfigData):
         super().__init__(config_data)
         self.config_data = config_data
-        # self.data_loader = data_loader
-        # self._component_type = component_type
 
     def create_unit(self):
         data_loader = self.create_data_loader()

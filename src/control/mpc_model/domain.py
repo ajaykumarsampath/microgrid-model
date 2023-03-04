@@ -15,10 +15,9 @@ class Horizon:
         try:
             assert self.since >= 0 and self.until >= 0 and self.sampling_time >= 0
             assert self.until - self.since >= 0
-            self.timestamps = Timestamps([t for t in range(self.since, self.until,
-                                                           self.sampling_time)])
+            self.timestamps = Timestamps([t for t in range(self.since, self.until, self.sampling_time)])
         except AssertionError:
-            raise AssertionError('since and until is positive and until greater than since')
+            raise AssertionError("since and until is positive and until greater than since")
 
 
 class IControlComponent:

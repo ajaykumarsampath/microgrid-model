@@ -15,16 +15,13 @@ class HistoricalData:
 
     def __post_init__(self):
         if len(self.timestamps) > 0:
-            if np.diff(self.timestamps).min() <= 0 or \
-                    len(self.timestamps) != len(self.data):
-                raise SimulationTimeseriesError(
-                    'time stamps in the historical data should be increasing')
+            if np.diff(self.timestamps).min() <= 0 or len(self.timestamps) != len(self.data):
+                raise SimulationTimeseriesError("time stamps in the historical data should be increasing")
 
     def add_data(self, timestamp: int, data: ComponentSimulationData):
         if len(self.timestamps) > 0:
             if timestamp <= self.timestamps[-1]:
-                raise SimulationTimeseriesError(
-                    'time stamps in the historical data should be increasing')
+                raise SimulationTimeseriesError("time stamps in the historical data should be increasing")
             else:
                 self.timestamps.append(timestamp)
                 self.data.append(data)
@@ -47,13 +44,10 @@ class MemoryDataStorage(IComponentDataStorage):
     def current_timestamp(self):
         return self._current_timestamp
 
-    def add_simulation_data(
-            self, current_timestamp, data: ComponentSimulationData):
+    def add_simulation_data(self, current_timestamp, data: ComponentSimulationData):
         self._current_timestamp = current_timestamp
         self.historical_data.timestamps.append(current_timestamp)
         self.historical_data.data.append(data)
 
-    def get_historical_data(self, since: int, until: int = None,
-                            unit_id: str = None) \
-            -> List[ComponentSimulationData]:
+    def get_historical_data(self, since: int, until: int = None, unit_id: str = None) -> List[ComponentSimulationData]:
         pass

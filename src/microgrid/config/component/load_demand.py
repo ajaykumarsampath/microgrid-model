@@ -3,7 +3,11 @@ from dataclasses import dataclass
 from common.model.component import BUS_ID, ComponentType
 from microgrid.data_loader.component.load_demand import LoadDemandDataLoader
 from microgrid.model.component.load_demand import LoadDemand
-from microgrid.config.interface import IUnitConfig, ComponentConfigRegistryData, ClassImportModuler
+from microgrid.config.interface import (
+    IUnitConfig,
+    ComponentConfigRegistryData,
+    ClassImportModuler,
+)
 from microgrid.shared.data_loader import IUnitConfigData, IComponentDataLoaderData
 from microgrid.shared.timeseries import SimulationTimeSeries, Timestamp
 
@@ -45,12 +49,11 @@ class LoadDemandConfig(IUnitConfig):
         return LoadDemand(self.name, data_loader)
 
     def create_data_loader(self) -> LoadDemandDataLoader:
-        return LoadDemandDataLoader(
-            self.initial_timestamp, self.data_loader_data.demand_time_series
-        )
+        return LoadDemandDataLoader(self.initial_timestamp, self.data_loader_data.demand_time_series)
 
 
 default_load_config_registry = ComponentConfigRegistryData(
-    'LOAD_DEMAND', ClassImportModuler(LoadDemandConfig.__module__, LoadDemandConfig.__name__),
-    ClassImportModuler(LoadDemandConfigData.__module__, LoadDemandConfigData.__name__)
+    "LOAD_DEMAND",
+    ClassImportModuler(LoadDemandConfig.__module__, LoadDemandConfig.__name__),
+    ClassImportModuler(LoadDemandConfigData.__module__, LoadDemandConfigData.__name__),
 )

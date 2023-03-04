@@ -6,13 +6,16 @@ from enum import Enum
 
 
 class ArrayShapeType(Enum):
-    row = 'row'
-    colum = 'colum'
+    row = "row"
+    colum = "colum"
 
 
 class VariableArray:
-    def __init__(self, var: Union[List[IBaseVariable], List[float]],
-                 shape_type: ArrayShapeType = ArrayShapeType.row):
+    def __init__(
+        self,
+        var: Union[List[IBaseVariable], List[float]],
+        shape_type: ArrayShapeType = ArrayShapeType.row,
+    ):
         self._var = var
         self._shape_type = shape_type
 
@@ -30,11 +33,18 @@ class VariableArray:
     def __getitem__(self, item) -> IBaseVariable:
         return self._var[item]
 
+    @property
     def shape(self):
         if self._shape_type is ArrayShapeType.row:
             return (len(self._var), 1)
         else:
             return (1, len(self._var))
+
+    def __setitem__(self, key, value):
+        if isinstance(value, Union[IBaseVariable, float, int]):
+            self._var[key] = value
+        else:
+            raise TypeError("Undefined variable to update")
 
     def __add__(self, other):
         try:
@@ -90,13 +100,20 @@ class VariableArray:
 
 
 class VariableMatrix:
-    def __init__(self, var: Union[List[IBaseVariable], List[float]],
-                 row_dim: int, col_dim: int):
+    def __init__(
+        self,
+        var: Union[List[IBaseVariable], List[float]],
+        row_dim: int,
+        col_dim: int,
+        shape_type: ArrayShapeType = ArrayShapeType.row,
+    ):
         self._var = var
         self._row_dim = row_dim
         self._col_dim = col_dim
+        self._shape_type = shape_type
         assert len(var) == self._col_dim * self._row_dim
 
+    @property
     def shape(self):
         return (self._row_dim, self._col_dim)
 
@@ -104,18 +121,27 @@ class VariableMatrix:
     def T(self):
         return VariableMatrix(self._var, self._col_dim, self._row_dim)
 
+    @property
+    def value(self):
+        return self._var
+
     def __getitem__(self, item):
         i = item[0]
         j = item[1]
         return self._var[j * self._row_dim + i]
 
+    def __setitem__(self, key, value):
+        if isinstance(value, Union[IBaseVariable, float, int]):
+            self._var[key[1] * self._row_dim + key[0]] = value
+        else:
+            raise TypeError("Undefined variable to update")
+
 
 def matmul(mat_var: VariableMatrix, array_var: VariableArray):
-    mat_shape = mat_var.shape()
-    vec_shape = array_var.shape()
+    mat_shape = mat_var.shape
+    vec_shape = array_var.shape
     assert mat_shape[1] == vec_shape[0]
 
-    result_var = [sum([mat_var[i, j] * array_var[j] for j in range(0, vec_shape[0])])
-                  for i in range(0, mat_shape[0])]
+    result_var = [sum([mat_var[i, j] * array_var[j] for j in range(0, vec_shape[0])]) for i in range(0, mat_shape[0])]
 
     return VariableArray(result_var, ArrayShapeType.row)

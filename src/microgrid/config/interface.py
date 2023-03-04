@@ -8,7 +8,11 @@ from common.model.component import ComponentType
 from microgrid.data_loader.interface import IGeneratorDataLoader
 from microgrid.model.component_interface import IComponent, IGridNetwork
 from microgrid.model.generator_interface import IGeneratorComponent
-from microgrid.shared.data_loader import IUnitConfigData, IGridNetworkConfigData, IGeneratorConfigData
+from microgrid.shared.data_loader import (
+    IUnitConfigData,
+    IGridNetworkConfigData,
+    IGeneratorConfigData,
+)
 
 
 class IUnitConfig:
@@ -80,11 +84,12 @@ class ClassImportModuler:
     def create_class(self) -> Any:
         try:
             import importlib
+
             module = importlib.import_module(self.module)
             class_ = getattr(module, self.value)
             return class_
         except ImportError as e:
-            raise WrongComponentConfigImporter(f'config error {e}')
+            raise WrongComponentConfigImporter(f"config error {e}")
 
     def __eq__(self, other):
         try:
@@ -112,7 +117,7 @@ class ComponentConfigRegistryData:
             data = from_dict(config_data_type, dict_)
             return config_class_type(data)
         except WrongComponentConfigImporter as e:
-            raise WrongComponentConfigData(f'Wrong config data at reference {self.reference} as {e}')
+            raise WrongComponentConfigData(f"Wrong config data at reference {self.reference} as {e}")
 
     def get_config_schema(self) -> dict:
         config_data_type = self.config_data_module.create_class()

@@ -3,8 +3,13 @@ from microgrid.shared.data_loader import IComponentDataLoader
 
 
 class IGeneratorDataLoader(IComponentDataLoader):
-    def __init__(self, initial_timestamp: int, power_bounds: Bounds, droop_gain: float = 0,
-                 grid_forming_unit_flag: bool = False):
+    def __init__(
+        self,
+        initial_timestamp: int,
+        power_bounds: Bounds,
+        droop_gain: float = 0,
+        grid_forming_unit_flag: bool = False,
+    ):
         super().__init__(initial_timestamp)
         self._power_bounds = power_bounds
         self._droop_gain = droop_gain

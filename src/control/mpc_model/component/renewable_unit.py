@@ -28,23 +28,22 @@ class RenewablePowerUnit(IControlComponent):
         return self._data.timestamps
 
     def _generate_variables(self):
-        power_bounds = BoundTimeseries(
-            min=ConstantTimeseriesData(self.timestamps, self._data.power_bounds.min),
-            max=ConstantTimeseriesData(self.timestamps, self._data.power_bounds.max)
+        power_bounds = BoundTimeseries.constant_bound_timeseries(
+            self.timestamps,
+            min_value=self._data.power_bounds.min,
+            max_value=self._data.power_bounds.max,
         )
         self._power = TimeIndexVariable(
-            f'{self.name}_power', bounds=power_bounds,
-            initial_value=ConstantTimeseriesData(self.timestamps, 0)
+            f"{self.name}_power",
+            bounds=power_bounds,
+            initial_value=ConstantTimeseriesData(self.timestamps, 0),
         )
 
     def _generate_constraint(self):
         constraint = [
-            self._power.get_value_index(i) <= self.power_forecast.get_value(t)
-            for i, t in enumerate(self.timestamps)
+            self._power.get_value_index(i) <= self.power_forecast.get_value(t) for i, t in enumerate(self.timestamps)
         ]
-        self._power_constraint = TimeIndexConstraint(
-            f'{self.name}_available_power_limit', self.timestamps, constraint
-        )
+        self._power_constraint = TimeIndexConstraint(f"{self.name}_available_power_limit", self.timestamps, constraint)
 
     def extend_optimisation_model(self, optimisation_engine: IOptimisationEngine):
         self._power.optimisation_value = optimisation_engine.add_timeindex_variable(
@@ -53,5 +52,5 @@ class RenewablePowerUnit(IControlComponent):
 
         self._power_constraint.optimisation_value = optimisation_engine.add_index_constraint(
             self._power_constraint.name,
-            [v.constraint_expression.value for v in self._power_constraint.value]
+            [v.constraint_expression for v in self._power_constraint.value],
         )

@@ -4,7 +4,6 @@ from scipy.interpolate import interp1d
 
 
 class SamplePointsToPowerTable:
-
     def __init__(self, points: List[float], power_values: List[float]):
         assert points[0] == 0
         assert power_values[0] == 0

@@ -10,10 +10,14 @@ class SimulationTimeSeries:
         try:
             self.timestamps = timestamps
             self.values = values
-            self._function = interp1d(x=self.timestamps, y=self.values, kind='linear',
-                                      fill_value="extrapolate")
+            self._function = interp1d(
+                x=self.timestamps,
+                y=self.values,
+                kind="linear",
+                fill_value="extrapolate",
+            )
         except Exception as err:
-            raise SimulationTimeseriesError(f'{err}')
+            raise SimulationTimeseriesError(f"{err}")
 
     def resample(self, timestamp: Timestamp):
         return self._function(timestamp)
