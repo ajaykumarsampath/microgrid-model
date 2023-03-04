@@ -1,9 +1,10 @@
 from unittest import TestCase
 
-from data_loader.component.grid_forming_unit import StoragePowerPlantDataLoader, \
+from common.model.component import ComponentType
+from common.timeseries.domain import Bounds
+from microgrid.data_loader.component.grid_forming_unit import StoragePowerPlantDataLoader, \
     ThermalGeneratorDataLoader
-from model.component.grid_forming_unit import StoragePowerPlant, ThermalGenerator
-from shared.component import Bounds
+from microgrid.model.component.grid_forming_unit import StoragePowerPlant, ThermalGenerator
 
 
 class TestStoragePowerPlant(TestCase):
@@ -22,6 +23,28 @@ class TestStoragePowerPlant(TestCase):
         assert storage_plant.current_energy == initial_energy
         assert storage_plant.current_power == 0
         assert storage_plant.power_setpoint == power_setpoint
+
+    def test_control_component_data(self):
+        initial_timestamp = 1639396720
+        initial_energy = 2
+        data_loader = StoragePowerPlantDataLoader(
+            initial_timestamp, power_bounds=Bounds(0, 5), droop_gain=1, energy_bounds=Bounds(0, 5),
+            initial_energy=initial_energy
+        )
+        storage_plant = StoragePowerPlant(name='storage', data_loader=data_loader)
+        control_component_data = storage_plant.control_component_data
+
+        assert control_component_data.name == 'storage'
+        assert control_component_data.component_type == ComponentType.Storage
+        assert control_component_data.power_bound == data_loader.power_bounds
+        assert control_component_data.energy_bound == data_loader.energy_bounds
+        assert control_component_data.measurements['energy'] == initial_energy
+        assert control_component_data.parameters.droop_gain == 1
+        assert control_component_data.parameters.grid_forming_flag
+        assert control_component_data.parameters.charging_efficiency \
+               == storage_plant.charge_efficiency
+        assert control_component_data.parameters.discharging_efficiency \
+               == storage_plant.discharge_efficiency
 
     def test_step_simulation_timestamp(self):
         initial_timestamp = 1639396720
@@ -69,7 +92,7 @@ class TestStoragePowerPlant(TestCase):
 
         storage_plant.power_setpoint = 1
 
-        with self.assertLogs('model.component.grid_forming_unit') as cm:
+        with self.assertLogs('microgrid.model.component.grid_forming_unit') as cm:
             storage_plant.step(initial_timestamp + 900)
             storage_plant.step(initial_timestamp + 1800)
             assert len(cm.records) == 2
@@ -104,6 +127,22 @@ class TestThermalGenerator(TestCase):
 
         assert thermal_plant.power_setpoint == power_setpoint
         assert thermal_plant.switch_state
+
+    def test_control_component_data(self):
+        initial_timestamp = 1639396720
+        data_loader = ThermalGeneratorDataLoader(
+            initial_timestamp, power_bounds=Bounds(0, 5), droop_gain=1, switch_state=False
+        )
+        thermal_plant = ThermalGenerator(name='thermal', data_loader=data_loader)
+
+        control_component_data = thermal_plant.control_component_data
+
+        assert control_component_data.name == 'thermal'
+        assert control_component_data.component_type == ComponentType.Thermal
+        assert control_component_data.power_bound == data_loader.power_bounds
+        assert not control_component_data.measurements['switch_state']
+        assert control_component_data.parameters.droop_gain == 1
+        assert control_component_data.parameters.grid_forming_flag
 
     def test_step_simulation_timestamp(self):
         initial_timestamp = 1639396720

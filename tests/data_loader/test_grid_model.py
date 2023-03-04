@@ -1,8 +1,9 @@
 import pytest
 
-from data_loader.domain import DuplicateGridModelError
-from data_loader.component.grid_model import GridNetworkDataLoader, SingleBusGridNetworkDataLoader
-from shared.component import GridLine
+from common.model.component import GridLine
+from microgrid.data_loader.component.grid_model import GridNetworkDataLoader, \
+    SingleBusGridNetworkDataLoader
+from microgrid.data_loader.domain import DuplicateGridModelError
 
 
 class TestGridDataLoader:

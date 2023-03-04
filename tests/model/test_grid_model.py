@@ -2,12 +2,13 @@ import time
 
 import numpy as np
 
-from model.exception import UnknownComponentError
-from model.component.grid_model import GridNetwork
-from data_loader.component.grid_model import GridNetworkDataLoader, SingleBusGridNetworkDataLoader
+from common.model.component import GridLine, ComponentType
+from microgrid.model.component.grid_model import GridNetwork
+from microgrid.data_loader.component.grid_model import GridNetworkDataLoader, \
+    SingleBusGridNetworkDataLoader
 import pytest
 
-from shared.component import GridLine
+from microgrid.model.exception import UnknownComponentError
 
 
 class TestGridModel:
@@ -23,6 +24,31 @@ class TestGridModel:
         assert grid_network.get_bus_grid_line(grid_network_data.SLACK_BUS_ID) == []
         assert grid_network.get_bus_neighbours(grid_network_data.SLACK_BUS_ID) == []
         assert grid_network.get_bus_grid_line('abs') == []
+
+    def test_control_component_data(self):
+        initial_timestamp = 1645825124
+        single_grid_network_data = SingleBusGridNetworkDataLoader(
+            initial_timestamp=initial_timestamp
+        )
+        single_grid_network = GridNetwork(name='single_grid', data_loader=single_grid_network_data)
+
+        single_control_component_data = single_grid_network.control_component_data
+
+        admittance = 20
+        grid_lines = [GridLine(from_bus='bus_0', to_bus='bus_1', admittance=admittance)]
+        grid_network_data = GridNetworkDataLoader(
+            initial_timestamp=initial_timestamp, grid_line=grid_lines)
+        grid_network = GridNetwork(name='grid', data_loader=grid_network_data)
+
+        control_component_data = grid_network.control_component_data
+
+        assert single_control_component_data.name == 'single_grid'
+        assert single_control_component_data.component_type == ComponentType.Grid
+        assert len(single_control_component_data.grid_lines) == 0
+
+        assert control_component_data.name == 'grid'
+        assert control_component_data.component_type == ComponentType.Grid
+        assert len(control_component_data.grid_lines) == 1
 
     def test_grid_model_with_grid_lines(self):
         initial_timestamp = 1645825124
@@ -132,5 +158,6 @@ class TestGridModel:
 if __name__ == '__main__':
 
     test_grid = TestGridModel()
-    test_grid.test_calculate_line_power()
+    # test_grid.test_calculate_line_power()
+    test_grid.test_single_bus_grid_model()
     print("completed")

@@ -1,5 +1,7 @@
-from data_loader.microgrid_model import MicrogridModelDataLoader
-from shared.component import ComponentSimulationData, Bounds, BUS_ID
+from common.model.component import BUS_ID
+from common.timeseries.domain import Bounds
+from microgrid.data_loader.microgrid_model import MicrogridModelDataLoader
+from microgrid.shared.simulation_data import ComponentSimulationData
 from tests.utils.test_mocks import MockUnitConfig, MockGeneratorConfig, \
     MockUnitConfigData, MockComponentDataLoaderData, MockGeneratorDataLoaderData, \
     MockGeneratorConfigData
@@ -37,22 +39,6 @@ class TestMicrogridModel:
             mock_generator_configs.append(
                 generate_mock_generator_config(name, bus_id)
             )
-
-        """
-        microgrid_model_data.add_storage_power_plant(mock_generator_configs[0])
-        microgrid_model_data.add_thermal_power_plant(mock_generator_configs[1])
-        microgrid_model_data.add_renewable_unit(mock_generator_configs[2])
-
-        bus_ids = [microgrid_model_data.get_component_bus_id(name)
-                            for name in expected_generator_name]
-        bus_ids.append(microgrid_model_data.get_component_bus_id(expected_demand_names[0]))
-
-        assert len(microgrid_model_data.get_renewable_units()) == 1
-        assert len(microgrid_model_data.get_storage_power_plants()) == 1
-        assert len(microgrid_model_data.get_thermal_generators()) == 1
-        assert len(microgrid_model_data.get_load_demands()) == 1
-        assert bus_ids == expected_bus_id
-        """
 
     def test_unknown_component_in_model(self):
         microgrid_model_data = MicrogridModelDataLoader(name='mock_mg')
